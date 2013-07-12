@@ -1,0 +1,56 @@
+2013-06-23  Andrey Penechko  <mrsmith33@yandex.ru>
+	Fix: texture loading bug.
+	Remove: hack used to fix writeln bug. Fixed in dmd0.63.2.
+	Add: Rect.size, Rect.grow, Rect.growed.
+
+2013-06-02  Andrey Penechko  <mrsmith33@yandex.ru>
+	Add: proper keyrepeating.
+
+2013-05-31  Andrey Penechko  <mrsmith33@yandex.ru>
+	Move to glfw c159411944. Add IdArray.opIndex. Improve unittests.
+
+
+2013-05-26  Andrey Penechko  <mrsmith33@yandex.ru>
+	Add: clipboad handling
+
+	* iwindow.d:
+	Add: clipboad handling methods
+	* glfwwindow.d:
+	Add: implement clipboad handling methods
+
+2013-05-21  Andrey Penechko  <mrsmith33@yandex.ru>
+	Add: enum KeyModifiers.
+
+2013-05-20  Andrey Penechko  <mrsmith33@yandex.ru>
+	Fix FreeType font loading fail.
+
+2013-05-19  Andrey Penechko  <mrsmith33@yandex.ru>
+
+	* core.dproj:
+	* glfwwindow.d:
+	* ogl3renderer.d:
+
+
+2013-04-20  Andrey Penechko  <mrsmith33@yandex.ru>
+
+	* core.dproj:
+	* math.d:
+	* types.d:
+	* input.d:
+	* iinput.d:
+	* all.d:
+	* mesh.d:
+	* texture.d:
+	* glerrors.d:
+	* font.d:
+	* texrectarray.d:
+	* shaderprogram.d:
+	* fontmanager.d:
+	* sdlwindow.d:
+	* textureatlas.d:
+	* iwindow.d:
+	* glfwwindow.d:
+	* irenderer.d:
+	* ogl3renderer.d:
+
+

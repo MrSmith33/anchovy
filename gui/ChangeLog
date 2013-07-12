@@ -1,0 +1,283 @@
+2013-06-23  Andrey Penechko  <mrsmith33@yandex.ru>
+	Add: skin inheriting.
+	Improve: edit text positioning when edit gets resized.
+
+2013-06-16  Andrey Penechko  <mrsmith33@yandex.ru>
+Add: Basic resizing/layout management/anchors.
+	* baselayoutmanager.d:
+	Add: basic layout manager which uses absolute positioning.
+		Takes into account widget anchors when parent gets resized.
+	* ilayoutmanager.d:
+	Add: layoutManager interface.
+	* iwidget.d:
+	Add: iwidget interface. Will be split into smaller pieces.
+	* frame.d:
+	Change: close button now anchors to right and top.
+	Add: basic layout manager is used by default for client area and internals.
+	* guilayer.d:
+	Change: setParentWidget to parent property
+	* guiwidget.d:
+	Add: anchors. Default anchor is LEFT|TOP
+	Add: discarding of cached geometry on size change.
+	Add: prefferedSize. Currently set to initial widget size. Currently used as a minimal size when resizing frame.
+	Add: width and height setter properties.
+	* guiwidgetcontainer.d:
+	Add: layoutManager property.
+
+2013-06-02  Andrey Penechko  <mrsmith33@yandex.ru>
+	Enchance cursor blinking.
+
+	* edit.d:
+	Add: proper blink interval reseting when cursor moves.
+	* timermanager.d:
+	Add: new method resetTimer(Timer timer, double newDelay = double.nan).
+
+2013-06-02  Andrey Penechko  <mrsmith33@yandex.ru>
+	Add: Edit cursor blinking.
+
+2013-06-02  Andrey Penechko  <mrsmith33@yandex.ru>
+	Add: timerManager property to GuiWindow.
+
+2013-05-26  Andrey Penechko  <mrsmith33@yandex.ru>
+	Add: RadioButton and radio-groups.
+
+	* checkbox.d:
+	* togglebutton.d:
+	Rename: onChange callback to onToggle
+	* guiwindow.d:
+	Add: setCheckedForGroup(uint group, RadioButton rbutton) method.
+	Add: RadioButton[uint] _checkGroups field.
+
+2013-05-26  Andrey Penechko  <mrsmith33@yandex.ru>
+	Change: capturing feature for 0.2.1dev.
+
+	* edit.d:
+	* frame.d:
+	* button.d:
+	* checkbox.d:
+	Change: pressedWidget to inputOwnerWidget
+
+	* guilayer.d:
+	Change: setParentWindow(GuiWindow) to setParentWidget(GuiWidgetContainer)
+	* guiwindow.d:
+	Remove: pressedWidget properties, _pressedWidget field
+	Change: _draggingWidget to _inputOwnerWidget
+	Deprecate: pushLayer, layers, popLayer
+	Add: more documentation
+
+2013-05-26  Andrey Penechko  <mrsmith33@yandex.ru>
+	Add: clipboard functionality to Edit.
+
+	* edit.d:
+	Add: copy(), paste() methods.
+	Add: dstring selectedText property.
+	Add: Ctrl+C, Ctrl+V, Ctrl+X shortcuts.
+
+2013-05-24  Andrey Penechko  <mrsmith33@yandex.ru>
+Add: Clipboard access from window
+	* frame.d:
+	* checkbox.d:
+	Add: focus on pointer press
+	* guiwindow.d:
+	Add: clipboard callbacks
+	Add: clipboard interface
+
+2013-05-21  Andrey Penechko  <mrsmith33@yandex.ru>
+	Add: KeyModifiers passed to keyPressed and keyReleased.
+
+
+2013-05-12  Andrey Penechko  <mrsmith33@yandex.ru>
+	Add togglebutton, checkbox
+
+2013-05-10  Andrey Penechko  <mrsmith33@yandex.ru>
+	Add text selection. Fix some bugs.
+	
+	* edit.d:
+	[ADD] Text selection.
+	[ADD] Home, And key processing.
+	* guiwindow.d:
+	* frame.d:
+	[CHANGE] staticRect recalculation must be initiated in Frame, not in Window.
+
+2013-05-10  Andrey Penechko  <mrsmith33@yandex.ru>
+	Add void Edit.insertAtCursorPos(dstring text) method
+
+2013-05-10  Andrey Penechko  <mrsmith33@yandex.ru>
+	Fix wrong cursor position when clicking on scrolled text
+
+
+2013-05-09  Andrey Penechko  <mrsmith33@yandex.ru>
+	Add cursor to edit and alignment of text. Move to new commit style.
+
+	* textline.d:
+	[ADD] width property
+	[ADD] height property
+	[CHANGE] now text origin is in left-upper corner
+	* guiwidget.d:
+	[ADD] skinChange method. Called by widget after the skin has been changed.
+	* edit.d:
+	[ADD] Cursor bar.
+	[ADD] Cursor can be moved via Left and Right arrow keys.
+	[ADD] Text scrolls horizontaly if cursor moves out of view.
+	[ADD] Cursor can be set via mouse click.
+	* label.d:
+	[CHANGE] text alignment now works via alignment parameter to guiRenderer
+	* button.d:
+	[CHANGE] text alignment now works via alignment parameter to guiRenderer
+	* iguirenderer.d:
+	* guirenderer.d:
+	[CHANGE] drawTextLine now receives additional parameter of alignment
+	[ADD] drawTextLine which accepts rect instead of point to be aligned in
+
+2013-05-08  Andrey Penechko  <mrsmith33@yandex.ru>
+	[FIXED] Wrong offset values was used at geometry generation.
+
+2013-04-20  Andrey Penechko  <mrsmith33@yandex.ru>
+	All widgets now have same constructor this(Rect, skin, style)
+
+2013-04-19  Andrey Penechko  <mrsmith33@yandex.ru>
+	[ADDED] GuiWidget._staticRect
+	All widgets changed to use it instead of passing it as parameter everywhere.
+	Now this is only calculated only when some widget changes its own position. It is done via calcStaticRect.
+	[ADDED] GuiWidget.staticRect property
+
+2013-04-10  Andrey Penechko  <mrsmith33@yandex.ru>
+
+	* edit.d:
+	[ADDED] new property bool isEditable. If set to false, edit will not react on key presses.
+
+2013-04-09  Andrey Penechko  <mrsmith33@yandex.ru>
+
+	* edit.d:
+
+	* all.d:
+	[ADDED] controls.Edit
+	* frame.d:
+	[CHANGED] internal children and regular children processing are now separated. regular children is only allowed inside client area.
+	* guilayer.d:
+	[REMOVED] drawContent. GuiWidgetContainer is used instead.
+	* guiwindow.d:
+	[ADDED] override keyPressed.
+	[ADDED] override keyReleased,
+	[ADDED] override charEntered.
+	[CHANGED] property focusedWidget to call focusGained/focusLost methods of Widget.
+	* guirenderer.d:
+	[CHANGED] drawTextLine was setting current color to white.
+	* guiwidget.d:
+	[ADDED] method bool keyPressed(in KeyCode key)
+	[ADDED] method bool keyReleased(in KeyCode key)
+	[ADDED] method bool charEntered(in dchar chr)
+	[ADDED] method void focusGained() used by GuiWindow
+	[ADDED] method void focusLost() used by GuiWindow
+
+
+2013-04-06  Andrey Penechko  <mrsmith33@yandex.ru>
+	[FIXED] hoveredWidget was not reseted when leaving widget in widgetcontainer 
+
+2013-04-03  Andrey Penechko  <mrsmith33@yandex.ru>
+	updated to latest core API. Replaced Rect.inside with Rect.contains
+
+2013-04-01  Andrey Penechko  <mrsmith33@yandex.ru>
+
+	* all.d:
+	* all.d:
+	* button.d:
+	* guilayer.d:
+	* guiwidgetcontainer.d:
+	* guiwindow.d:
+	* imagebutton.d:
+
+	* frame.d:
+	[ADDED] new property void onClose(RegularHandler newHandler)
+
+	* guirenderer.d:
+	[FIXED] widget was drawing
+	* guiskin.d:
+	[ADDED] uvec2 minSize, uvec2 maxSize properties to GuiStyleState
+	* guiwidget.d:
+	[ADDED] new property void styleName(string newStyleName)
+	[ADDED] new property void state(string newStateName)
+	[ADDED] new property uvec2 size()
+	[ADDED] new property void size(uvec2 newSize)
+	[ADDED] new parameter for handlers of type GuiWidget
+	* jsonguiskinparser.d:
+	[ADDED] minSize, maxSize properties to GuiStyleState
+	[ADDED] parseSize method
+	* guilayer.d:
+	* guiwindow.d:
+	[DELETED] moved to \controls
+
+2013-03-30  Andrey Penechko  <mrsmith33@yandex.ru>
+	implemented button text drawing, skin fonts, shader colors, static library
+	* frame.d:
+	[ADDED] Frame control
+	* all.d:
+	[ADDED] public import of voxel.core.input
+	[ADDED] public import of std.conv: to
+	* button.d:
+	[ADDED] client area cropping
+	[REMOVED] _text. Widget._textLine is used instead
+	[ADDED] text line drawing in drawContent
+	[CHANGED] click now works only for left mouse button
+	* label.d:
+	[REMOVED] _text. Widget._textLine is used instead
+	[REMOVED] text property. Widget.caption is used instead
+	* guilayer.d:
+	* guiwidgetcontainer.d:
+	[CHANGED] updated pointer methods to use mouse button parameter
+	* guirenderer.d:
+	[CHANGED] text shader now uses gColor instead of white
+	[CHANGED] updated to new drawing interface
+	[ADDED] line would not draw if it is not loaded
+	[ADDED] new method void pushClientArea(Rect area)
+	[ADDED] new method void popClientArea()
+	[ADDED] new method void setClientArea(Rect area)
+	[ADDED] new property IRenderer renderer()
+	* guiskin.d:
+	[ADDED] skin fonts
+	[CHANGED] loadResources(IRenderer guiRenderer) to loadResources(IGuiRenderer guiRenderer)
+	[ADDED] fonts loading to loadResources method
+	[ADDED] string GuiStyle.fontName
+	* guiwidget.d:
+	[CHANGED] updated pointer methods to use mouse button parameter
+	[ADDED] new property size
+	[ADDED] new property caption
+	* guiwindow.d:
+	[CHANGED] updated pointer methods to use mouse button parameter
+	[CHANGED] click now works only for left mouse button
+	* iguirenderer.d:
+	[ADDED] new method void pushClientArea(Rect area)
+	[ADDED] new method void popClientArea()
+	[ADDED] new method void setClientArea(Rect area)
+	[ADDED] new property IRenderer renderer()
+	* jsonguiskinparser.d:
+	[ADDED] font loading
+	* textline.d:
+	[ADDED] new property isInited
+
+	* main.d:
+	[CHANGED] updated with according with all the changes
+
+2013-03-28  Andrey Penechko  <mrsmith33@yandex.ru>
+
+	* button.d:
+	[ADDED] pressed, hovered states
+	* guirenderer.d:
+	[ADDED] widget skin outline
+	* guiskin.d:
+	[REMOVED] Point2i GuiStyleState.offset
+	[ADDED] RectOffset GuiStyleState.outline
+	* guiwindow.d:
+	[FIXED] pressedWidget now properly resets
+	* jsonguiskinparser.d:
+	[CHANGED] offset parsing to outline parsing
+
+2013-03-28  Andrey Penechko  <mrsmith33@yandex.ru>
+
+	* button.d:
+	  [ADDED] state changes accordingly to leave/enter logic
+	* guirenderer.d:
+	  [CHANGED] widget geometry selection based on widgets currnet state
+	* guiwidget.d:
+	  [CHANGED] TexRectArray geometry() @property => ref TexRectArray[string] geometry() @property
+
