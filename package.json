@@ -1,0 +1,97 @@
+{
+	"name" : "anchovy",
+	"authors" : [ "Andrey Penechko" ],
+	"dependencies" : {
+	  "anchovy:core" : "~master",
+	  "anchovy:graphics" : "~master",
+	  "anchovy:gui" : "~master",
+	  "anchovy:utils" : "~master"
+	},
+	"description" : "Set of multimedia libraries for games and gui applications",
+	"homepage" : "http://github.com/MrSmith33/anchovy",
+	"license" : "Boost",
+	"subPackages" : [
+	{
+		"name" : "core",
+		"dependencies" : {
+			"anchovy:util" : "~master",
+			"derelict:freeimage" : "~master",
+			"derelict:freetype" : "~master",
+			"derelict:glfw3" : "~master",
+			"derelict:opengl3" : "~master",
+			"derelict:util" : "~master",
+			"dlib" : "~master"
+		},
+		"importPaths" : [ "import" ],
+		"sourcePaths" : [ "import/anchovy/core" ],
+		"targetPath" : "lib",
+		"targetType" : "library"
+	},
+	{
+		"name" : "graphics",
+		"dependencies" : {
+			"anchovy:core" : "~master",
+			"anchovy:util" : "~master",
+			"derelict:freeimage" : "~master",
+			"derelict:freetype" : "~master",
+			"derelict:glfw3" : "~master",
+			"derelict:opengl3" : "~master",
+			"derelict:util" : "~master",
+			"dlib" : "~master"
+		},
+		"importPaths" : [ "import" ],
+		"sourcePaths" : [ "import/anchovy/graphics" ],
+		"targetPath" : "lib",
+		"targetType" : "library"
+	},
+	{
+		"name" : "gui",
+		"dependencies" : {
+			"anchovy:core" : "~master",
+			"anchovy:graphics" : "~master",
+			"anchovy:util" : "~master",
+			"derelict:freeimage" : "~master",
+			"derelict:freetype" : "~master",
+			"derelict:glfw3" : "~master",
+			"derelict:opengl3" : "~master",
+			"derelict:util" : "~master",
+			"dlib" : "~master"
+		},
+		"importPaths" : [ "import" ],
+		"sourcePaths" : [ "import/anchovy/gui" ],
+		"targetPath" : "lib",
+		"targetType" : "library"
+	},
+	{
+		"name" : "utils",
+		"dependencies" : {
+			"anchovy:core" : "~master"
+		},
+		"importPaths" : [ "import" ],
+		"sourcePaths" : [ "import/anchovy/utils" ],
+		"targetPath" : "lib",
+		"targetType" : "library"
+	},
+	{
+		"name" : "examples",
+		"dependencies" : {
+			"anchovy:core" : "~master",
+			"anchovy:graphics" : "~master",
+			"anchovy:gui" : "~master",
+			"anchovy:util" : "~master",
+			"derelict:freeimage" : "~master",
+			"derelict:freetype" : "~master",
+			"derelict:glfw3" : "~master",
+			"derelict:opengl3" : "~master",
+			"derelict:util" : "~master",
+			"dlib" : "~master"
+		},
+		"importPaths" : [ "import" ],
+		"sourcePaths" : [ "examples" ],
+		"targetPath" : "bin",
+		"targetType" : "executable"
+	}
+	],
+	"targetPath" : "lib",
+	"targetType" : "none"
+}
