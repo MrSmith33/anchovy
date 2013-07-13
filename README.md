@@ -9,7 +9,8 @@ API can change with every version.
 * anchovy.utils - additional helpers.
 * anchovy.graphics - windowing and rendering. 
 * anchovy.gui - skinnable graphical interface. The only usable package right now.
-###planned packages:
+
+####planned packages:
 * anchovy.audio - OpenAL sound manager.
 * anchovy.network - client-server framework.
 * anchovy.locale - translation management.
