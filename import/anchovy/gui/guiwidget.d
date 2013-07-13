@@ -287,7 +287,7 @@ public:
 		return _skin;
 	}
 
-	protected Font getStyleFont(in GuiSkin skin, in string styleName)
+	protected Font getStyleFont(GuiSkin skin, in string styleName)
 	{
 		if (skin[styleName] is null) return null;
 		string font = _skin[_styleName].fontName;
