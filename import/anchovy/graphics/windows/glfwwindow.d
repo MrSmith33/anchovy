@@ -270,7 +270,7 @@ extern(C)
 	{
 
 	}
-	static void keyfun(GLFWwindow* w, int key, int action, int)
+	static void keyfun(GLFWwindow* w, int key, int, int action, int)
 	{
 		if (action == GLFW_RELEASE)
 		{

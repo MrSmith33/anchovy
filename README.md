@@ -39,11 +39,11 @@ Execute there:
 	dub install --local derelict
 	dub install --local dlib
 
-Compile __Derelict3__ using its __build/build.d__ script and __dlib__ using
+Compile __Derelict3__ using its __build/build.d__ script 
+
+and __dlib__ using
 
 	dub build
-
-Then copy all __.lib__ files to the deps/lib folder.
 
 Build __build.d__ file located in root folder and run it. All .lib files will be located in __/lib__ folder. Gui demo will be located in __bin__ folder.
 

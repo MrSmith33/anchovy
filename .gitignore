@@ -6,4 +6,5 @@
 *.so
 lib/*.lib
 lib/*.a
+obj/
 .DS_Store
