@@ -128,7 +128,12 @@ class Scrollbar(bool horizontal) : GuiWidgetContainer
 		{
 			widget.handleParentSkinChange();
 		}
+		static if(horizontal)
+			_rect.height = _children[1].height;
+		else
+			_rect.width = _children[1].width;
 		updateComponents();
+		
 	}
 
 	protected void updateComponents()
@@ -142,7 +147,10 @@ class Scrollbar(bool horizontal) : GuiWidgetContainer
 			_children[1].position = ivec2(0, 0);
 			_children[2].position = ivec2(_children[1].width + _scrollBodySize, 0);
 			_children[3].width = to!uint(_sliderRatio * _scrollBodySize);
-			if ((_children[3].x + _children[3].width) > _children[2].x)
+			_children[3].height = _rect.height;
+			if (_children[3].x < _children[1].width) 
+				_children[3].x = _children[1].width;
+			else if ((_children[3].x + _children[3].width) > _children[2].x)
 			{
 				_children[3].x =  (_children[2].x - _children[3].width);
 			}
@@ -156,7 +164,10 @@ class Scrollbar(bool horizontal) : GuiWidgetContainer
 			_children[1].position = ivec2(0, 0);
 			_children[2].position = ivec2(0, _children[1].height + _scrollBodySize);
 			_children[3].height = to!uint(_sliderRatio * _scrollBodySize);
-			if ((_children[3].y + _children[3].height) > _children[2].y)
+			_children[3].width = _rect.width;
+			if (_children[3].y < _children[1].height) 
+				_children[3].y = _children[1].height;
+			else if ((_children[3].y + _children[3].height) > _children[2].y)
 			{
 				_children[3].y =  (_children[2].y - _children[3].height);
 			}

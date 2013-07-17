@@ -41,6 +41,7 @@ public
 	import anchovy.gui.controls.frame;
 	import anchovy.gui.controls.guiwindow;
 	import anchovy.gui.controls.scrollbar;
+	import anchovy.gui.controls.list;
 
 	import anchovy.gui.controls.internals.draggable;
 }

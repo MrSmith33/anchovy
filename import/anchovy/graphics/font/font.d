@@ -86,6 +86,7 @@ public:
 		_ascender = face.ascender/64;
 		_descender = face.descender/64;
 		_height = face.height/64;
+		_size = size;
 		FT_Done_Face(face);
 		FT_Done_FreeType(library);
 	}
@@ -93,6 +94,11 @@ public:
 	uint height() @property const
 	{
 		return _height;
+	}
+	
+	uint size() @property const
+	{
+		return _size;
 	}
 	
 	uint lineGap() @property const
@@ -180,6 +186,7 @@ private:
 private:
 
 	uint _height;
+	uint _size;
 	uint _lineGap;
 	uint _ascender;
 	uint _descender;

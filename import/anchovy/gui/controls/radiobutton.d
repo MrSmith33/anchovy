@@ -58,7 +58,6 @@ public:
 	
 	override bool pointerReleased(ivec2 pointerPosition, PointerButton button)
 	{
-		window.inputOwnerWidget = null;
 		if (!_staticRect.contains(pointerPosition)) return false;
 		if (button == PointerButton.PB_LEFT && window.inputOwnerWidget is this)
 		{
@@ -71,6 +70,7 @@ public:
 			if (_onClick !is null) _onClick(this, pointerPosition);
 			
 			updateState();
+			window.inputOwnerWidget = null;
 			
 			return true;
 		}

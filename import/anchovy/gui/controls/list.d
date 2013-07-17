@@ -28,19 +28,60 @@ DEALINGS IN THE SOFTWARE.
 
 module anchovy.gui.controls.list;
 
+import std.math;
+
 import anchovy.gui.all;
 
-class List : GuiWidget
+class List : GuiWidgetContainer
 {
-	this(Rect initRect, in string initStyleName = "list", GuiSkin initSkin = null)
+	this(Rect initRect, in string initStyleName = "edit", GuiSkin initSkin = null)
 	{
 		super(initRect, initStyleName, initSkin);
+	}
+	
+	override void init()
+	{
+		addWidget(new VScrollbar(Rect(0,0,0,0)));
+		_minSize = uvec2(200, 200);
+	}
+	
+	override void drawBackground(IGuiRenderer guirenderer) 
+	{
+		guirenderer.drawControlBack(this, _staticRect);
+	}
+	
+	override void handleResize() @trusted
+	{
+		applySizeConstraints();
+	}
+
+	override void drawContent(IGuiRenderer guirenderer)
+	{
+		guirenderer.pushClientArea(_staticRect);
+		guirenderer.renderer.setColor(Color(0, 0, 0, 255));
+		int y = canvasY;
+		foreach(ref line; _textCache)
+		{
+			guirenderer.drawTextLine(line, _staticRect.x, _staticRect.y + y, AlignmentType.LEFT_TOP);
+			y += _lineGap + _fontHeight;
+		}
+		_children[0].draw(guirenderer);
+		guirenderer.popClientArea();
 	}
 
 	void append(string newItem)
 	{
 		_items ~= newItem;
-
+		_textCache ~= new TextLine(to!dstring(newItem), _font);
+		writeln("appended: ", newItem);
+	}
+	
+	string[] clear()
+	{
+		auto items = _items;
+		_items = [];
+		discardTextCache();
+		return items;
 	}
 
 	string opIndex(size_t index)
@@ -59,28 +100,58 @@ protected:
 		if (newFont != _font)
 		{
 			_font = newFont;
+			_lineGap = _font.lineGap;
+			_fontHeight = _font.size;
 			discardTextCache();
 		}
+		foreach (widget; _children)
+		{
+			widget.handleParentSkinChange();
+		}
+		updateComponents();
 	}
 
 	void discardTextCache()
 	{
-
+		_textCache = [];
+	}
+	
+	void updateComponents()
+	{
+		writeln(_rect.width," ", _children[0].width);
+		_children[0].x = _rect.width - _children[0].width;
+		_children[0].height = _rect.height;
 	}
 
 	void updateTextCache()
 	{
-
+		uint firstCached = _firstVisibleIndex; 
+		uint lastCached = firstCached + _textCache.length;
+		
+		uint newFirstCached = -canvasY;
+		uint newLastCached = newFirstCached + _maxVisibleLines;
+		if (newLastCached >= _items.length)
+			newLastCached = _items.length-1;
+	}
+	
+	uint calcMaxVisibleLines() @property
+	{
+		return cast(uint)ceil(_rect.height / cast(float)(_fontHeight + _lineGap));
 	}
 
 	/// index of string in _items which is at top position in viewport
 	/// must be < _items.length
-	size_t _firstVisibleIndex;
+	uint _firstVisibleIndex;
 	TextLine[] _textCache;
 	string[] _items;
 
-	ubyte _lineGap;
+	uint _lineGap;
 	uint _fontHeight;
+	
+	
+	uint _maxVisibleLines;
+	
+	int canvasX, canvasY;
 
 	Font _font;
 }

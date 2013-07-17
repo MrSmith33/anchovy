@@ -110,11 +110,11 @@ class GuiTestWindow : GlfwWindow
 		GuiLayer mainLayer = new GuiLayer(graySkin);
 		guiwin.addWidget(mainLayer);
 
-		Button button1 = new Button(Rect(20, 20, 120, 120));
+		/*Button button1 = new Button(Rect(20, 20, 60, 40));
 		button1.caption = "Click me!";
 		button1.onClick = (IWidget w, ivec2 p){w.caption = to!dstring(p);};
 		button1.onLeave = (IWidget w){w.caption = "Click me!";};
-		mainLayer.addWidget(button1);
+		mainLayer.addWidget(button1);*/
 
 		Label l = new Label(Rect(100, 20, 30, 10));
 		l.caption = "English Русский Українська";
@@ -125,6 +125,15 @@ class GuiTestWindow : GlfwWindow
 
 		auto vscrollBar = new VScrollbar(Rect(20,170,18, 100));
 		mainLayer.addWidget(vscrollBar);
+		
+		auto list = new List(Rect(200,100,100, 200));
+		mainLayer.addWidget(list);
+		
+		auto addListItemButton = new Button(Rect(120, 100, 80, 24));
+		addListItemButton.caption = "Add item";
+		int itemId;
+		addListItemButton.onClick = (IWidget w, ivec2 p){list.append("Item"~to!string(itemId));++itemId;};
+		mainLayer.addWidget(addListItemButton);
 		                  
 		Frame frame1 = new Frame(Rect(100, 200, 200, 300));
 		mainLayer.addWidget(frame1);
@@ -169,7 +178,7 @@ class GuiTestWindow : GlfwWindow
 		radio3.onToggle = (IWidget w) => writeln((cast(Checkbox)w).isChecked ? "3 checked" : "3 unchecked");
 		frame1.addWidget(radio3);
 
-		Frame calculator = new Frame(Rect(300, 200, 98, 200));
+		/*Frame calculator = new Frame(Rect(300, 200, 98, 200));
 		mainLayer.addWidget(calculator);
 
 		Button bDel = new Button(Rect(28,28,50,24));
@@ -211,7 +220,7 @@ class GuiTestWindow : GlfwWindow
 		calculator.addWidget(b7);
 		calculator.addWidget(b8);
 		calculator.addWidget(b9);
-		calculator.addWidget(bDot);
+		calculator.addWidget(bDot);*/
 
 
 		fpsLabel = new Label(Rect(0, 0, 30, 10));
