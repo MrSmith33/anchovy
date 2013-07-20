@@ -5,8 +5,11 @@
 	  "anchovy:core" : "~master",
 	  "anchovy:graphics" : "~master",
 	  "anchovy:gui" : "~master",
-	  "anchovy:utils" : "~master"
+	  "anchovy:utils" : "~master",
+	  "anchovy:guidemo" : "~master"
 	},
+	"targetPath" : "lib",
+	"targetType" : "library",
 	"description" : "Set of multimedia libraries for games and gui applications",
 	"homepage" : "http://github.com/MrSmith33/anchovy",
 	"license" : "Boost",
@@ -14,7 +17,7 @@
 	{
 		"name" : "core",
 		"dependencies" : {
-			"anchovy:util" : "~master",
+			"anchovy:utils" : "~master",
 			"derelict:freeimage" : "~master",
 			"derelict:freetype" : "~master",
 			"derelict:glfw3" : "~master",
@@ -31,7 +34,7 @@
 		"name" : "graphics",
 		"dependencies" : {
 			"anchovy:core" : "~master",
-			"anchovy:util" : "~master",
+			"anchovy:utils" : "~master",
 			"derelict:freeimage" : "~master",
 			"derelict:freetype" : "~master",
 			"derelict:glfw3" : "~master",
@@ -49,7 +52,7 @@
 		"dependencies" : {
 			"anchovy:core" : "~master",
 			"anchovy:graphics" : "~master",
-			"anchovy:util" : "~master",
+			"anchovy:utils" : "~master",
 			"derelict:freeimage" : "~master",
 			"derelict:freetype" : "~master",
 			"derelict:glfw3" : "~master",
@@ -73,12 +76,12 @@
 		"targetType" : "library"
 	},
 	{
-		"name" : "examples",
+		"name" : "guidemo",
 		"dependencies" : {
 			"anchovy:core" : "~master",
 			"anchovy:graphics" : "~master",
 			"anchovy:gui" : "~master",
-			"anchovy:util" : "~master",
+			"anchovy:utils" : "~master",
 			"derelict:freeimage" : "~master",
 			"derelict:freetype" : "~master",
 			"derelict:glfw3" : "~master",
@@ -86,12 +89,9 @@
 			"derelict:util" : "~master",
 			"dlib" : "~master"
 		},
-		"importPaths" : [ "import" ],
 		"sourcePaths" : [ "examples" ],
 		"targetPath" : "bin",
 		"targetType" : "executable"
 	}
-	],
-	"targetPath" : "lib",
-	"targetType" : "none"
+	]
 }
