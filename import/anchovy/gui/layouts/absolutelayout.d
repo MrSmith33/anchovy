@@ -26,16 +26,16 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.gui.baselayoutmanager;
+module anchovy.gui.layouts.absolutelayout;
 
 import anchovy.gui.all;
 
-public import anchovy.gui.interfaces.ilayoutmanager;
+public import anchovy.gui.interfaces.ilayout;
 
-class BaseLayoutManager : ILayoutManager
+class AbsoluteLayout : ILayout
 {
 	/// Called by container to update its children positions and sizes.
-	override void layoutContainer(in uvec2 clientAreaSize, GuiWidget[] children)
+	override void layoutContainer(in ivec2 clientAreaSize, Widget[] children)
 	{
 
 	}
@@ -44,10 +44,10 @@ class BaseLayoutManager : ILayoutManager
 	/// 
 	/// Container can choose which widgets must be layouted by passing only them.
 	/// This can be used if container has several client areas.
-	override void onContainerResized(uvec2 oldSize, uvec2 newSize, GuiWidget[] children)
+	override void onContainerResized(ivec2 oldSize, ivec2 newSize, Widget[] children)
 	{
-		int dx = cast(int)newSize.x - cast(int)oldSize.x;
-		int dy = cast(int)newSize.y - cast(int)oldSize.y;
+		int dx = newSize.x - oldSize.x;
+		int dy = newSize.y - oldSize.y;
 
 		foreach(ref widget; children)
 		{
@@ -55,9 +55,9 @@ class BaseLayoutManager : ILayoutManager
 			{
 				int newWidth = widget.width + dx;
 				if (newWidth >= 0)
-					widget.size(to!uint(newWidth), widget.height);
+					widget.size = ivec2(newWidth, widget.height);
 				else
-					widget.size(0, widget.height);
+					widget.size = ivec2(0, widget.height);
 			}
 			else if (widget.anchor & Sides.LEFT)
 			{
@@ -65,7 +65,7 @@ class BaseLayoutManager : ILayoutManager
 			}
 			else if (widget.anchor & Sides.RIGHT)
 			{
-				widget.position = ivec2(to!int(widget.x + dx), widget.y);
+				widget.position = ivec2(widget.x + dx, widget.y);
 			}
 			else
 			{
@@ -74,7 +74,7 @@ class BaseLayoutManager : ILayoutManager
 
 			if (widget.anchor & Sides.TOP && widget.anchor & Sides.BOTTOM)
 			{
-				widget.size(widget.width, to!uint(widget.height + dy));
+				widget.size = ivec2(widget.width, widget.height + dy);
 			}
 			else if (widget.anchor & Sides.TOP)
 			{
@@ -82,7 +82,7 @@ class BaseLayoutManager : ILayoutManager
 			}
 			else if (widget.anchor & Sides.BOTTOM)
 			{
-				widget.position = ivec2(widget.x, to!int(widget.y + dy));
+				widget.position = ivec2(widget.x, widget.y + dy);
 			}
 			else
 			{

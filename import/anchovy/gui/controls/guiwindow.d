@@ -32,7 +32,7 @@ import std.array;
 
 import anchovy.gui.all;
 
-public class GuiWindow : GuiWidgetContainer
+public class GuiWindow : WidgetContainer
 {
 public:
 
@@ -113,7 +113,7 @@ public:
 		{
 			if (widget.pointerPressed(pointerPosition, button))
 			{
-				GuiWidget pressedWidget = _hoveredWidget;
+				Widget pressedWidget = _hoveredWidget;
 				return true;
 			}
 		}
@@ -169,54 +169,31 @@ public:
 		return false;
 	}
 
-	deprecated void pushLayer(GuiLayer newLayer)
-	{
-		newLayer.parent = this;
-		_children ~= newLayer;
-	}
-
-	deprecated GuiLayer[] layers() @property pure
-	{
-		return cast(GuiLayer[])_children;
-	}
-
-	deprecated GuiLayer popLayer()
-	{
-		if (!_children.empty)
-		{
-			GuiWidget topLayer = _children[$-1];
-			_children.popBack;
-			return cast(GuiLayer) topLayer;
-		}
-
-		return null;
-	}
-
 	override GuiWindow window() @property @safe pure
 	{
 		return this;
 	}
 
 	/// Used to get last clicked widget
-	GuiWidget lastClickedWidget() @property @safe pure
+	Widget lastClickedWidget() @property @safe pure
 	{
 		return _lastClickedWidget;
 	}
 
 	/// Used to set last clicked widget
-	void lastClickedWidget(GuiWidget widget) @property @safe pure
+	void lastClickedWidget(Widget widget) @property @safe pure
 	{
 		_lastClickedWidget = widget;
 	}
 
 	/// Used to get current hovered widget
-	GuiWidget hoveredWidget() @property @safe pure
+	Widget hoveredWidget() @property @safe pure
 	{
 		return _hoveredWidget;
 	}
 
 	/// Used to set current hovered widget
-	void hoveredWidget(GuiWidget widget) @property @trusted
+	void hoveredWidget(Widget widget) @property @trusted
 	{
 		if (_hoveredWidget !is widget)
 		{
@@ -233,26 +210,26 @@ public:
 	}
 
 	/// Used to get current focused input owner widget
-	GuiWidget inputOwnerWidget() @property @safe pure
+	Widget inputOwnerWidget() @property @safe pure
 	{
 		return _inputOwnerWidget;
 	}
 
 	/// Used to set current focused input owner widget
-	void inputOwnerWidget(GuiWidget widget) @property @trusted
+	void inputOwnerWidget(Widget widget) @property @trusted
 	{
 		debug writeln("new input owner widget ", widget);
 		_inputOwnerWidget = widget;
 	}
 
 	/// Used to get current focused widget
-	GuiWidget focusedWidget() @property @safe pure
+	Widget focusedWidget() @property @safe pure
 	{
 		return _focusedWidget;
 	}
 
 	/// Used to set current focused widget
-	void focusedWidget(GuiWidget widget) @property
+	void focusedWidget(Widget widget) @property
 	{
 		if (_focusedWidget !is widget)
 		{
@@ -326,23 +303,23 @@ protected:
 
 	/// Current input owner If set, this widget will receive all pointer moved events.
 	/// See_Also: inputOwnerWidget
-	GuiWidget		_inputOwnerWidget;
+	Widget		_inputOwnerWidget;
 
 	/// Currently dragging widget. Will receive onDrag events.
-	GuiWidget		_draggingWidget;
+	Widget		_draggingWidget;
 
 	/// Last clicked widget. Used for double-click checking.
 	/// See_Also: lastClickedWidget
-	GuiWidget		_lastClickedWidget;
+	Widget		_lastClickedWidget;
 
 	/// Hovered widget. Widget over which pointer is located.
 	/// See_Also: hoveredWidget
-	GuiWidget		_hoveredWidget;
+	Widget		_hoveredWidget;
 
 	/// Focused widget.
 	/// 
 	/// Will receive all key events if input is not grabbed by other widget.
-	GuiWidget		_focusedWidget;
+	Widget		_focusedWidget;
 
 	/// Stores checked radio button for each radio group.
 	/// See_Also: setCheckedForGroup

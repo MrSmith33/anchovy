@@ -26,7 +26,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.gui.guiwidget;
+module anchovy.gui.widget;
 
 import anchovy.gui.all;
 
@@ -35,7 +35,7 @@ public import anchovy.gui.interfaces.iwidget;
 enum defaultAnchor = Sides.LEFT | Sides.TOP;
 
 ///
-abstract class GuiWidget : IWidget
+abstract class Widget : IWidget
 {
 public:
 
@@ -204,13 +204,13 @@ public:
 		return _maxSize;
 	}
 
-	override void parent(GuiWidget newParent) @property
+	override void parent(Widget newParent) @property
 	{
 		_parent = newParent;
 		if (skin is null && _parent !is null && _isInheritsSkin) skin = _parent.skin;
 	}
 
-	override GuiWidget parent() @property @safe
+	override Widget parent() @property @safe
 	{
 		return _parent;
 	}
@@ -244,16 +244,7 @@ public:
 		return _rect;
 	}
 
-	override void size(in uint newWidth, in uint newHeight) @property
-	{
-		_rect.width = newWidth;
-		_rect.height = newHeight;
-		
-		discardGeometry();
-		handleResize();
-	}
-
-	override void size(uvec2 newSize) @property
+	override void size(ivec2 newSize) @property
 	{
 		_rect.width = newSize.x;
 		_rect.height = newSize.y;
@@ -262,9 +253,9 @@ public:
 		handleResize();
 	}
 
-	override uvec2 size() @property
+	override ivec2 size() @property
 	{
-		return uvec2(_rect.width, _rect.height);
+		return _rect.size;
 	}
 
 	override void skin(GuiSkin newSkin) @property
@@ -433,6 +424,16 @@ public:
 		return _parent.window;
 	}
 
+	void addHandler(T)(T handler)
+	{
+		static assert(isDelegate!T, "handler must be a delegate, not " ~ T.stringof);
+		alias ParameterTypeTuple!T[0] eventType;
+		static assert(!is(eventType == Event), "handler's parameter must not be Event class but inherited one");
+		static assert(is(eventType : Event), "handler's parameter must be inherited from Event class");
+		static assert(ParameterTypeTuple!T.length == 1, "handler must have only one parameter, Event's descendant");
+		array[typeid(eventType)] ~= cast(void delegate(Event))handler;
+	}
+
 protected:
 
 	void discardGeometry() @safe
@@ -458,7 +459,7 @@ protected:
 	TextLine	_textLine;
 
 	/// Parent of this widget. Can be null if have no parent.
-	GuiWidget	_parent;
+	Widget	_parent;
 
 	/// Position is relative to parent's position.
 	Rect		_rect;
@@ -511,5 +512,5 @@ protected:
 	/// Will be called when pointer have been moved from the widget.
 	RegularHandler	_onLeave;
 
-
+	void delegate(Event)[][TypeInfo] _eventHandlers;
 }

@@ -26,28 +26,20 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.gui.all;
+module anchovy.gui.interfaces.ilayout;
 
-public
+import anchovy.gui.all;
+
+/// 
+/// Relative positions will be only affected. Static positions must be updated by container.
+interface ILayout
 {
-	import std.conv: to;
-	import std.stdio;
+	/// Called by container to update its children positions and sizes.
+	void layoutContainer(in ivec2 clientAreaSize, Widget[] children);
 
-	import dlib.math.vector;
-	import dlib.math.utils;
-
-	import anchovy.core.input;
-	import anchovy.core.types;
-	import anchovy.graphics.all;
-	import anchovy.graphics.interfaces.irenderer;
-
-	import anchovy.gui.gui;
-
-	import anchovy.gui.events, anchovy.gui.guiskin, anchovy.gui.widget, anchovy.gui.widgetcontainer, anchovy.gui.guirenderer;
-	import anchovy.gui.interfaces.iguiskinparser, anchovy.gui.interfaces.iguirenderer;
-	import anchovy.gui.jsonguiskinparser;
-	import anchovy.gui.layouts.absolutelayout;
-	import anchovy.gui.textline;
-	import anchovy.gui.timermanager;
-	import anchovy.gui.controls.all;
+	/// Called by container when its size was changed.
+	/// 
+	/// Container can choose which widgets must be layouted by passing only them.
+	/// This can be used if container has several client areas.
+	void onContainerResized(ivec2 oldSize, ivec2 newSize, Widget[] children);
 }

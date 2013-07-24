@@ -163,10 +163,15 @@ struct Rect
 			height = clampValue!uint(height, minSize.y, maxSize.y);
 		}
 	}
-
-	uvec2 size() @property
+	
+	ivec2 position() @property
 	{
-		return uvec2(width, height);
+		return ivec2(x, y);
+	}
+
+	ivec2 size() @property
+	{
+		return ivec2(width, height);
 	}
 
 	string toString()

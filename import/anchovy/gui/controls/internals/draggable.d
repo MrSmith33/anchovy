@@ -32,7 +32,7 @@ import anchovy.gui.all;
 
 alias void delegate(IWidget widget, ref ivec2 deltaPosition) OnDragHandler;
 
-class Draggable : GuiWidget
+class Draggable : Widget
 {
 	this(Rect initRect, in string initStyleName = "none", GuiSkin initSkin = null)
 	{

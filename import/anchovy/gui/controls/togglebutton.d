@@ -30,7 +30,7 @@ module anchovy.gui.controls.togglebutton;
 
 import anchovy.gui.all;
 
-abstract class ToggleButton : GuiWidget
+abstract class ToggleButton : Widget
 {
 	this(Rect initRect, in string initStyleName = "toggle", GuiSkin initSkin = null)
 	{

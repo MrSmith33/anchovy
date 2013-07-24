@@ -26,39 +26,11 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.gui.guievents;
+module anchovy.gui.gui;
 
-@disable class Event
+import anchovy.gui.all;
+
+class Gui
 {
-	/++
-	 + If this flag is set to PropPhase.Sinking -
-	 + event propagates
-	 + from window to target widget, otherwise
-	 + it is bubbling from target to window
-	 +/
-	bool	sinking;
-
-	this()
-	{
-		// Constructor code
-	}
-}
-
-@disable class EventPointer : Event
-{
-	enum : uint // mouse buttons
-	{
-		LEFT_BUTTON     = 0x1,  
-		RIGHT_BUTTON     = 0x2,  
-		CENTER_BUTTON   = 0x4,
-		X_BUTTON_1       = 0x8,
-		X_BUTTON_2       = 0x10,
-		X_BUTTON_3       = 0x20,
-	}
-
-	/// mouse buttons - combination of flags above
-	uint  buttons;
-
-	int pointerX;
-	int pointerY;
+	
 }

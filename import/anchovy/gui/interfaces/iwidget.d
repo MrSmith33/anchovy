@@ -30,10 +30,11 @@ module anchovy.gui.interfaces.iwidget;
 
 import anchovy.gui.all;
 
+alias void delegate(Event event) EventHandler;
 alias void delegate(IWidget widget, ivec2 point) ClickHandler;
 alias void delegate(IWidget widget) RegularHandler;
 
-/// Used to specify GuiWidget.anchor.
+/// Used to specify Widget.anchor.
 enum Sides
 {
 	LEFT = 1,
@@ -82,81 +83,75 @@ public:
 	//+-------------------------------------------------------------------------------+
 	//|                                  Properties                                   |
 	//+-------------------------------------------------------------------------------+
-	
-	/** 
-	Anchored sides of the widget.
-	Can be constructed by ORing Anchor values.
-	Examples:
-	---
-	widget.anchor = Sides.LEFT | Sides.RIGHT;
-	 ---
-	*/
-	uint anchor() @property;
-	
-	/// ditto
-	void anchor(uint newAnchor) @property;
-	
-	dstring caption() @property;
-	
-	void caption(dstring newCaption) @property;
-	
-	// Used internally by gui renderer.
-	ref TexRectArray[string] geometry() @property @safe;
-	
-	void parent(GuiWidget newParent) @property;
-	
-	GuiWidget parent() @property @safe;
-	
-	void position(ivec2 newPosition) @property @safe;
-	
-	ivec2 position() @property @safe;
-	
-	// Add checks and discardGeometry
-	void rect(Rect newRect) @property @safe;
-	
-	Rect rect() @property @safe;
-	
-	void skin(GuiSkin newSkin) @property;
-	
-	GuiSkin skin() @property @safe;
-	
-	string state() @property @safe;
-	
-	void state(string newStateName) @property;
-	
-	Rect staticRect() @property;
-	
-	string styleName() @property @safe;
-	
-	void styleName(string newStyleName) @property @safe;
+	@property
+	{
+		/** 
+		Anchored sides of the widget.
+		Can be constructed by ORing Anchor values.
+		Examples:
+		---
+		widget.anchor = Sides.LEFT | Sides.RIGHT;
+		 ---
+		*/
+		uint anchor();
+		
+		/// ditto
+		void anchor(uint newAnchor);
+		
+		dstring caption();
+		
+		void caption(dstring newCaption);
+		
+		// Used internally by gui renderer.
+		ref TexRectArray[string] geometry() @safe;
+		
+		void parent(Widget newParent);
+		
+		Widget parent() @safe;
+		
+		void position(ivec2 newPosition) @safe;
+		ivec2 position() @safe;
+		
+		// Add checks and discardGeometry
+		void rect(Rect newRect) @safe;
+		Rect rect() @safe;
+		
+		void skin(GuiSkin newSkin);
+		GuiSkin skin() @safe;
+		
+		string state() @safe;
+		void state(string newStateName);
+		
+		Rect staticRect();
+		
+		string styleName() @safe;
+		void styleName(string newStyleName) @safe;
 
-	void size(in uint newWidth, in uint newHeight) @property;
-	
-	void size(uvec2 newSize) @property;
-	
-	uvec2 size() @property;
+		void size(ivec2 newSize);
+		ivec2 size();
 
-	int width() @property @safe;
-	
-	void width(int newWidth) @property;
-	
-	int height() @property @safe;
-	
-	void height(int newHeight) @property;
-	
-	int x() @property @safe;
+		int width() @safe;
+		void width(int newWidth);
+		
+		int height() @safe;
+		void height(int newHeight);
+		
+		int x() @safe;
+		void x(int newX) @safe;
+		
+		int y() @safe;
+		void y(int newX) @safe;
 
-	void x(int newX) @property @safe;
-	
-	int y() @property @safe;
-
-	void y(int newX) @property @safe;
-	
-	void onClick(ClickHandler newHandler) @property @safe;
-	
-	void onEnter(RegularHandler newHandler) @property @safe;
-	
-	void onLeave(RegularHandler newHandler) @property @safe;
-	
-	GuiWindow window() @property @safe;
+	//+-------------------------------------------------------------------------------+
+	//|                                Event handling                                 |
+	//+-------------------------------------------------------------------------------+
+		
+		void onClick(ClickHandler newHandler) @safe;
+		
+		void onEnter(RegularHandler newHandler) @safe;
+		
+		void onLeave(RegularHandler newHandler) @safe;
+		
+		GuiWindow window() @safe;
+	}
 }

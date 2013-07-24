@@ -30,7 +30,7 @@ module anchovy.gui.controls.guilayer;
 
 import anchovy.gui.all;
 
-class GuiLayer : GuiWidgetContainer
+class GuiLayer : WidgetContainer
 {
 public:
 
@@ -40,7 +40,7 @@ public:
 		super(Rect(0,0,0,0), "", skin);
 	}
 
-	override void parent(GuiWidget newParent) @property
+	override void parent(Widget newParent) @property
 	{
 		_parent = newParent;
 	}

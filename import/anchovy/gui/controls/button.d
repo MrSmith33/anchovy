@@ -30,7 +30,7 @@ module anchovy.gui.controls.button;
 
 import anchovy.gui.all;
 
-class Button : GuiWidget
+class Button : Widget
 {
 public:
 	this(Rect initRect, in string initStyleName = "button", GuiSkin initSkin = null)

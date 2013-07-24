@@ -26,18 +26,18 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.gui.guiwidgetcontainer;
+module anchovy.gui.widgetcontainer;
 
 import anchovy.gui.all;
 
-public import anchovy.gui.interfaces.ilayoutmanager;
+public import anchovy.gui.interfaces.ilayout;
 
 /**
  * Widget that is used as a container for other widgets.
  * 
  * Can apply layout to its client area by using provided layout manager.
  */
-class GuiWidgetContainer : GuiWidget
+class WidgetContainer : Widget
 {
 public:
 	this(Rect rect, in string styleName, GuiSkin skin = null)
@@ -45,7 +45,7 @@ public:
 		super(rect, styleName, skin);
 	}
 
-	void addWidget(GuiWidget widget)
+	void addWidget(Widget widget)
 	{
 		widget.parent = this;
 		widget.calcStaticRect(_staticRect);
@@ -120,14 +120,14 @@ public:
 //|                                  Properties                                   |
 //+-------------------------------------------------------------------------------+
 
-	void layoutManager(ILayoutManager newLayoutManager) @property
+	void layout(ILayout newLayout) @property
 	{
-		_layoutManager = newLayoutManager;
+		_layout = newLayout;
 		updateLayout();
 	}
 
 	/// Must return children array.
-	GuiWidget[] children() @property
+	Widget[] children() @property
 	{
 		return _children;
 	}
@@ -153,9 +153,9 @@ protected:
 	/// Used to layout children in client area.
 	/// 
 	/// If is null, no layout would be done. I.e. absolute positioning.
-	ILayoutManager _layoutManager;
+	ILayout _layout;
 
 	///All the children of this widget.
-	GuiWidget[]	_children;	
+	Widget[]	_children;	
 }
 

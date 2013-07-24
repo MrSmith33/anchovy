@@ -32,7 +32,7 @@ import std.math;
 
 import anchovy.gui.all;
 
-class List : GuiWidgetContainer
+class List : WidgetContainer
 {
 	this(Rect initRect, in string initStyleName = "edit", GuiSkin initSkin = null)
 	{

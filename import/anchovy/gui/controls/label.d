@@ -30,7 +30,7 @@ module anchovy.gui.controls.label;
 
 import anchovy.gui.all;
 
-class Label : GuiWidget
+class Label : Widget
 {
 
 public:

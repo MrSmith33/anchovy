@@ -30,14 +30,14 @@ module anchovy.gui.controls.frame;
 
 import anchovy.gui.all;
 
-class Frame : GuiWidgetContainer
+class Frame : WidgetContainer
 {
 	this(Rect rect, in string styleName = "frame", GuiSkin skin = null)
 	{
 		super(rect, styleName, skin);
 	}
 
-	override void addWidget(GuiWidget widget)
+	override void addWidget(Widget widget)
 	{
 		widget.parent = this;
 		widget.calcStaticRect(_clientArea);
@@ -59,7 +59,7 @@ class Frame : GuiWidgetContainer
 		}
 	}
 
-	override GuiWidget[] children() @property
+	override Widget[] children() @property
 	{
 		return _children[_internalCount..$];
 	}
@@ -81,7 +81,7 @@ class Frame : GuiWidgetContainer
 		_children ~= ib;
 		++_internalCount;
 
-		_layoutManager = new BaseLayoutManager();
+		_layout = new AbsoluteLayout();
 	}
 
 	override bool pointerPressed(ivec2 pointerPosition, PointerButton button)
@@ -212,19 +212,19 @@ protected:
 
 	override void updateLayout()
 	{
-		if (_layoutManager is null) return;
-		_layoutManager.layoutContainer(size, _children[0.._internalCount]);
-		_layoutManager.layoutContainer(uvec2(_clientArea.width, _clientArea.height), _children[_internalCount..$]);
+		if (_layout is null) return;
+		_layout.layoutContainer(size, _children[0.._internalCount]);
+		_layout.layoutContainer(ivec2(_clientArea.width, _clientArea.height), _children[_internalCount..$]);
 	}
 	
 	override void updateLayoutResize(ivec2 deltaSize)
 	{
-		if (_layoutManager is null) return;
-		_layoutManager.onContainerResized(size, uvec2(size.x + deltaSize.x, size.y + deltaSize.y), _children[0.._internalCount]);
-		_layoutManager.onContainerResized(uvec2(_clientArea.width, _clientArea.height),
-		                                  uvec2(_clientArea.width+deltaSize.x, _clientArea.height + deltaSize.y),
+		if (_layout is null) return;
+		_layout.onContainerResized(size, ivec2(size.x + deltaSize.x, size.y + deltaSize.y), _children[0.._internalCount]);
+		_layout.onContainerResized(ivec2(_clientArea.width, _clientArea.height),
+		                                  ivec2(_clientArea.width+deltaSize.x, _clientArea.height + deltaSize.y),
 		                                  _children[_internalCount..$]);
-		size = uvec2(size.x + deltaSize.x, size.y + deltaSize.y);
+		size = ivec2(size.x + deltaSize.x, size.y + deltaSize.y);
 		calcStaticRect(_parent.staticRect);
 	}
 
@@ -244,7 +244,7 @@ private:
 	uint _draggingSides;
 
 	/// Count of internal widgets.
-	/// Will be moved to GuiWidgetContainer.
+	/// Will be moved to WidgetContainer.
 	uint _internalCount;
 
 	RegularHandler _onClose;

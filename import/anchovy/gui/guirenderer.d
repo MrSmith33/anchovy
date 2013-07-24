@@ -92,7 +92,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 		return _fontManager;
 	}
 
-	override void drawControlBack(GuiWidget widget, Rect staticRect)
+	override void drawControlBack(Widget widget, Rect staticRect)
 	{
 		GuiStyle* styleptr;
 		if (widget.skin !is null)
@@ -208,7 +208,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 		return _renderer;
 	}
 
-	TexRectArray buildWidgetGeometry(ref GuiWidget widget, in GuiStyle style)
+	TexRectArray buildWidgetGeometry(ref Widget widget, in GuiStyle style)
 	{
 		TexRectArray geometry = new TexRectArray;
 		GuiStyleState state = style[widget.state];

@@ -5,8 +5,7 @@
 	  "anchovy:core" : "~master",
 	  "anchovy:graphics" : "~master",
 	  "anchovy:gui" : "~master",
-	  "anchovy:utils" : "~master",
-	  "anchovy:guidemo" : "~master"
+	  "anchovy:utils" : "~master"
 	},
 	"targetPath" : "lib",
 	"targetType" : "library",
@@ -27,8 +26,7 @@
 		},
 		"importPaths" : [ "import" ],
 		"sourcePaths" : [ "import/anchovy/core" ],
-		"targetPath" : "lib",
-		"targetType" : "library"
+		"targetPath" : "lib"
 	},
 	{
 		"name" : "graphics",
@@ -44,8 +42,7 @@
 		},
 		"importPaths" : [ "import" ],
 		"sourcePaths" : [ "import/anchovy/graphics" ],
-		"targetPath" : "lib",
-		"targetType" : "library"
+		"targetPath" : "lib"
 	},
 	{
 		"name" : "gui",
@@ -62,8 +59,7 @@
 		},
 		"importPaths" : [ "import" ],
 		"sourcePaths" : [ "import/anchovy/gui" ],
-		"targetPath" : "lib",
-		"targetType" : "library"
+		"targetPath" : "lib"
 	},
 	{
 		"name" : "utils",
@@ -72,26 +68,7 @@
 		},
 		"importPaths" : [ "import" ],
 		"sourcePaths" : [ "import/anchovy/utils" ],
-		"targetPath" : "lib",
-		"targetType" : "library"
-	},
-	{
-		"name" : "guidemo",
-		"dependencies" : {
-			"anchovy:core" : "~master",
-			"anchovy:graphics" : "~master",
-			"anchovy:gui" : "~master",
-			"anchovy:utils" : "~master",
-			"derelict:freeimage" : "~master",
-			"derelict:freetype" : "~master",
-			"derelict:glfw3" : "~master",
-			"derelict:opengl3" : "~master",
-			"derelict:util" : "~master",
-			"dlib" : "~master"
-		},
-		"sourcePaths" : [ "examples" ],
-		"targetPath" : "bin",
-		"targetType" : "executable"
+		"targetPath" : "lib"
 	}
 	]
 }

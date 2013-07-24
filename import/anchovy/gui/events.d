@@ -26,20 +26,33 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.gui.interfaces.ilayoutmanager;
+module anchovy.gui.events;
 
 import anchovy.gui.all;
 
-/// 
-/// Relative positions will be only affected. Static positions must be updated by container.
-interface ILayoutManager
+class Event
 {
-	/// Called by container to update its children positions and sizes.
-	void layoutContainer(in uvec2 clientAreaSize, GuiWidget[] children);
+	/++
+	 + If this flag is set to PropPhase.Sinking -
+	 + event propagates
+	 + from window to target widget, otherwise
+	 + it is bubbling from target to window
+	 +/
+	bool	sinking;
 
-	/// Called by container when its size was changed.
-	/// 
-	/// Container can choose which widgets must be layouted by passing only them.
-	/// This can be used if container has several client areas.
-	void onContainerResized(uvec2 oldSize, uvec2 newSize, GuiWidget[] children);
+	this()
+	{
+		// Constructor code
+	}
+
+	Gui gui;
+}
+
+class PointerEvent : Event
+{
+	PointerButton  button; //core.input;
+
+	int pointerX;
+	int pointerY;
+	KeyModifiers modifiers;
 }

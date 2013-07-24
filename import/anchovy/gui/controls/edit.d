@@ -33,7 +33,7 @@ import std.stdio;
 
 import anchovy.gui.all;
 
-class Edit : GuiWidget
+class Edit : Widget
 {
 	this(Rect initRect, in string initStyleName = "edit", GuiSkin initSkin = null)
 	{

@@ -28,7 +28,14 @@ DEALINGS IN THE SOFTWARE.
 
 module main;
 
-import std.conv, std.datetime, std.file, std.random, std.stdio, std.utf, core.cpuid;
+import core.cpuid;
+import std.algorithm;
+import std.conv;
+import std.datetime;
+import std.file;
+import std.random;
+import std.stdio;
+import std.utf;
 
 import derelict.opengl3.gl3;
 
@@ -41,7 +48,6 @@ import anchovy.graphics.font.fontmanager;
 import anchovy.graphics.font.textureatlas;
 
 import anchovy.gui.all;
-import anchovy.gui.baselayoutmanager;
 import fpshelper;
 import anchovy.gui.timermanager;
 
@@ -73,18 +79,27 @@ class GuiTestWindow : GlfwWindow
 		fpsHelper.update(dt);
 		timerManager.updateTimers(glfwGetTime());
 	}
+	
+	string[] getHardwareInfo()
+	{
+		return [
+			"CPU vendor: " ~ vendor,
+			"CPU name: " ~ processor,
+			"Cores: " ~ to!string(coresPerCPU),
+			"Threads: " ~ to!string(threadsPerCPU),
+			"CPU chache levels: " ~ to!string(cacheLevels),
+			"GPU vendor: " ~ ZToString(glGetString(GL_VENDOR)),
+			"Renderer: " ~ ZToString(glGetString(GL_RENDERER)),
+			"OpenGL version: " ~ ZToString(glGetString(GL_VERSION)),
+			"GLSL version: " ~ ZToString(glGetString(GL_SHADING_LANGUAGE_VERSION)),
+		];
+	}
 
 	void load(in string[] args)
 	{
-		writeln("CPU vendor: ", vendor);
-		writeln("CPU name: ", processor);
-		writeln("Cores: ", coresPerCPU, " Threads: ", threadsPerCPU);
-		writeln("CPU chache levels: ", cacheLevels);
-		writeln("GPU vendor: ", ZToString(glGetString(GL_VENDOR)));
-		writeln("Renderer: ", ZToString(glGetString(GL_RENDERER)));
-		writeln("OpenGL version: ", ZToString(glGetString(GL_VERSION)));
-		writeln("GLSL version: ", ZToString(glGetString(GL_SHADING_LANGUAGE_VERSION)));
-		writeln("--------------------------------------------------------------------");
+		foreach(item; getHardwareInfo())
+			writeln(item);
+		writeln("========");
 		dstring russianChars = 	"АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяїє";
 		renderer = new Ogl3Renderer(this);
 		guiRenderer = new SkinnedGuiRenderer(renderer);
@@ -264,7 +279,7 @@ class GuiTestWindow : GlfwWindow
 	{
 		fpsLabel.position = ivec2(newWidth - 200, 10);
 		reshape(newWidth, newHeight);
-		guiwin.size = uvec2(newWidth, newHeight);
+		guiwin.size = ivec2(newWidth, newHeight);
 	}
 
 	override void mousePressed(in uint mouseButton)

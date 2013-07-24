@@ -40,7 +40,7 @@ alias Scrollbar!false VScrollbar;
 /// and uses scrollbody_vert, scrollup, scrolldown, scrollslider styles.
 /// 
 /// See_Also: HScrollbar, VScrollbar
-class Scrollbar(bool horizontal) : GuiWidgetContainer
+class Scrollbar(bool horizontal) : WidgetContainer
 {
 	this(Rect initRect, in string initStyleName = "scrollbar", GuiSkin initSkin = null)
 	{
