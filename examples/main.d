@@ -118,19 +118,27 @@ class GuiTestWindow : GlfwWindow
 		writeln(graySkin);
 		graySkin.loadResources(guiRenderer);
 		
-		guiwin = new GuiWindow(guiRenderer, timerManager, Rect(0, 0, width, height), graySkin);
-		guiwin.setClipboardStringCallback = (dstring newStr) => setClipboard(to!string(newStr));
-		guiwin.getClipboardStringCallback = delegate dstring(){return to!dstring(getClipboard());};
-		setClipboard("abc");
-		GuiLayer mainLayer = new GuiLayer(graySkin);
-		guiwin.addWidget(mainLayer);
+		//guiwin = new GuiWindow(guiRenderer, timerManager, Rect(0, 0, width, height), graySkin);
+		//guiwin.setClipboardStringCallback = (dstring newStr) => setClipboard(to!string(newStr));
+		//guiwin.getClipboardStringCallback = delegate dstring(){return to!dstring(getClipboard());};
+		gui = new Gui(guiRenderer, timerManager, graySkin);
+		gui.setClipboardStringCallback = (dstring newStr) => setClipboard(to!string(newStr));
+		gui.getClipboardStringCallback = delegate dstring(){return to!dstring(getClipboard());};
+		//setClipboard("abc");
+		auto mainLayer = new WidgetContainer();
+		mainLayer.skin = graySkin;
+		gui.addChild(mainLayer);
 
-		/*Button button1 = new Button(Rect(20, 20, 60, 40));
+		Button button1 = new Button();
+		button1.skin = graySkin;
+		button1.userSize = ivec2(50, 50);
+		button1.position = ivec2(20, 20);
 		button1.caption = "Click me!";
-		button1.onClick = (IWidget w, ivec2 p){w.caption = to!dstring(p);};
-		button1.onLeave = (IWidget w){w.caption = "Click me!";};
-		mainLayer.addWidget(button1);*/
+		button1.addEventHandler(delegate bool(PointerClickEvent event){button1.caption = to!dstring(event.pointerPosition); return true;});
+		button1.addEventHandler(delegate bool(PointerLeaveEvent event){button1.caption = "Click me!";return true;});
+		mainLayer.addChild(button1);
 
+		/+
 		Label l = new Label(Rect(100, 20, 30, 10));
 		l.caption = "English Русский Українська";
 		mainLayer.addWidget(l);
@@ -245,7 +253,7 @@ class GuiTestWindow : GlfwWindow
 		guiwin.addWidget(fpsLabel);
 		fpsHelper.onFpsUpdate = delegate(ref FpsHelper helper){fpsLabel.caption = "FPS: " ~ to!dstring(cast(uint)helper.fps) ~
 			" dt: " ~ to!dstring(helper.deltaTime);};
-
+		+/
 		renderer.enableAlphaBlending();
 		glEnable(GL_SCISSOR_TEST);
 		guiRenderer.fontManager.getFontAtlasTex;
@@ -264,7 +272,9 @@ class GuiTestWindow : GlfwWindow
 		/*renderer.setColor(Color4f(1 ,0.5,0,0.5));
 		renderer.drawRect(50, 0, 100, 50);
 		renderer.drawTexRect(50, 100, 32, 32, 0, 0, 32, 32, testTexture);*/
-		guiwin.draw();
+		auto event = new DrawEvent(guiRenderer);
+		event.gui = gui;
+		gui.handleEvent(event);
 
 		glUseProgram(0);
 	}
@@ -279,22 +289,32 @@ class GuiTestWindow : GlfwWindow
 	{
 		fpsLabel.position = ivec2(newWidth - 200, 10);
 		reshape(newWidth, newHeight);
-		guiwin.size = ivec2(newWidth, newHeight);
+		//guiwin.size = ivec2(newWidth, newHeight);
 	}
 
 	override void mousePressed(in uint mouseButton)
 	{
-		guiwin.pointerPressed(getMousePosition, cast(PointerButton)mouseButton);
+		/*auto event = new PointerPressEvent(getMousePosition, cast(PointerButton)mouseButton);
+		event.gui = gui;
+		gui.handleEvent(event);*/
+		gui.pointerPressed(getMousePosition, cast(PointerButton)mouseButton);
 	}
 
 	override void mouseReleased(in uint mouseButton)
 	{
-		guiwin.pointerReleased(getMousePosition, cast(PointerButton)mouseButton);
+		auto event = new PointerReleaseEvent(getMousePosition, cast(PointerButton)mouseButton);
+		event.gui = gui;
+		gui.handleEvent(event);
 	}
 
 	override void mouseMoved(in int newX, in int newY)
 	{
-		guiwin.pointerMoved(ivec2(newX, newY));
+		ivec2 newPos = ivec2(newX, newY);
+		ivec2 deltaPos = newPos - pointerPosition;
+		pointerPosition = newPos;
+		auto event = new PointerMoveEvent(newPos, deltaPos);
+		event.gui = gui;
+		gui.handleEvent(event);
 	}
 
 	KeyModifiers getCurrentKeyModifiers()
@@ -316,20 +336,28 @@ class GuiTestWindow : GlfwWindow
 			running = false;
 			return;
 		}
-		guiwin.keyPressed(cast(KeyCode)keyCode, getCurrentKeyModifiers());
+		auto event = new KeyPressEvent(cast(KeyCode)keyCode, getCurrentKeyModifiers());
+		event.gui = gui;
+		gui.handleEvent(event);
 	}
 
 	override void keyReleased(in uint keyCode)
 	{
-		guiwin.keyReleased(cast(KeyCode)keyCode, getCurrentKeyModifiers());
+		auto event = new KeyReleaseEvent(cast(KeyCode)keyCode, getCurrentKeyModifiers());
+		event.gui = gui;
+		gui.handleEvent(event);
 	}
 
 	override void charReleased(in dchar unicode)
 	{
-		guiwin.charEntered(unicode);
+		auto event = new CharEnterEvent(unicode);
+		event.gui = gui;
+		gui.handleEvent(event);
 	}
 
-	GuiWindow guiwin;
+	Gui gui;
+	ivec2 pointerPosition;
+	//GuiWindow guiwin;
 	GuiSkin graySkin;
 
 	TimerManager timerManager;

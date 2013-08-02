@@ -92,19 +92,20 @@ class SkinnedGuiRenderer : IGuiRenderer
 		return _fontManager;
 	}
 
-	override void drawControlBack(Widget widget, Rect staticRect)
+	override void drawControlBack(IWidget widget, Rect staticRect)
 	{
 		GuiStyle* styleptr;
 		if (widget.skin !is null)
 		{
-			styleptr = widget.styleName in widget.skin.styles;
+			styleptr = widget.style in widget.skin.styles;
 		}
 
 		if (styleptr is null)
 		{
+			writeln("no style ", widget);
 			_renderer.setColor(Color(255, 255, 255, 255));
 			_renderer.fillRect(staticRect);
-			_renderer.setColor(Color(128, 128, 128, 255));
+			_renderer.setColor(Color(255, 0, 0, 255));
 			_renderer.drawRect(staticRect);
 		}
 		else
@@ -208,13 +209,13 @@ class SkinnedGuiRenderer : IGuiRenderer
 		return _renderer;
 	}
 
-	TexRectArray buildWidgetGeometry(ref Widget widget, in GuiStyle style)
+	TexRectArray buildWidgetGeometry(ref IWidget widget, in GuiStyle style)
 	{
 		TexRectArray geometry = new TexRectArray;
 		GuiStyleState state = style[widget.state];
 		RectOffset fb = state.fixedBorders;
-		int widgetHeight = widget.height + state.outline.top + state.outline.bottom;
-		int widgetWidth = widget.width + state.outline.left + state.outline.right;
+		int widgetHeight = widget.prefferedSize.y + state.outline.top + state.outline.bottom;
+		int widgetWidth = widget.prefferedSize.x + state.outline.left + state.outline.right;
 		//writeln("w: ", widgetWidth, ", h: ", widgetHeight);
 		assert(geometry !is null);
 		if (fb.left > 0)

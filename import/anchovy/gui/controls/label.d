@@ -35,24 +35,26 @@ class Label : Widget
 
 public:
 
-	this(Rect initRect, in string initStyleName = "label", GuiSkin initSkin = null)
+	this()
 	{
-		super(initRect, initStyleName, initSkin);
+		super();
+		style = "label";
+		_textLine = new TextLine("", null);
 	}
 
-	override void drawBackground(IGuiRenderer renderer) 
+	override void doDraw(IGuiRenderer renderer) 
 	{
-	}
-
-	override void drawContent(IGuiRenderer renderer) 
-	{
+		//renderer.drawControlBack(this, staticRect);
 		renderer.renderer.setColor(Color(255, 255, 255, 255));
-		renderer.drawTextLine(_textLine, _staticRect, AlignmentType.LEFT_CENTER);
+		renderer.drawTextLine(_textLine, staticRect, AlignmentType.LEFT_CENTER);
 	}
 
 	override protected void skinChanged()
 	{
-		setTextLineFont();
+		_textLine.font = getStyleFont(skin, state);
 	}
+	
+	protected:
+	TextLine _textLine;
 }
 

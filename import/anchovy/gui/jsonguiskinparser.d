@@ -165,10 +165,10 @@ class JsonGuiSkinParser
 		parsedStyleState.outline = RectOffset(parseRectOffset(outlineValue, globalState.outline.arrayof));
 
 		jsonArray minSize = getValue!(jsonArray)("minSize", stateValue);
-		parsedStyleState.minSize = parseSize(minSize, uvec2(parsedStyleState.atlasRect.width, parsedStyleState.atlasRect.height));
+		parsedStyleState.minSize = parseSize(minSize, ivec2(parsedStyleState.atlasRect.width, parsedStyleState.atlasRect.height));
 
 		jsonArray maxSize = getValue!(jsonArray)("maxSize", stateValue);
-		parsedStyleState.maxSize = parseSize(maxSize, uvec2(0, 0));
+		parsedStyleState.maxSize = parseSize(maxSize, ivec2(0, 0));
 
 		return parsedStyleState;
 	}
@@ -205,15 +205,15 @@ private:
 		return ivec2(getValue!int(inArray[0]), getValue!int(inArray[1]));
 	}
 
-	uvec2 parseSize(jsonArray inArray, uvec2 defaultValue = uvec2(0, 0))
+	ivec2 parseSize(jsonArray inArray, ivec2 defaultValue = ivec2(0, 0))
 	{
 		if (inArray.length == 0) return defaultValue;
 		if (inArray.length == 1)
 		{
 			uint size = getValue!uint(inArray[0]);
-			return uvec2(size, size);
+			return ivec2(size, size);
 		}
-		return uvec2(getValue!uint(inArray[0]), getValue!uint(inArray[1]));
+		return ivec2(getValue!uint(inArray[0]), getValue!uint(inArray[1]));
 	}
 
 	int[4] parseRectOffset(jsonArray inArray, int[4] defaultValue = [0, 0, 0, 0])

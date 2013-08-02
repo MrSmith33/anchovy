@@ -28,6 +28,8 @@ DEALINGS IN THE SOFTWARE.
 
 module anchovy.gui.widget;
 
+import std.traits;
+
 import anchovy.gui.all;
 
 public import anchovy.gui.interfaces.iwidget;
@@ -39,258 +41,300 @@ abstract class Widget : IWidget
 {
 public:
 
-	this(Rect initRect, in string initStyleName, GuiSkin initSkin = null)
+	this()
 	{
-		_rect = initRect;
-		_prefferedSize = uvec2(_rect.width, _rect.height);
-		styleName = initStyleName;
-		skin = initSkin;
-		_textLine = new TextLine("", null);
-		init();
+		//_rect = initRect;
+		//_prefferedSize = uvec2(_rect.width, _rect.height);
+		//styleName = initStyleName;
+		//skin = initSkin;
+		//_textLine = new TextLine("", null);
+		//init();
+		addEventHandler(&handleDraw);
+		addEventHandler(&handleUpdatePosition);
 	}
 
 	/// Called by a constructor.
 	/// You can do custom init here.
-	protected void init()
+	/*protected void init()
 	{
-	}
+	}*/
 
-	override void calcStaticRect(Rect parentStaticRect) @safe
+	/*override void calcStaticRect(Rect parentStaticRect) @safe
 	{
 		_staticRect = _rect.relativeToParent(parentStaticRect);
-	}
+	}*/
 
 //+-------------------------------------------------------------------------------+
 //|                                   Drawing                                     |
 //+-------------------------------------------------------------------------------+
 
-	override void draw(IGuiRenderer renderer) @trusted
+	bool handleDraw(DrawEvent event)
 	in
 	{
-		assert(renderer !is null);
+		assert(event.guiRenderer !is null);
 	}
 	body
 	{
-		if (_isBackgroundVisible)
-			drawBackground(renderer);
+		//writeln("handleDraw");
+		if (_isBackgroundVisible && event.sinking)
+			doDraw(event.guiRenderer);
 
-		if (_isContentVisible)
-			drawContent(renderer);
+		//if (_isContentVisible)
+		//	drawContent(event.guiRenderer);
+		return true;
 	}
 
-	void drawBackground(IGuiRenderer renderer) 
+	void doDraw(IGuiRenderer renderer) 
 	{
-		renderer.drawControlBack(this, _staticRect);
-	}
-
-	void drawContent(IGuiRenderer renderer)
-	{
+		//writeln("drawBackground");
+		renderer.drawControlBack(this, staticRect);
 	}
 
 //+-------------------------------------------------------------------------------+
 //|                                Event handling                                 |
 //+-------------------------------------------------------------------------------+
 
-	protected void applySizeConstraints()
+	/*protected void applySizeConstraints()
 	{
 		_rect.clampSize(_minSize, _maxSize);
-	}
-
-	override bool charEntered(in dchar chr)
+	}*/
+	
+	void updateStaticPosition()
 	{
-		return true;
+		if (_parent is null) return;
+		_staticPosition = _position + _parent.staticPosition;
 	}
 
 	void handleResize() @trusted
 	{
-		applySizeConstraints();
-	}
-
-	override void focusGained()
-	{
+		//applySizeConstraints();
 	}
 	
-	override void focusLost()
+	bool handleUpdatePosition(UpdatePositionEvent event)
 	{
-	}
-
-	override bool pointerPressed(ivec2 pointerPosition, PointerButton button)
-	{
-		if (!_staticRect.contains(pointerPosition)) return false;
-		return false;
-	}
-
-	override bool pointerReleased(ivec2 pointerPosition, PointerButton button)
-	{
-		if (!_staticRect.contains(pointerPosition)) return false;
-		return false;
-	}
-
-	override bool pointerMoved(ivec2 newPointerPosition)
-	{
-		if (!_staticRect.contains(newPointerPosition)) return false;
-		window.hoveredWidget = this;
+		if (event.sinking)
+		{
+			updateStaticPosition();
+			return false;
+		}
 		return true;
-	}
-
-	override void pointerEntered()
-	{
 	}
 	
-	override void pointerLeaved()
+	void addEventHandler(T)(T handler)
 	{
+		static assert(isDelegate!T, "handler must be a delegate, not " ~ T.stringof);
+		alias ParameterTypeTuple!T[0] eventType;
+		static assert(!is(eventType == Event), "handler's parameter must not be Event class but inherited one");
+		static assert(is(eventType : Event), "handler's parameter must be inherited from Event class");
+		static assert(ParameterTypeTuple!T.length == 1, "handler must have only one parameter, Event's descendant");
+		_eventHandlers[typeid(eventType)] ~= cast(bool delegate(Event))handler;
 	}
 
-	override bool keyPressed(in KeyCode key, KeyModifiers modifiers)
+	/// Returns true if event was handled
+	/// This handler will be called by Gui class twice, before and after visiting its children.
+	/// In first case sinking flag will be true;
+	override bool handleEvent(Event e)
 	{
-		return true;
+		bool result = false;
+		if (auto handlers = typeid(e) in _eventHandlers)
+		{
+			foreach(h; *handlers)
+				result |= h(e);
+		}
+		return result;
 	}
 
-	override bool keyReleased(in KeyCode key, KeyModifiers modifiers)
+	override bool recursiveHandleEvent(Event e)
 	{
-		return true;
-	}
+		e.sinking = true;
+		if (!handleEvent(e))
+		{
+			return false;
+		}
 
+		bool handled = false;
+		foreach (widget; children) {
+			e.sinking = true;
+			handled |= widget.recursiveHandleEvent(e);
+		}
+		
+		e.sinking = false;
+		return handleEvent(e) || handled;
+	}
+	
 //+-------------------------------------------------------------------------------+
 //|                                  Properties                                   |
 //+-------------------------------------------------------------------------------+
 
-	/** 
-	Anchored sides of the widget.
-	Can be constructed by ORing Anchor values.
-	Examples:
-	---
-	widget.anchor = Anchor.LEFT | Anchor.RIGHT;
-	 ---
-	See_Also:
-	 	_anchor
-	*/
-	override uint anchor() @property
+	override void addChild(IWidget child)
 	{
-		return _anchor;
+		assert(false);
 	}
 
-	/// ditto
-	override void anchor(uint newAnchor) @property
+	@property
 	{
-		_anchor = newAnchor;
-	}
-
-	override dstring caption() @property
-	{
-		if (_textLine is null) return "";
-		return _textLine.text;
-	}
-
-	override void caption(dstring newCaption) @property
-	{
-		if (_textLine is null) return;
-		return _textLine.text = newCaption;
-	}
-
-	// Used internally by gui renderer.
-	override ref TexRectArray[string] geometry() @property @safe
-	{
-		return _geometry;
-	}
-
-	uvec2 minSize() @property
-	{
-		return _minSize;
-	}
-
-	uvec2 maxSize() @property
-	{
-		return _maxSize;
-	}
-
-	override void parent(Widget newParent) @property
-	{
-		_parent = newParent;
-		if (skin is null && _parent !is null && _isInheritsSkin) skin = _parent.skin;
-	}
-
-	override Widget parent() @property @safe
-	{
-		return _parent;
-	}
-
-	override void position(ivec2 newPosition) @property @safe
-	{
-		_rect.x = newPosition.x;
-		_rect.y = newPosition.y;
-		if (parent !is null)
-			calcStaticRect(parent.staticRect);
-	}
-
-	override ivec2 position() @property @safe
-	{
-		return ivec2(_rect.x, _rect.y);
-	}
-
-	override void rect(Rect newRect) @property @safe
-	{
-		_rect = newRect;
-
-		discardGeometry();
-		handleResize();
-
-		if (parent !is null)
-			calcStaticRect(parent.staticRect);
-	}
-
-	override Rect rect() @property @safe
-	{
-		return _rect;
-	}
-
-	override void size(ivec2 newSize) @property
-	{
-		_rect.width = newSize.x;
-		_rect.height = newSize.y;
-
-		discardGeometry();
-		handleResize();
-	}
-
-	override ivec2 size() @property
-	{
-		return _rect.size;
-	}
-
-	override void skin(GuiSkin newSkin) @property
-	{
-		if (newSkin is null || newSkin == _skin) return;
-		_skin = newSkin;
-		if (auto style = _skin[_styleName])
+		/** 
+		* Anchored sides of the widget.
+		* Can be constructed by ORing Anchor values.
+		* Examples:
+		* ---
+		* widget.anchor = Anchor.LEFT | Anchor.RIGHT;
+		*  ---
+		* See_Also:
+		* 	_anchor
+		*/
+		override uint anchor()
 		{
-			_minSize = style["normal"].minSize;
-			_maxSize = style["normal"].maxSize;
-			applySizeConstraints();
+			return _anchor;
 		}
-		applySizeConstraints();
-		discardGeometry();
-		skinChanged();
-	}
 
-	override GuiSkin skin() @property @safe
-	{
-		return _skin;
+		/// ditto
+		override void anchor(uint newAnchor)
+		{
+			_anchor = newAnchor;
+		}
+
+		// Used internally by gui renderer.
+		override ref TexRectArray[string] geometry()
+		{
+			return _geometry;
+		}
+
+		ivec2 minSize()
+		{
+			return _minSize;
+		}
+		
+		override IWidget[] children()
+		{
+			return null;
+		}
+
+		override void parent(IWidget newParent)
+		{
+			if (newParent is null) return;
+			_parent = newParent;
+			updateStaticPosition();
+			
+			if (_skin is null && _isInheritsSkin)
+			{
+				skin = _parent.skin;
+			}
+		}
+
+		override IWidget parent()
+		{
+			return _parent;
+		}
+
+		override void position(ivec2 newPosition)
+		{
+			_position = newPosition;
+			updateStaticPosition();
+		}
+
+		override ivec2 position()
+		{
+			return _position;
+		}
+		
+		override ivec2 staticPosition()
+		{
+			return _staticPosition;
+		}
+		
+		override void userSize(ivec2 newSize)
+		{
+			_userSize = newSize;
+
+			discardGeometry();//TODO: add check if size is the same
+			handleResize();
+		}
+
+		override ivec2 userSize()
+		{
+			return _userSize;
+		}
+		
+		override ivec2 prefferedSize()
+		{
+			return max(_userSize, _minSize);
+		}
+
+		override void skin(GuiSkin newSkin)
+		{
+			if (newSkin is null || newSkin == _skin) return;
+			_skin = newSkin;
+			writeln("skin changed");
+			if (auto style = _skin[_style])
+			{
+				_minSize = style["normal"].minSize;
+			}
+			discardGeometry(); //TODO: add check if size is the same
+			skinChanged();
+		}
+
+		override GuiSkin skin()
+		{
+			return _skin;
+		}
+		
+		bool isInheritsSkin()
+		{
+			return _isInheritsSkin;
+		}
+
+		void isInheritsSkin(bool inherits)
+		{
+			if (_isInheritsSkin == inherits) return;
+
+			_isInheritsSkin = inherits;
+
+			if (_isInheritsSkin && parent !is null)
+			{
+				GuiSkin parentSkin = parent.skin;
+
+				if (_skin != parentSkin)
+					skin = parentSkin;
+			}
+		}
+
+		override string state()
+		{
+			return _state;
+		}
+
+		override void state(string newState)
+		{
+			_state = newState;
+			if (_skin is null || _skin[_style] is null) return;
+			_minSize = _skin[_style][_state].minSize;
+		}
+
+		override string style()
+		{
+			return _style;
+		}
+
+		override void style(string newStyle)
+		{
+			_style = newStyle;
+		}
 	}
 
 	protected Font getStyleFont(GuiSkin skin, in string styleName)
 	{
+		writeln("skin: ", skin);
+		writeln("styleName: ", styleName);
+		writeln("skin[styleName]: ", skin[styleName]);
 		if (skin[styleName] is null) return null;
-		string font = _skin[_styleName].fontName;
+		string font = _skin[_style].fontName;
+		writeln("fontName: ", font);
 		Font* fontPtr = font in _skin.fonts;
+		writeln("fontPtr: ", fontPtr);
 		if (fontPtr is null) return null;
+		writeln("font found");
 		return *fontPtr;
-	}
-
-	protected void setTextLineFont()
-	{
-		if (_textLine is null) return;
-		_textLine.font = getStyleFont(_skin, _styleName);
 	}
 
 	void handleParentSkinChange()
@@ -303,135 +347,6 @@ public:
 
 	protected void skinChanged()
 	{
-	}
-
-	bool isInheritsSkin() @property
-	{
-		return _isInheritsSkin;
-	}
-
-	void isInheritsSkin(bool inherits) @property
-	{
-		if (_isInheritsSkin == inherits) return;
-
-		_isInheritsSkin = inherits;
-
-		if (_isInheritsSkin && parent !is null)
-		{
-			GuiSkin parentSkin = parent.skin;
-
-			if (_skin != parentSkin)
-				skin = parentSkin;
-		}
-	}
-
-	override string state() @property @safe
-	{
-		return _state;
-	}
-
-	override void state(string newStateName) @property
-	{
-		_state = newStateName;
-		if (_skin is null || _skin[_styleName] is null) return;
-		GuiStyleState newState = _skin[_styleName][_state];
-		_rect.clampSize(newState.minSize, newState.maxSize);
-	}
-
-	override Rect staticRect() @property @safe
-	{
-		return _staticRect;
-	}
-
-	override string styleName() @property @safe
-	{
-		return _styleName;
-	}
-
-	override void styleName(string newStyleName) @property @safe
-	{
-		_styleName = newStyleName;
-	}
-
-	override int width() @property @safe
-	{
-		return _rect.width;
-	}
-
-	override void width(int newWidth) @property
-	{
-		_rect.width = newWidth;
-		discardGeometry();
-		handleResize();
-	}
-	
-	override int height() @property @safe
-	{
-		return _rect.height;
-	}
-
-	override void height(int newHeight) @property
-	{
-		_rect.height = newHeight;
-		discardGeometry();
-		handleResize();
-	}
-
-	override int x() @property @safe
-	{
-		return _rect.x;
-	}
-
-	override void x(int newX) @property @trusted
-	{
-		_rect.x = newX;
-
-		if (parent !is null)
-			calcStaticRect(parent.staticRect);
-	}
-	
-	override int y() @property @safe
-	{
-		return _rect.y;
-	}
-
-	override void y(int newY) @property @trusted
-	{
-		_rect.y = newY;
-
-		if (parent !is null)
-			calcStaticRect(parent.staticRect);
-	}
-
-	override void onClick(ClickHandler newHandler) @property @safe
-	{
-		_onClick = newHandler;
-	}
-
-	override void onEnter(RegularHandler newHandler) @property @safe
-	{
-		_onEnter = newHandler;
-	}
-
-	override void onLeave(RegularHandler newHandler) @property @safe
-	{
-		_onLeave = newHandler;
-	}
-
-	override GuiWindow window() @property @safe
-	{
-		if (_parent is null) return null;
-		return _parent.window;
-	}
-
-	void addHandler(T)(T handler)
-	{
-		static assert(isDelegate!T, "handler must be a delegate, not " ~ T.stringof);
-		alias ParameterTypeTuple!T[0] eventType;
-		static assert(!is(eventType == Event), "handler's parameter must not be Event class but inherited one");
-		static assert(is(eventType : Event), "handler's parameter must be inherited from Event class");
-		static assert(ParameterTypeTuple!T.length == 1, "handler must have only one parameter, Event's descendant");
-		array[typeid(eventType)] ~= cast(void delegate(Event))handler;
 	}
 
 protected:
@@ -452,31 +367,25 @@ protected:
 	TexRectArray[string] _geometry;
 
 	/// Widget name. Mainly used when assembling anchovy.gui.
-	string		_name;
-
-	//TODO: Remove this
-	/// Can be used by widget for displaying caption.
-	TextLine	_textLine;
+	string _name;
 
 	/// Parent of this widget. Can be null if have no parent.
-	Widget	_parent;
+	IWidget	_parent;
 
 	/// Position is relative to parent's position.
-	Rect		_rect;
+	ivec2 _position;
 
 	/// Position is relative to window origin.
 	/// Calculated in calculateStaticRect
-	Rect		_staticRect;
+	ivec2 _staticPosition;
 
 	/// Widget size specified when creating widget.
 	/// Used by layout manager to decide widgets preffered size. 
 	/// Currrently used as minimal size for frame.
-	uvec2 _prefferedSize;
+	ivec2 _userSize;
 
-	/// Minimal and maximal sizes of the widget, specified by skin;
-	uvec2 _minSize;
-	/// ditto
-	uvec2 _maxSize;
+	/// Minimal size of the widget, specified by skin;
+	ivec2 _minSize;
 
 	/// 
 	bool _isEnabled = true;
@@ -497,20 +406,8 @@ protected:
 	string		_state = "normal";
 
 	/// Style name in current skin.
-	string		_styleName;
+	string		_style;
 
-//+-------------------------------------------------------------------------------+
-//|                                  Event handlers                               |
-//+-------------------------------------------------------------------------------+
-
-	/// Will be called when pointer button is clicked.
-	ClickHandler	_onClick;
-
-	/// Will be called when pointer have been moved onto the widget.
-	RegularHandler	_onEnter;
-
-	/// Will be called when pointer have been moved from the widget.
-	RegularHandler	_onLeave;
-
-	void delegate(Event)[][TypeInfo] _eventHandlers;
+	/// Event handlers.
+	bool delegate(Event)[][TypeInfo] _eventHandlers;
 }

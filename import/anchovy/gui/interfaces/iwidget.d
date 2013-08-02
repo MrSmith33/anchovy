@@ -30,10 +30,6 @@ module anchovy.gui.interfaces.iwidget;
 
 import anchovy.gui.all;
 
-alias void delegate(Event event) EventHandler;
-alias void delegate(IWidget widget, ivec2 point) ClickHandler;
-alias void delegate(IWidget widget) RegularHandler;
-
 /// Used to specify Widget.anchor.
 enum Sides
 {
@@ -48,19 +44,19 @@ abstract class IWidget
 {
 public:
 
-	void calcStaticRect(Rect parentStaticRect);
+	//void calcStaticRect(Rect parentStaticRect);
 	
 	//+-------------------------------------------------------------------------------+
 	//|                                   Drawing                                     |
 	//+-------------------------------------------------------------------------------+
 	
-	void draw(IGuiRenderer renderer) @trusted;
+	//void draw(IGuiRenderer renderer);
 	
 	//+-------------------------------------------------------------------------------+
 	//|                                Event handling                                 |
 	//+-------------------------------------------------------------------------------+
 	
-	bool charEntered(in dchar chr);
+	/*bool charEntered(in dchar chr);
 	
 	void focusGained();
 	
@@ -78,11 +74,16 @@ public:
 	
 	bool keyPressed(in KeyCode key, KeyModifiers modifiers);
 	
-	bool keyReleased(in KeyCode key, KeyModifiers modifiers);
+	bool keyReleased(in KeyCode key, KeyModifiers modifiers);*/
+
+	bool handleEvent(Event event);
+	
+	bool recursiveHandleEvent(Event event);
 	
 	//+-------------------------------------------------------------------------------+
 	//|                                  Properties                                   |
 	//+-------------------------------------------------------------------------------+
+
 	@property
 	{
 		/** 
@@ -98,60 +99,35 @@ public:
 		/// ditto
 		void anchor(uint newAnchor);
 		
-		dstring caption();
-		
-		void caption(dstring newCaption);
-		
 		// Used internally by gui renderer.
-		ref TexRectArray[string] geometry() @safe;
+		ref TexRectArray[string] geometry();
 		
-		void parent(Widget newParent);
+		void addChild(IWidget child);
+		IWidget[] children();
+
+		void parent(IWidget newParent);
+		IWidget parent();
 		
-		Widget parent() @safe;
-		
-		void position(ivec2 newPosition) @safe;
-		ivec2 position() @safe;
-		
-		// Add checks and discardGeometry
-		void rect(Rect newRect) @safe;
-		Rect rect() @safe;
+		void position(ivec2 newPosition);
+		ivec2 position();
+		ivec2 staticPosition();
+
+		void userSize(ivec2 newSize);
+		ivec2 userSize();
+		ivec2 prefferedSize();
+
+		final Rect staticRect()
+		{
+			return Rect(staticPosition, prefferedSize);
+		}
 		
 		void skin(GuiSkin newSkin);
-		GuiSkin skin() @safe;
+		GuiSkin skin();
 		
-		string state() @safe;
-		void state(string newStateName);
+		string state();
+		void state(string newState);
 		
-		Rect staticRect();
-		
-		string styleName() @safe;
-		void styleName(string newStyleName) @safe;
-
-		void size(ivec2 newSize);
-		ivec2 size();
-
-		int width() @safe;
-		void width(int newWidth);
-		
-		int height() @safe;
-		void height(int newHeight);
-		
-		int x() @safe;
-		void x(int newX) @safe;
-		
-		int y() @safe;
-		void y(int newX) @safe;
-
-	//+-------------------------------------------------------------------------------+
-	//|                                Event handling                                 |
-	//+-------------------------------------------------------------------------------+
-		
-		void onClick(ClickHandler newHandler) @safe;
-		
-		void onEnter(RegularHandler newHandler) @safe;
-		
-		void onLeave(RegularHandler newHandler) @safe;
-		
-		GuiWindow window() @safe;
+		string style();
+		void style(string newStyle);
 	}
 }

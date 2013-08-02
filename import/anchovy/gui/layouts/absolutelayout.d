@@ -53,11 +53,11 @@ class AbsoluteLayout : ILayout
 		{
 			if ((widget.anchor & Sides.LEFT) && (widget.anchor & Sides.RIGHT))
 			{
-				int newWidth = widget.width + dx;
+				int newWidth = widget.userSize.x + dx;
 				if (newWidth >= 0)
-					widget.size = ivec2(newWidth, widget.height);
+					widget.userSize = ivec2(newWidth, widget.userSize.y);
 				else
-					widget.size = ivec2(0, widget.height);
+					widget.userSize = ivec2(0, widget.userSize.y);
 			}
 			else if (widget.anchor & Sides.LEFT)
 			{
@@ -65,7 +65,7 @@ class AbsoluteLayout : ILayout
 			}
 			else if (widget.anchor & Sides.RIGHT)
 			{
-				widget.position = ivec2(widget.x + dx, widget.y);
+				widget.position = ivec2(widget.position.x + dx, widget.position.y);
 			}
 			else
 			{
@@ -74,7 +74,7 @@ class AbsoluteLayout : ILayout
 
 			if (widget.anchor & Sides.TOP && widget.anchor & Sides.BOTTOM)
 			{
-				widget.size = ivec2(widget.width, widget.height + dy);
+				widget.userSize = ivec2(widget.userSize.x, widget.userSize.y + dy);
 			}
 			else if (widget.anchor & Sides.TOP)
 			{
@@ -82,7 +82,7 @@ class AbsoluteLayout : ILayout
 			}
 			else if (widget.anchor & Sides.BOTTOM)
 			{
-				widget.position = ivec2(widget.x, widget.y + dy);
+				widget.position = ivec2(widget.position.x, widget.position.y + dy);
 			}
 			else
 			{

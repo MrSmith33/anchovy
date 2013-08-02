@@ -77,6 +77,14 @@ struct Rect
 		height = d;
 	}
 
+	this(ivec2 position, ivec2 size)
+	{
+		x = position.x;
+		y = position.y;
+		width = size.x;
+		height = size.y;
+	}
+
 	void move(ivec2 delta)
 	{
 		x += delta.x;

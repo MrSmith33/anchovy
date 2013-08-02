@@ -31,11 +31,12 @@ module anchovy.gui.controls.all;
 public
 {
 	import anchovy.gui.controls.button;
-	import anchovy.gui.controls.togglebutton;
+	import anchovy.gui.controls.label;
+	/*import anchovy.gui.controls.togglebutton;
 	import anchovy.gui.controls.checkbox;
 	import anchovy.gui.controls.radiobutton;
 	import anchovy.gui.controls.imagebutton;
-	import anchovy.gui.controls.label;
+	
 	import anchovy.gui.controls.edit;
 	import anchovy.gui.controls.guilayer;
 	import anchovy.gui.controls.frame;
@@ -43,5 +44,5 @@ public
 	import anchovy.gui.controls.scrollbar;
 	import anchovy.gui.controls.list;
 
-	import anchovy.gui.controls.internals.draggable;
+	import anchovy.gui.controls.internals.draggable;*/
 }

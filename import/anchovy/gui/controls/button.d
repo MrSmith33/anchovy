@@ -33,15 +33,28 @@ import anchovy.gui.all;
 class Button : Widget
 {
 public:
-	this(Rect initRect, in string initStyleName = "button", GuiSkin initSkin = null)
+	this()
 	{
-		super(initRect, initStyleName, initSkin);
+		super();
+		addEventHandler(&pointerPressed);
+		addEventHandler(&pointerMoved);
+		addEventHandler(&pointerEntered);
+		addEventHandler(&pointerLeaved);
+		addEventHandler(&pointerReleased);
+		style = "button";
+		_textLine = new TextLine("", null);
+	}
+	
+	void caption(dstring newCaption) @property
+	{
+		_textLine.text = newCaption;
 	}
 
-	override void drawContent(IGuiRenderer renderer) 
+	override void doDraw(IGuiRenderer renderer) 
 	{
+		renderer.drawControlBack(this, staticRect);
 		assert(_textLine);
-		renderer.pushClientArea(_staticRect);
+		renderer.pushClientArea(staticRect);
 
 		int offx, offy;
 		if (state == "pressed")
@@ -49,40 +62,42 @@ public:
 			offx = 1;
 			offy = 1;
 		}
-		renderer.drawTextLine(_textLine, _staticRect, AlignmentType.CENTER_CENTER);
+		renderer.drawTextLine(_textLine, staticRect, AlignmentType.CENTER_CENTER);
 		renderer.popClientArea;
 	}
 
-	override bool pointerPressed(ivec2 pointerPosition, PointerButton button)
+	bool pointerPressed(PointerPressEvent event)
 	{
-		if (!_staticRect.contains(pointerPosition)) return false;
-		if (button == PointerButton.PB_LEFT)
+		writeln("pointer press");
+		//if (!staticRect.contains(event.pointerPosition)) return false;
+		if (event.button == PointerButton.PB_LEFT)
 		{
-			window.inputOwnerWidget = this;
+			event.gui.inputOwnerWidget = this;
 			state = "pressed";
 			return true;
 		}
-		return false;
-	}
-
-	override bool pointerMoved(ivec2 newPointerPosition)
-	{
-		if (!_staticRect.contains(newPointerPosition))
-		{
-			if (window.inputOwnerWidget is this)
-				state = "normal";
-			return false;
-		}
-		if (window.inputOwnerWidget is this)
-			state = "pressed";
-
-		window.hoveredWidget = this;
 		return true;
 	}
 
-	override void pointerEntered()
+	bool pointerMoved(PointerMoveEvent event)
 	{
-		if (window.inputOwnerWidget is this)
+		writeln("pointer move");
+		if (!staticRect.contains(event.newPointerPosition))
+		{
+			if (event.gui.inputOwnerWidget is this)
+				state = "normal";
+			return false;
+		}
+		if (event.gui.inputOwnerWidget is this)
+			state = "pressed";
+
+		event.gui.hoveredWidget = this;
+		return true;
+	}
+
+	bool pointerEntered(PointerEnterEvent event)
+	{
+		if (event.gui.inputOwnerWidget is this)
 		{
 			state = "pressed";
 		}
@@ -90,40 +105,43 @@ public:
 		{
 			state = "hover";
 		}
-		if (_onEnter !is null) _onEnter(this);
+		return true;
 	}
 	
-	override void pointerLeaved()
+	bool pointerLeaved(PointerLeaveEvent event)
 	{
 		state = "normal";
-		if (_onLeave !is null) _onLeave(this);
+		return true;
 	}
 
-	override bool pointerReleased(ivec2 pointerPosition, PointerButton button)
+	bool pointerReleased(PointerReleaseEvent event)
 	{
 		//
-		if (button == PointerButton.PB_LEFT && window.inputOwnerWidget is this)
+		if (event.button == PointerButton.PB_LEFT && event.gui.inputOwnerWidget is this)
 		{
-			window.lastClickedWidget = this;
-			window.inputOwnerWidget = null;
+			event.gui.lastClickedWidget = this;
+			event.gui.inputOwnerWidget = null;
 
-			if (!_staticRect.contains(pointerPosition))
+			if (!staticRect.contains(event.pointerPosition))
 			{
-				window.hoveredWidget = null;
+				event.gui.hoveredWidget = null;
 				state = "normal";
 				return true;
 			}
-			if (_onClick !is null) _onClick(this, pointerPosition);
 			state = "hover";
 
 			return true;
 		}
-		return false;
+		return true;
 	}
 
 	override protected void skinChanged()
 	{
-		setTextLineFont();
+		writeln("button skin changed ", _skin, " ", _style);
+		_textLine.font = getStyleFont(skin, style);
 	}
+	
+	protected:
+	TextLine _textLine;
 }
 

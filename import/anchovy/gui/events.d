@@ -30,29 +30,164 @@ module anchovy.gui.events;
 
 import anchovy.gui.all;
 
-class Event
+abstract class Event
 {
 	/++
-	 + If this flag is set to PropPhase.Sinking -
+	 + If this flag is set-
 	 + event propagates
-	 + from window to target widget, otherwise
-	 + it is bubbling from target to window
+	 + from root widget to target widget, otherwise
+	 + it is bubbling from target to root.
 	 +/
 	bool	sinking;
-
-	this()
+	
+	/// Pseudo flag for convenience.
+	/// Opposite to sinking.
+	bool bubbling() @property
 	{
-		// Constructor code
+		return !sinking;
 	}
+	/// ditto
+	bool bubbling(bool newBubbling) @property
+	{
+		return sinking = !newBubbling;
+	}
+	
+	/// Specifies if event was already handled.
+	/// Useful for checking if any child has handled this event.
+	/// Set automatically by EventPropagator
+	bool handled;
 
+	/// Reference to Gui class, used to obtain some global information.
 	Gui gui;
 }
 
-class PointerEvent : Event
+abstract class PointerButtonEvent : Event
 {
-	PointerButton  button; //core.input;
+	this(ivec2 pointerPosition, PointerButton button)
+	{
+		this.pointerPosition = pointerPosition;
+		this.button = button;
+	}
+	ivec2 pointerPosition;
+	PointerButton button;
+}
 
-	int pointerX;
-	int pointerY;
+// Pointer button
+
+class PointerPressEvent : PointerButtonEvent
+{
+	this(ivec2 pointerPosition, PointerButton button)
+	{
+		super(pointerPosition, button);
+	}
+}
+
+class PointerReleaseEvent : PointerButtonEvent
+{
+	this(ivec2 pointerPosition, PointerButton button)
+	{
+		super(pointerPosition, button);
+	}
+}
+
+class PointerClickEvent : PointerButtonEvent
+{
+	this(ivec2 pointerPosition, PointerButton button)
+	{
+		super(pointerPosition, button);
+	}
+}
+
+class PointerMoveEvent : Event
+{
+	this(ivec2 newPointerPosition, ivec2 delta)
+	{
+		this.newPointerPosition = newPointerPosition;
+		this.delta = delta;
+	}
+	ivec2 newPointerPosition;
+	ivec2 delta;
+}
+
+// Keyboard
+
+class CharEnterEvent : Event
+{
+	this(dchar character)
+	{
+		this.character = character;
+	}
+	dchar character;
+}
+
+abstract class KeyEvent : Event
+{
+	this(uint keyCode, KeyModifiers modifiers)
+	{
+		this.keyCode = keyCode;
+		this.modifiers = modifiers;
+	}
+	uint keyCode;
 	KeyModifiers modifiers;
+}
+
+class KeyPressEvent : KeyEvent
+{
+	this(uint keyCode, KeyModifiers modifiers)
+	{
+		super(keyCode, modifiers);
+	}
+}
+
+class KeyReleaseEvent : KeyEvent
+{
+	this(uint keyCode, KeyModifiers modifiers)
+	{
+		super(keyCode, modifiers);
+	}
+}
+
+// Hovering
+
+class PointerEnterEvent : Event
+{
+}
+
+class PointerLeaveEvent : Event
+{
+}
+
+// Focus
+
+class FocusGainEvent : Event
+{
+}
+
+class FocusLoseEvent : Event
+{
+}
+
+// Layout
+
+class ExpandLayoutEvent : Event
+{
+}
+
+class MinimizeLayoutEvent : Event
+{
+}
+
+// Misc
+
+class DrawEvent : Event
+{
+	this(IGuiRenderer guiRenderer)
+	{
+		this.guiRenderer = guiRenderer;
+	}
+	IGuiRenderer guiRenderer;
+}
+
+class UpdatePositionEvent : Event
+{
 }

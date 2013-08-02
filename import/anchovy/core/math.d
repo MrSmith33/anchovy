@@ -29,3 +29,8 @@ DEALINGS IN THE SOFTWARE.
 module anchovy.core.math;
 
 import anchovy.core.types;
+
+ivec2 max(ivec2 a, ivec2 b)
+{
+	return ivec2(a.x > b.x ? a.x : b.x, a.y > b.y ? a.y : b.y);
+}

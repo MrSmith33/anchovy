@@ -114,10 +114,10 @@ struct GuiStyleState
 
 	/// Minimal size of the widget. If not explicitly specified equal to atlasRect size.
 	/// It is highly recommended to set it to size equal or greater than atlasRect size to prevent glitches.
-	uvec2 minSize;
+	ivec2 minSize;
 
 	/// Maximal size of the widget. By default equal to [0,0]. If maxSize is zero maxSize is not limited.
-	uvec2 maxSize;
+	ivec2 maxSize;
 	
 	/// Defines offset of content rect from widget borders.
 	RectOffset contentPadding;

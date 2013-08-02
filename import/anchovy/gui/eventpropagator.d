@@ -26,69 +26,58 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.gui.widgetcontainer;
+module anchovy.gui.eventpropagator;
 
+import std.traits;
 import anchovy.gui.all;
 
-public import anchovy.gui.interfaces.ilayout;
-
-/**
- * Widget that is used as a container for other widgets.
- * 
- * Can apply layout to its client area by using provided layout manager.
- */
-class WidgetContainer : Widget
+/// Helper struct for propagating event through widget tree.
+///
+/// Event propagation results in a list of widgets stored in eventConsumerChain.
+/// Widgets are arranged in the order from widget that originally has handled event to the root widget.
+struct EventPropagator
 {
-public:
-	this()
-	{
-		super();
-	}
+	/// Widget chain that have handled event.
+	///
+	/// Actual event consumer is first, its parent second...
+	IWidget[] eventConsumerChain;
 
-	override void addChild(IWidget widget)
+	/// does actual event propagation.
+	///
+	/// Returns: true if event was handled.
+	bool propagateEvent(alias fun, Event, IWidget)(Event event, IWidget widget)
 	{
-		widget.parent = this;
-		_children ~= widget;
-	}
-
-	override void doDraw(IGuiRenderer renderer) 
-	{
-	}
-
-//+-------------------------------------------------------------------------------+
-//|                                  Properties                                   |
-//+-------------------------------------------------------------------------------+
-	@property
-	{
-		void layout(ILayout newLayout)
+		bool widgetHandledEvent;
+		
+		// Phase 1: event sinking into widget.
+		event.sinking = true;
+		
+		widgetHandledEvent = widget.handleEvent(event);
+		if (widgetHandledEvent)
 		{
-			_layout = newLayout;
-			updateLayout();
+			eventConsumerChain ~= widget;
+			return true;
 		}
 
-		/// Must return children array.
-		override IWidget[] children()
+		// Phase 2: event sinking into each widget's child.
+		bool anyChildHandledEvent = false;
+		foreach (child; widget.children)
 		{
-			return _children;
+			event.sinking = true;
+			anyChildHandledEvent |= propagateEvent!(fun)(event, child);
 		}
+		
+		// Phase 3: event bubling into widget.
+		event.sinking = false;
+		
+		widgetHandledEvent = widget.handleEvent(event);
+		
+		if (widgetHandledEvent || anyChildHandledEvent)
+		{
+			eventConsumerChain ~= widget;
+			return true;
+		}
+		
+		return false;
 	}
-	
-protected:
-
-	void updateLayout()
-	{
-	}
-
-	void updateLayoutResize(ivec2 deltaSize)
-	{
-	}
-
-	/// Used to layout children in client area.
-	/// 
-	/// If is null, no layout would be done. I.e. absolute positioning.
-	ILayout _layout;
-
-	///All the children of this widget.
-	IWidget[]	_children;	
 }
-
