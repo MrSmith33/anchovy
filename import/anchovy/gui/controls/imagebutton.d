@@ -32,12 +32,15 @@ import anchovy.gui.all;
 
 class ImageButton : Button
 {
-	this(Rect initRect, in string initStyleName = "button", GuiSkin initSkin = null)
+	this()
 	{
-		super(initRect, initStyleName, initSkin);
+		super();
 	}
+	
+	override void caption(dstring newCaption) @property
+	{}
 
-	override void drawContent(IGuiRenderer renderer)
+	override void doDraw(IGuiRenderer renderer)
 	{
 	}
 

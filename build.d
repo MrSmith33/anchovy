@@ -1,41 +1,95 @@
 module build;
 
-//version = showBuildString;
+version = showBuildString;
 
-import std.file;
-import std.process;
-import std.stdio;
+import std.file : dirEntries, SpanMode;
+import std.process : executeShell;
+import std.stdio : writeln;
 
-alias packageSettings pack;
+import std.algorithm : findSplitBefore;
+import std.range : retro, chain;
+import std.array : array;
+import std.conv : to;
+
+enum 
+{
+	executable,
+	staticLib,
+	sharedLib,
+}
+
+alias pack = packageSettings;
 struct packageSettings
 {
 	string name;
 	string sourcePath;
 	string[] importPaths;
 	string[] libFiles;
-	string outputFile;
-	string flags;
+	string outputName;
+	uint targetType;
+	string linkerFlags;
+}
+
+version(Windows)
+{
+	enum exeSuffix = ".exe";
+	enum exePrefix = "";
+	enum staticLibSuffix = ".lib";
+	enum staticLibPrefix = "";
+	enum sharedLibSuffix = ".dll";
+	enum sharedLibPrefix = "";
+}
+version(linux)
+{
+	enum exeSuffix = "";
+	enum exePrefix = "";
+	enum staticLibSuffix = ".a";
+	enum staticLibPrefix = "lib";
+	enum sharedLibSuffix = ".so";
+	enum sharedLibPrefix = "lib";
+}
+
+string withSuffixPrefix(string filePath, string prefix, string suffix)
+{
+	auto splitted = filePath.retro.findSplitBefore("/");
+
+    return chain(splitted[1].retro,
+		prefix,
+		splitted[0].array.retro,
+		suffix).array.to!string;
 }
 
 void buildPackage(ref packageSettings settings, string flags)
 {
-	string buildString = "dmd.exe "~flags~" ";
+	string buildString = "dmd"~exeSuffix~" "~flags~" ";
+	if (settings.targetType == staticLib) buildString ~= "-lib ";
+	
 	foreach(string filename; dirEntries(settings.sourcePath, "*.d", SpanMode.depth))
 	{
 		buildString ~= '"'~filename~"\" ";
 	}
-	
+
 	foreach(path; settings.importPaths)
 	{
-		buildString ~= "\"-I"~path~"\" ";
+		buildString ~= "-I\""~path~"\" ";
 	}
 	
 	foreach(lib; settings.libFiles)
 	{
-		buildString ~= "\""~lib~"\" ";
+		buildString ~= "\""~withSuffixPrefix(lib, staticLibPrefix, staticLibSuffix)~"\" ";
 	}
-	
-	buildString ~= settings.flags~" \"-of"~settings.outputFile~"\" ";
+
+	buildString ~= settings.linkerFlags;
+
+	buildString ~= " -of\"";
+
+	switch(settings.targetType)
+	{
+		case executable: buildString ~= withSuffixPrefix(settings.outputName, exePrefix, exeSuffix) ~ "\""; break;
+		case staticLib: buildString ~= withSuffixPrefix(settings.outputName, staticLibPrefix, staticLibSuffix) ~ "\""; break;
+		case sharedLib: buildString ~= withSuffixPrefix(settings.outputName, sharedLibPrefix, sharedLibSuffix) ~ "\""; break;
+		default: assert(false);
+	}
 	
 	version(showBuildString) writeln(buildString);
 	
@@ -48,13 +102,15 @@ void buildPackage(ref packageSettings settings, string flags)
 
 void main()
 {
-	auto imports = ["import", "deps\\dlib-master", "deps\\derelict-master\\import"];
-	auto packages = [pack("core", "import\\anchovy\\core", imports, [], "lib\\debug\\core.lib", "-lib"), 
-	pack("graphics", "import\\anchovy\\graphics", imports,[], "lib\\debug\\graphics.lib", "-lib"), 
-	pack("gui", "import\\anchovy\\gui", imports,[], "lib\\debug\\gui.lib", "-lib"), 
-	pack("utils", "import\\anchovy\\utils", imports,[], "lib\\debug\\utils.lib", "-lib"), 
-	pack("examples", "examples", imports,["lib\\debug\\core.lib", "lib\\debug\\graphics.lib", "lib\\debug\\gui.lib", "lib\\debug\\utils.lib","deps\\derelict-master\\lib\\dmd\\DerelictUtil.lib", "deps\\derelict-master\\lib\\dmd\\DerelictGLFW3.lib", "deps\\derelict-master\\lib\\dmd\\DerelictGL3.lib", "deps\\derelict-master\\lib\\dmd\\DerelictFT.lib", "deps\\derelict-master\\lib\\dmd\\DerelictFI.lib","deps\\dlib-master\\dlib.lib"], "bin\\guidemo.exe", "")];
+	auto imports = ["import", "deps/dlib", "deps/derelict-fi-master/source", "deps/derelict-sdl2-master/source", "deps/derelict-ft-master/source", "deps/derelict-gl3-master/source", "deps/derelict-glfw3-master/source", "deps/derelict-util-1.0.0/source", "deps/sdlang-d-0.8.4"];
+	auto packages = [
+	pack("core", "import/anchovy/core", imports, [], "lib/debug/core", staticLib), 
+	pack("graphics", "import/anchovy/graphics", imports,[], "lib/debug/graphics", staticLib), 
+	pack("gui", "import/anchovy/gui", imports,[], "lib/debug/gui", staticLib), 
+	pack("utils", "import/anchovy/utils", imports,[], "lib/debug/utils", staticLib), 
+	pack("examples", "examples", imports,
+		["deps/derelict-util-1.0.0/lib/DerelictUtil","deps/derelict-glfw3-master/lib/DerelictGLFW3", "deps/derelict-gl3-master/lib/DerelictGL3", "deps/derelict-ft-master/lib/DerelictFT", "deps/derelict-fi-master/lib/DerelictFI", "deps/dlib/dlib","lib/debug/utils", "lib/debug/core", "lib/debug/graphics", "deps/sdlang-d-0.8.4/sdlang-d.lib", "lib/debug/gui"].retro.array, "bin/guidemo", executable)];
 	
 	foreach(ref pack; packages)
-		buildPackage(pack, "-debug -gc");
+		buildPackage(pack, "-debug -gc -m32");
 }

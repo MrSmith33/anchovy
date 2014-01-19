@@ -29,10 +29,9 @@ DEALINGS IN THE SOFTWARE.
 module anchovy.gui.widget;
 
 import std.traits;
-
 import anchovy.gui.all;
-
 public import anchovy.gui.interfaces.iwidget;
+import anchovy.utils.flexibleobject;
 
 enum defaultAnchor = Sides.LEFT | Sides.TOP;
 
@@ -43,26 +42,9 @@ public:
 
 	this()
 	{
-		//_rect = initRect;
-		//_prefferedSize = uvec2(_rect.width, _rect.height);
-		//styleName = initStyleName;
-		//skin = initSkin;
-		//_textLine = new TextLine("", null);
-		//init();
 		addEventHandler(&handleDraw);
 		addEventHandler(&handleUpdatePosition);
 	}
-
-	/// Called by a constructor.
-	/// You can do custom init here.
-	/*protected void init()
-	{
-	}*/
-
-	/*override void calcStaticRect(Rect parentStaticRect) @safe
-	{
-		_staticRect = _rect.relativeToParent(parentStaticRect);
-	}*/
 
 //+-------------------------------------------------------------------------------+
 //|                                   Drawing                                     |
@@ -75,18 +57,14 @@ public:
 	}
 	body
 	{
-		//writeln("handleDraw");
 		if (_isBackgroundVisible && event.sinking)
 			doDraw(event.guiRenderer);
 
-		//if (_isContentVisible)
-		//	drawContent(event.guiRenderer);
 		return true;
 	}
 
 	void doDraw(IGuiRenderer renderer) 
 	{
-		//writeln("drawBackground");
 		renderer.drawControlBack(this, staticRect);
 	}
 
@@ -94,30 +72,39 @@ public:
 //|                                Event handling                                 |
 //+-------------------------------------------------------------------------------+
 
-	/*protected void applySizeConstraints()
-	{
-		_rect.clampSize(_minSize, _maxSize);
-	}*/
-	
 	void updateStaticPosition()
 	{
-		if (_parent is null) return;
-		_staticPosition = _position + _parent.staticPosition;
+		scope event = new UpdatePositionEvent();
+		event.sinking = true;
+		handleEvent(new UpdatePositionEvent);
+	}
+	
+	void updateStaticPositionChildren()
+	{
+		scope event = new UpdatePositionEvent();
+		event.sinking = true;
+		recursiveHandleEvent(new UpdatePositionEvent);
 	}
 
 	void handleResize() @trusted
 	{
-		//applySizeConstraints();
 	}
 	
 	bool handleUpdatePosition(UpdatePositionEvent event)
 	{
 		if (event.sinking)
 		{
-			updateStaticPosition();
-			return false;
+			if (_parent is null)
+			{
+				_staticPosition = _position;
+			}
+			else
+			{
+				_staticPosition = _position + _parent.staticPosition;
+			}
+			
 		}
-		return true;
+		return false;
 	}
 	
 	void addEventHandler(T)(T handler)
@@ -158,7 +145,7 @@ public:
 			handled |= widget.recursiveHandleEvent(e);
 		}
 		
-		e.sinking = false;
+		e.bubbling = true;
 		return handleEvent(e) || handled;
 	}
 	
@@ -265,7 +252,7 @@ public:
 		{
 			if (newSkin is null || newSkin == _skin) return;
 			_skin = newSkin;
-			writeln("skin changed");
+			
 			if (auto style = _skin[_style])
 			{
 				_minSize = style["normal"].minSize;
@@ -320,20 +307,30 @@ public:
 		{
 			_style = newStyle;
 		}
+
+		override bool isFocusable()
+		{
+			return _isFocusable;
+		}
+
+		override void isFocusable(bool newIsFocusable)
+		{
+			_isFocusable = newIsFocusable;
+		}
 	}
 
-	protected Font getStyleFont(GuiSkin skin, in string styleName)
+	protected Font getStyleFont()
 	{
-		writeln("skin: ", skin);
-		writeln("styleName: ", styleName);
-		writeln("skin[styleName]: ", skin[styleName]);
-		if (skin[styleName] is null) return null;
+		//writeln("skin: ", skin);
+		//writeln("styleName: ", styleName);
+		//writeln("skin[styleName]: ", skin[styleName]);
+		if (_skin[_style] is null) return null;
 		string font = _skin[_style].fontName;
-		writeln("fontName: ", font);
+		//writeln("fontName: ", font);
 		Font* fontPtr = font in _skin.fonts;
-		writeln("fontPtr: ", fontPtr);
+		//writeln("fontPtr: ", fontPtr);
 		if (fontPtr is null) return null;
-		writeln("font found");
+		//writeln("font found");
 		return *fontPtr;
 	}
 
@@ -386,6 +383,9 @@ protected:
 
 	/// Minimal size of the widget, specified by skin;
 	ivec2 _minSize;
+	
+	///
+	bool _isFocusable = false;
 
 	/// 
 	bool _isEnabled = true;

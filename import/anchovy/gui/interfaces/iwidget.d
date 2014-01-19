@@ -44,37 +44,9 @@ abstract class IWidget
 {
 public:
 
-	//void calcStaticRect(Rect parentStaticRect);
-	
-	//+-------------------------------------------------------------------------------+
-	//|                                   Drawing                                     |
-	//+-------------------------------------------------------------------------------+
-	
-	//void draw(IGuiRenderer renderer);
-	
 	//+-------------------------------------------------------------------------------+
 	//|                                Event handling                                 |
 	//+-------------------------------------------------------------------------------+
-	
-	/*bool charEntered(in dchar chr);
-	
-	void focusGained();
-	
-	void focusLost();
-	
-	bool pointerPressed(ivec2 pointerPosition, PointerButton button);
-	
-	bool pointerReleased(ivec2 pointerPosition, PointerButton button);
-	
-	bool pointerMoved(ivec2 newPointerPosition);
-	
-	void pointerEntered();
-	
-	void pointerLeaved();
-	
-	bool keyPressed(in KeyCode key, KeyModifiers modifiers);
-	
-	bool keyReleased(in KeyCode key, KeyModifiers modifiers);*/
 
 	bool handleEvent(Event event);
 	
@@ -99,7 +71,7 @@ public:
 		/// ditto
 		void anchor(uint newAnchor);
 		
-		// Used internally by gui renderer.
+		// Used internally by GuiRenderer.
 		ref TexRectArray[string] geometry();
 		
 		void addChild(IWidget child);
@@ -129,5 +101,8 @@ public:
 		
 		string style();
 		void style(string newStyle);
+
+		bool isFocusable();
+		void isFocusable(bool newIsFocusable);
 	}
 }

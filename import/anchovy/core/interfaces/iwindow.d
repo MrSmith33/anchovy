@@ -22,7 +22,7 @@ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT
 SHALL THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE
 FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
-ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE ыфцSOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
@@ -45,10 +45,10 @@ abstract class IWindow
 	void grabMouse();
 	void releaseMouse();
 
-	uvec2 getSize();
+	ivec2 getSize();
 
 	bool isKeyPressed(uint key);
-	@property
+	@property nothrow
 	{
 		uint width();
 		uint width(in uint newWidth);
@@ -59,20 +59,22 @@ abstract class IWindow
 
 	string getClipboard();
 	void setClipboard(string newClipboardString);
-
-	void focusChanged(in bool focusObtained){}
-	void keyPressed(in uint keyCode){}
-	void keyReleased(in uint keyCode){}
-	void charPressed(in dchar unicode){}
-	void charReleased(in dchar unicode){}
-	void mousePressed(in uint mouseButton){}
-	void mouseReleased(in uint mouseButton){}
-	void mouseMoved(in int newX, in int newY){}
-	void windowResized(in uint newWidth, in uint newHeight){}
-	void windowMoved(in int newX, in int newY){}
-	void windowIconified(in bool iconified){}
-	void wheelScrolled(in double scrollX, in double scrollY){}
-	bool quit()
+	nothrow
+	{
+		void focusChanged(in bool focusObtained){}
+		void keyPressed(in uint keyCode){}
+		void keyReleased(in uint keyCode){}
+		void charPressed(in dchar unicode){}
+		void charReleased(in dchar unicode){}
+		void mousePressed(in uint mouseButton){}
+		void mouseReleased(in uint mouseButton){}
+		void mouseMoved(in int newX, in int newY){}
+		void windowResized(in uint newWidth, in uint newHeight){}
+		void windowMoved(in int newX, in int newY){}
+		void windowIconified(in bool iconified){}
+		void wheelScrolled(in double scrollX, in double scrollY){}
+	}
+	bool quit() nothrow
 	{
 		return true;
 	}

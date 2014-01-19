@@ -39,19 +39,24 @@ public:
 	{
 		super();
 		style = "label";
-		_textLine = new TextLine("", null);
+		_textLine = new TextLine("abc", null);
+	}
+	
+	@property void caption(dstring newCaption)
+	{
+		_textLine.text = newCaption;
 	}
 
 	override void doDraw(IGuiRenderer renderer) 
 	{
 		//renderer.drawControlBack(this, staticRect);
 		renderer.renderer.setColor(Color(255, 255, 255, 255));
-		renderer.drawTextLine(_textLine, staticRect, AlignmentType.LEFT_CENTER);
+		renderer.drawTextLine(_textLine, staticPosition, AlignmentType.LEFT_TOP);
 	}
 
 	override protected void skinChanged()
 	{
-		_textLine.font = getStyleFont(skin, state);
+		_textLine.font = getStyleFont();
 	}
 	
 	protected:

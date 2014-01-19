@@ -71,7 +71,7 @@ public:
 			checkFtError(
 				FT_New_Face(library, toStringz(filename), 0, &face));
 			checkFtError(
-				FT_Select_Charmap(face, FT_Encoding.FT_ENCODING_UNICODE));
+				FT_Select_Charmap(face, FT_ENCODING_UNICODE));
 			checkFtError(
 				//FT_Set_Char_Size(face, cast(int)(size*64), 0, 72, 0));
 				FT_Set_Pixel_Sizes(face, 0, size));
@@ -82,7 +82,7 @@ public:
 			writeln(e.msg);
 		}
 
-		loadGlyps(chars, library, face, texAtlas, size);
+		loadGlyphs(chars, library, face, texAtlas, size);
 		_ascender = face.ascender/64;
 		_descender = face.descender/64;
 		_height = face.height/64;
@@ -125,12 +125,17 @@ public:
 
 	Glyph* getGlyph(in dchar chr)
 	{
-		return chr in glyphs;//TODO: Add loading for nonexisting glyphs
+		if (auto glyph = chr in glyphs)
+		{
+			return glyph;
+		}
+		else
+			return '?' in glyphs;//TODO: Add loading for nonexisting glyphs
 	}
 
 private:
 
-	private void loadGlyps(in dstring chars, in FT_Library library, ref FT_Face face, TextureAtlas atlas, in uint size)
+	private void loadGlyphs(in dstring chars, in FT_Library library, ref FT_Face face, TextureAtlas atlas, in uint size)
 	{
 		if (chars.length == 0) return;
 

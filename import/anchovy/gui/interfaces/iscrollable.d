@@ -26,81 +26,13 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.gui.controls.guilayer;
+module anchovy.gui.interfaces.iscrollable;
 
 import anchovy.gui.all;
 
-class GuiLayer : WidgetContainer
+interface IScrollable
 {
-public:
-
-	// Needs reworking.
-	this(GuiSkin skin = null)
-	{
-		super(Rect(0,0,0,0), "", skin);
-	}
-
-	override void parent(Widget newParent) @property
-	{
-		_parent = newParent;
-	}
-
-	override void drawContent(IGuiRenderer renderer)
-	{
-		foreach(widget; _children)
-		{
-			widget.draw(renderer);
-		}
-	}
-
-	override bool pointerPressed(ivec2 pointerPosition, PointerButton button)
-	{
-		foreach_reverse(widget; _children)
-		{
-			if (widget.pointerPressed(pointerPosition, button))
-			{
-				return true;
-			}
-		}
-
-		if (isClickTransparent)
-			return false;
-		else
-			return true;
-	}
-
-	override bool pointerReleased(ivec2 pointerPosition, PointerButton button)
-	{
-		foreach_reverse(widget; _children)
-		{
-			if (widget.pointerReleased(pointerPosition, button))
-			{
-				return true;
-			}
-		}
-		
-		if (isClickTransparent)
-			return false;
-		else
-			return true;
-	}
-
-	override bool pointerMoved(ivec2 newPointerPosition)
-	{		
-		foreach_reverse(widget; _children)
-		{
-			if (widget.pointerMoved(newPointerPosition))
-			{
-				return true;
-			}
-		}
-		
-		return false;
-	}
-
-
-protected:
-
-	/// Specifies whether or not the click should be propagated to the next layer.
-	bool isClickTransparent = true;
+	ivec2 canvasSize() @property;
+	
+	
 }

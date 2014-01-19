@@ -29,7 +29,7 @@ DEALINGS IN THE SOFTWARE.
 module anchovy.utils.rectbinpacker;
 
 
-import anchovy.core.types;
+import anchovy.utils.rect;
 /**
  * Rewrite of Jukka Jylanki's RectangleBinPacker
  */

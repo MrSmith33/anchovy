@@ -49,35 +49,41 @@ struct EventPropagator
 	{
 		bool widgetHandledEvent;
 		
-		// Phase 1: event sinking into widget.
-		event.sinking = true;
-		
-		widgetHandledEvent = widget.handleEvent(event);
-		if (widgetHandledEvent)
+		if (fun(event, widget))
 		{
-			eventConsumerChain ~= widget;
-			return true;
-		}
-
-		// Phase 2: event sinking into each widget's child.
-		bool anyChildHandledEvent = false;
-		foreach (child; widget.children)
-		{
+			// Phase 1: event sinking into widget.
 			event.sinking = true;
-			anyChildHandledEvent |= propagateEvent!(fun)(event, child);
+			
+			widgetHandledEvent = widget.handleEvent(event);
+			if (widgetHandledEvent)
+			{
+				eventConsumerChain ~= widget;
+				return true;
+			}
+
+			// Phase 2: event sinking into each widget's child.
+			bool anyChildHandledEvent = false;
+			foreach (ref child; widget.children)
+			{
+				event.sinking = true;
+				anyChildHandledEvent |= propagateEvent!(fun)(event, child);
+			}
+			
+			// Phase 3: event bubling into widget.
+			event.bubbling = true;
+			
+			widgetHandledEvent = widget.handleEvent(event);
+			
+			if (widgetHandledEvent || anyChildHandledEvent)
+			{
+				eventConsumerChain ~= widget;
+				return true;
+			}
 		}
-		
-		// Phase 3: event bubling into widget.
-		event.sinking = false;
-		
-		widgetHandledEvent = widget.handleEvent(event);
-		
-		if (widgetHandledEvent || anyChildHandledEvent)
+		else
 		{
-			eventConsumerChain ~= widget;
-			return true;
+			event.bubbling = true;
 		}
-		
 		return false;
 	}
 }

@@ -66,6 +66,6 @@ abstract class IRenderer
 	void setColor(in Color newColor);
 	void setColor(in Color4f newColor);
 	void setClearColor(in Color color);
-	uvec2 windowSize();
+	ivec2 windowSize();
 	void flush();
 }

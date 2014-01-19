@@ -38,7 +38,7 @@ abstract class Event
 	 + from root widget to target widget, otherwise
 	 + it is bubbling from target to root.
 	 +/
-	bool	sinking;
+	bool	sinking = true;
 	
 	/// Pseudo flag for convenience.
 	/// Opposite to sinking.
@@ -61,14 +61,22 @@ abstract class Event
 	Gui gui;
 }
 
-abstract class PointerButtonEvent : Event
+abstract class PointerEvent : Event
+{
+	this(ivec2 pointerPosition)
+	{
+		this.pointerPosition = pointerPosition;
+	}
+	ivec2 pointerPosition;
+}
+
+abstract class PointerButtonEvent : PointerEvent
 {
 	this(ivec2 pointerPosition, PointerButton button)
 	{
-		this.pointerPosition = pointerPosition;
+		super(pointerPosition);
 		this.button = button;
 	}
-	ivec2 pointerPosition;
 	PointerButton button;
 }
 
@@ -98,14 +106,21 @@ class PointerClickEvent : PointerButtonEvent
 	}
 }
 
-class PointerMoveEvent : Event
+class PointerDoubleClickEvent : PointerButtonEvent
+{
+	this(ivec2 pointerPosition, PointerButton button)
+	{
+		super(pointerPosition, button);
+	}
+}
+
+class PointerMoveEvent : PointerEvent
 {
 	this(ivec2 newPointerPosition, ivec2 delta)
 	{
-		this.newPointerPosition = newPointerPosition;
+		super(newPointerPosition);
 		this.delta = delta;
 	}
-	ivec2 newPointerPosition;
 	ivec2 delta;
 }
 

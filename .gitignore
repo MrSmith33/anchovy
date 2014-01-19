@@ -4,7 +4,10 @@
 *.obj
 *.a
 *.so
-lib/*.lib
-lib/*.a
+lib/
 obj/
 .DS_Store
+deps/
+bin/
+.dub/
+.sublime*

@@ -35,32 +35,45 @@ import anchovy.gui.all;
 
 class Edit : Widget
 {
-	this(Rect initRect, in string initStyleName = "edit", GuiSkin initSkin = null)
+	this()
 	{
-		super(initRect, initStyleName, initSkin);
+		super();
+		addEventHandler(&keyPressed);
+		addEventHandler(&keyReleased);
+		addEventHandler(&charEntered);
+		addEventHandler(&focusGained);
+		addEventHandler(&focusLost);
+		addEventHandler(&pointerPressed);
+		addEventHandler(&pointerReleased);
+		addEventHandler(&pointerMoved);
+		
+		_isFocusable = true;
+		
+		style = "edit";
+		_textLine = new TextLine("", null);
 	}
 
-	override bool keyPressed(in KeyCode key, KeyModifiers modifiers)
+	bool keyPressed(KeyPressEvent event)
 	{
 		if (!_isEditable) return true;
 		
 		bool doTextUpdate = true;
 		bool doDeselect = true;
 
-		if (modifiers & KeyModifiers.CONTROL)
+		if (event.modifiers & KeyModifiers.CONTROL)
 		{
-			if (key == KeyCode.KEY_C)
+			if (event.keyCode == KeyCode.KEY_C)
 			{
-				window.clipboardString = copy();
+				event.gui.clipboardString = copy();
 				doDeselect = false;
 			}		
-			else if (key == KeyCode.KEY_V)
+			else if (event.keyCode == KeyCode.KEY_V)
 			{
-				paste(window.clipboardString);
+				paste(event.gui.clipboardString);
 			}	
-			else if (key == KeyCode.KEY_X)
+			else if (event.keyCode == KeyCode.KEY_X)
 			{
-				window.clipboardString = copy();
+				event.gui.clipboardString = copy();
 				removeSelectedText();
 			}
 			else
@@ -68,7 +81,7 @@ class Edit : Widget
 				doTextUpdate = false;
 			}
 		}
-		else if (key == KeyCode.KEY_BACKSPACE)
+		else if (event.keyCode == KeyCode.KEY_BACKSPACE)
 		{
 			if (_hasSelectedText)
 			{
@@ -82,15 +95,15 @@ class Edit : Widget
 				onCursorMove();
 			}
 		}
-		else if (key == KeyCode.KEY_LEFT)
+		else if (event.keyCode == KeyCode.KEY_LEFT)
 		{
 			moveCursorLeft();
 		}
-		else if (key == KeyCode.KEY_RIGHT)
+		else if (event.keyCode == KeyCode.KEY_RIGHT)
 		{
 			moveCursorRight();
 		}
-		else if (key == KeyCode.KEY_DELETE)
+		else if (event.keyCode == KeyCode.KEY_DELETE)
 		{
 			if (_hasSelectedText)
 			{
@@ -102,11 +115,11 @@ class Edit : Widget
 				onCursorMove();
 			}
 		}
-		else if (key == KeyCode.KEY_HOME)
+		else if (event.keyCode == KeyCode.KEY_HOME)
 		{
 			setCursorPos(0);
 		}
-		else if (key == KeyCode.KEY_END)
+		else if (event.keyCode == KeyCode.KEY_END)
 		{
 			setCursorPos(_textLine.text.length);
 		}
@@ -127,7 +140,7 @@ class Edit : Widget
 		return true;
 	}
 	
-	override bool keyReleased(in KeyCode key, KeyModifiers modifiers)
+	bool keyReleased(KeyReleaseEvent)
 	{
 		return true;
 	}
@@ -158,12 +171,12 @@ class Edit : Widget
 		setCursorPos(_cursorPos + text.length);
 	}
 	
-	override bool charEntered(in dchar chr)
+	bool charEntered(CharEnterEvent event)
 	{
 		if (_isEditable)
 		{
 			normalizeSelection();
-			_textLine.text = _textLine.text[0.._selectionStart] ~ chr ~ _textLine.text[_selectionEnd..$];
+			_textLine.text = _textLine.text[0.._selectionStart] ~ event.character ~ _textLine.text[_selectionEnd..$];
 			setCursorPos(_selectionStart+1);
 			deselect();
 			calcTextXPos();
@@ -177,24 +190,25 @@ class Edit : Widget
 		return selectedText();
 	}
 
-	override void drawContent(IGuiRenderer renderer) 
+	override void doDraw(IGuiRenderer renderer) 
 	{
+		renderer.drawControlBack(this, staticRect);
 		assert(_textLine);
-		renderer.pushClientArea(_staticRect);
+		renderer.pushClientArea(staticRect);
 			renderer.renderer.setColor(Color(0,0,0));
-			renderer.drawTextLine(_textLine, _staticRect.croppedByOffset(_contentOffset), AlignmentType.NONE_CENTER);
-			if (_state == "focused" && _isCursorVisible && _isCursorBlinkVisible && window.inputOwnerWidget != this)
+			renderer.drawTextLine(_textLine, staticRect.croppedByOffset(_contentOffset), AlignmentType.NONE_CENTER);
+			if (_state == "focused" && _isCursorVisible && _isCursorBlinkVisible)
 			{
-				renderer.renderer.fillRect(Rect(_staticRect.x + _cursorRenderPos + _textLine.x + _contentOffset.left,
-			                                	_staticRect.y + _staticRect.height/2 - _textLine.height/2,
+				renderer.renderer.fillRect(Rect(_staticPosition.x + _cursorRenderPos + _textLine.x + _contentOffset.left,
+			                                	_staticPosition.y + _userSize.y/2 - _textLine.height/2,
 			                                	1, _textLine.height));
 			}
 			if (_hasSelectedText)
 			{
 				renderer.renderer.setColor(Color(0,0,255, 64));
 				uint selectionStartX = calcCharOffset(_selectionStart);
-					renderer.renderer.fillRect(Rect(_staticRect.x + _textLine.x + _contentOffset.left + selectionStartX,
-				                                	_staticRect.y + _staticRect.height/2 - _textLine.height/2,
+					renderer.renderer.fillRect(Rect(_staticPosition.x + _textLine.x + _contentOffset.left + selectionStartX,
+				                                	_staticPosition.y + _userSize.y/2 - _textLine.height/2,
 					                               	calcCharOffset(_selectionEnd) - selectionStartX, _textLine.height));
 			}
 		renderer.popClientArea;
@@ -205,7 +219,7 @@ class Edit : Widget
 		calcTextXPos();
 	}
 
-	override void focusGained()
+	void focusGained(FocusGainEvent event)
 	out
 	{
 		assert(_blinkTimer);
@@ -215,8 +229,11 @@ class Edit : Widget
 		assert(_blinkTimer is null);
 		assert(_isCursorBlinkVisible);
 		_state = "focused";
+		_gui = event.gui;
 
-		_blinkTimer = window.timerManager.addTimer(_blinkInterval, &onCursorBlink, double.nan, TimerTickType.PROCESS_LAST);
+		_blinkTimer = event.gui.timerManager.addTimer(_blinkInterval, &onCursorBlink, double.nan, TimerTickType.PROCESS_LAST);
+		
+		return true;
 	}
 
 	/// Used as a callback to blink timer.
@@ -228,14 +245,16 @@ class Edit : Widget
 		return 0;
 	}
 	
-	override void focusLost()
+	bool focusLost(FocusLoseEvent event)
 	{
 		_state = "normal";
 
-		window.timerManager.stopTimer(_blinkTimer);
+		event.gui.timerManager.stopTimer(_blinkTimer);
 		_blinkTimer = null;
 
 		_isCursorBlinkVisible = true;
+		
+		return true;
 	}
 
 	dstring text() @property
@@ -262,15 +281,13 @@ class Edit : Widget
 		}
 	}
 
-	override bool pointerPressed(ivec2 pointerPosition, PointerButton button)
+	bool pointerPressed(PointerPressEvent event)
 	{
-		if (!_staticRect.contains(pointerPosition)) return false;
-
-		if (button == PointerButton.PB_LEFT)
+		if (event.button == PointerButton.PB_LEFT)
 		{
-			window.focusedWidget = this;
-			moveCursorToClickPos(pointerPosition);
-			window.inputOwnerWidget = this;
+			event.gui.focusedWidget = this;
+			moveCursorToClickPos(event.pointerPosition);
+			event.gui.inputOwnerWidget = this;
 			_selectionStart = _cursorPos;
 			_selectionEnd = _cursorPos;
 			return true;
@@ -279,30 +296,29 @@ class Edit : Widget
 		return true;
 	}
 
-	override bool pointerReleased(ivec2 pointerPosition, PointerButton button)
+	bool pointerReleased(PointerReleaseEvent event)
 	{
-		if (!_staticRect.contains(pointerPosition) && window.inputOwnerWidget != this) return false;
+		if (event.gui.inputOwnerWidget != this) return false;
 
-		if (button == PointerButton.PB_LEFT)
+		if (event.button == PointerButton.PB_LEFT)
 		{
-			window.inputOwnerWidget = null;
+			event.gui.inputOwnerWidget = null;
 			return true;
 		}
 		
 		return true;
 	}
 
-	override bool pointerMoved(ivec2 newPointerPosition)
+	bool pointerMoved(PointerMoveEvent event)
 	{
-		if (window.inputOwnerWidget == this )
+		if (event.gui.inputOwnerWidget == this )
 		{
-			moveCursorToClickPos(newPointerPosition);
+			moveCursorToClickPos(event.pointerPosition);
 			_selectionEnd = _cursorPos;
 			updateSelection();
 			calcTextXPos();
 		}
-
-		return false;
+		return true;
 	}
 
 	void isEditable(bool editable) @property
@@ -366,8 +382,8 @@ protected:
 
 	override void skinChanged()
 	{
-		_contentOffset = _skin[_styleName]["normal"].contentPadding;
-		setTextLineFont();
+		_contentOffset = _skin[_style]["normal"].contentPadding;
+		_textLine.font = getStyleFont();
 	}
 
 	void moveCursorToClickPos(ivec2 pointerPosition)
@@ -379,7 +395,7 @@ protected:
 	{
 		if (_textLine.text.length > 0)
 		{
-			int clickX = pointerPosition.x - (_staticRect.x + _contentOffset.left + _textLine.x);
+			int clickX = pointerPosition.x - (_staticPosition.x + _contentOffset.left + _textLine.x);
 
 			Font textFont = _textLine.font;
 			int charCenter;
@@ -407,7 +423,7 @@ protected:
 	{
 		if (_blinkTimer)
 		{
-			window.timerManager.resetTimer(_blinkTimer);
+			_gui.timerManager.resetTimer(_blinkTimer);
 			_isCursorBlinkVisible = true;
 		}
 	}
@@ -457,7 +473,9 @@ protected:
 		{
 			if (charIndex == position) break;
 
-			charX += textFont.getGlyph(_textLine.text[charIndex]).metrics.advanceX;
+			Glyph* glyph = textFont.getGlyph(_textLine.text[charIndex]);
+			assert(glyph !is null);
+			charX += glyph.metrics.advanceX;
 			++charIndex;
 			
 			if (charIndex == _textLine.text.length) break;
@@ -489,29 +507,35 @@ protected:
 
 	void calcTextXPos()
 	{
-		Rect textRect = _rect.croppedByOffset(_contentOffset);
-		if (_textLine.width < textRect.width)
+		int contentWidth = _userSize.x - _contentOffset.horizontal;
+		if (_textLine.width < contentWidth)
 		{
 			_textLine.x = 0;
 		}
 		else
 		{
-			if (_cursorRenderPos + _textLine.x > textRect.width || _cursorPos == _textLine.text.length)
+			if (_cursorRenderPos + _textLine.x > contentWidth || _cursorPos == _textLine.text.length)
 			{
-				_textLine.x = textRect.width - _cursorRenderPos;
+				_textLine.x = contentWidth - _cursorRenderPos;
 			}
 			else if (_cursorRenderPos + _textLine.x < 0)
 			{
 				_textLine.x = -_cursorRenderPos;
 			}
-			else if (_textLine.x + _textLine.width < textRect.width)
+			else if (_textLine.x + _textLine.width < contentWidth)
 			{
-				_textLine.x = textRect.width - _textLine.width;
+				_textLine.x = contentWidth - _textLine.width;
 			}
 		}
 	}
+	
+protected:
+	TextLine _textLine;
 
 private:
+
+	//hack
+	Gui _gui;
 
 	RectOffset _contentOffset;
 	bool _isEditable = true;

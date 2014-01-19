@@ -53,6 +53,8 @@ import anchovy.gui.timermanager;
 
 import anchovy.utils.string : ZToString;
 
+pragma(lib, "dl");
+
 class GuiTestWindow : GlfwWindow
 {
 	void run(in string[] args)
@@ -100,8 +102,8 @@ class GuiTestWindow : GlfwWindow
 		foreach(item; getHardwareInfo())
 			writeln(item);
 		writeln("========");
-		dstring russianChars = 	"АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяїє";
-		renderer = new Ogl3Renderer(this);
+		dstring russianChars = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяє"d;
+renderer = new Ogl3Renderer(this);
 		guiRenderer = new SkinnedGuiRenderer(renderer);
 		fpsHelper.maxFps = 120;
 		timerManager = new TimerManager(delegate double(){return glfwGetTime();});
@@ -115,12 +117,11 @@ class GuiTestWindow : GlfwWindow
 		string graySkinSource = cast(string)read("skingray.json");
 		auto skinParser = new JsonGuiSkinParser;
 		graySkin = skinParser.parse(graySkinSource);
-		writeln(graySkin);
+		//writeln(graySkin);
 		graySkin.loadResources(guiRenderer);
-		
-		//guiwin = new GuiWindow(guiRenderer, timerManager, Rect(0, 0, width, height), graySkin);
-		//guiwin.setClipboardStringCallback = (dstring newStr) => setClipboard(to!string(newStr));
-		//guiwin.getClipboardStringCallback = delegate dstring(){return to!dstring(getClipboard());};
+
+		//--------------------------------------------------------------
+
 		gui = new Gui(guiRenderer, timerManager, graySkin);
 		gui.setClipboardStringCallback = (dstring newStr) => setClipboard(to!string(newStr));
 		gui.getClipboardStringCallback = delegate dstring(){return to!dstring(getClipboard());};
@@ -129,131 +130,31 @@ class GuiTestWindow : GlfwWindow
 		mainLayer.skin = graySkin;
 		gui.addChild(mainLayer);
 
-		Button button1 = new Button();
-		button1.skin = graySkin;
+		auto button1 = cast(Button)createWidget("button");
+		//button1.skin = graySkin;
 		button1.userSize = ivec2(50, 50);
 		button1.position = ivec2(20, 20);
 		button1.caption = "Click me!";
 		button1.addEventHandler(delegate bool(PointerClickEvent event){button1.caption = to!dstring(event.pointerPosition); return true;});
 		button1.addEventHandler(delegate bool(PointerLeaveEvent event){button1.caption = "Click me!";return true;});
 		mainLayer.addChild(button1);
-
-		/+
-		Label l = new Label(Rect(100, 20, 30, 10));
-		l.caption = "English Русский Українська";
-		mainLayer.addWidget(l);
-
-		auto hscrollBar = new HScrollbar(Rect(20,150,100, 18));
-		mainLayer.addWidget(hscrollBar);
-
-		auto vscrollBar = new VScrollbar(Rect(20,170,18, 100));
-		mainLayer.addWidget(vscrollBar);
 		
-		auto list = new List(Rect(200,100,100, 200));
-		mainLayer.addWidget(list);
-		
-		auto addListItemButton = new Button(Rect(120, 100, 80, 24));
-		addListItemButton.caption = "Add item";
-		int itemId;
-		addListItemButton.onClick = (IWidget w, ivec2 p){list.append("Item"~to!string(itemId));++itemId;};
-		mainLayer.addWidget(addListItemButton);
-		                  
-		Frame frame1 = new Frame(Rect(100, 200, 200, 300));
-		mainLayer.addWidget(frame1);
-		frame1.onClose = (IWidget w){writeln("close button was pressed");};
+		Label l = new Label();
+		l.skin = graySkin;
+		l.position = ivec2(20, 100);
+		l.caption = "Click me";
+		mainLayer.addChild(l);
 
-		Button button2 = new Button(Rect(2, 2, 120, 24));
-		button2.caption = "button2";
-
-		button2.onEnter = (IWidget w) => writeln("pointer entered button2");
-		button2.onLeave = (IWidget w) => writeln("pointer leaved button2");
-		frame1.addWidget(button2);
-		
-		Edit edit1 = new Edit(Rect(2, 28, 120, 24)); 
+		Edit edit1 = new Edit(); 
+		edit1.userSize = ivec2(120, 24);
+		edit1.position = ivec2(20, 120);
+		edit1.skin = graySkin;
 		edit1.text = "edit me!";
 		edit1.anchor = Sides.LEFT| Sides.TOP | Sides.RIGHT;
-		frame1.addWidget(edit1);
+		mainLayer.addChild(edit1);
 
-		auto vscrollBar2 = new VScrollbar(Rect(165,1,18, 246));
-		vscrollBar2.anchor = Sides.BOTTOM | Sides.TOP | Sides.RIGHT;
-		frame1.addWidget(vscrollBar2);
+		//--------------------------------------------------------------
 
-		auto hscrollBar2 = new HScrollbar(Rect(1,246,165, 18));
-		hscrollBar2.anchor = Sides.BOTTOM | Sides.LEFT | Sides.RIGHT;
-		frame1.addWidget(hscrollBar2);
-
-		button2.onClick = (IWidget w, Point2i) => edit1.paste("abc");
-
-		Checkbox check1 = new Checkbox(Rect(2,56, 11,11));
-		check1.onToggle = (IWidget w) => writeln((cast(Checkbox)w).isChecked ? "checked" : "unchecked");
-		frame1.addWidget(check1);
-
-		auto radio1 = new RadioButton(Rect(2,69, 12,12));
-		radio1.group = 1;
-		radio1.onToggle = (IWidget w) => writeln((cast(Checkbox)w).isChecked() ? "1 checked" : "1 unchecked");
-		frame1.addWidget(radio1);
-		auto radio2 = new RadioButton(Rect(2,82, 12,12));
-		radio2.group = 1;
-		radio2.onToggle = (IWidget w) => writeln((cast(Checkbox)w).isChecked ? "2 checked" : "2 unchecked");
-		frame1.addWidget(radio2);
-		auto radio3 = new RadioButton(Rect(2,96, 12,12));
-		radio3.group = 1;
-		radio3.onToggle = (IWidget w) => writeln((cast(Checkbox)w).isChecked ? "3 checked" : "3 unchecked");
-		frame1.addWidget(radio3);
-
-		/*Frame calculator = new Frame(Rect(300, 200, 98, 200));
-		mainLayer.addWidget(calculator);
-
-		Button bDel = new Button(Rect(28,28,50,24));
-		bDel.caption = "<-";
-		Button bC = new Button(Rect(2,28,24,24));
-		bC.caption = "C";
-		Button b7 = new Button(Rect(2,54,24,24));
-		b7.caption = "7";
-		Button b8 = new Button(Rect(28,54,24,24));
-		b8.caption = "8";
-		Button b9 = new Button(Rect(54,54,24,24));
-		b9.caption = "9";
-		Button b4 = new Button(Rect(2,80,24,24));
-		b4.caption = "4";
-		Button b5 = new Button(Rect(28,80,24,24));
-		b5.caption = "5";
-		Button b6 = new Button(Rect(54,80,24,24));
-		b6.caption = "6";
-		Button b1 = new Button(Rect(2,106,24,24));
-		b1.caption = "1";
-		Button b2 = new Button(Rect(28,106,24,24));
-		b2.caption = "2";
-		Button b3 = new Button(Rect(54,106,24,24));
-		b3.caption = "3";
-		Button b0 = new Button(Rect(2,132,50,24));
-		b0.caption = "0";
-		Button bDot = new Button(Rect(54,132,24,24));
-		bDot.caption = ".";
-
-		calculator.addWidget(bDel);
-		calculator.addWidget(bC);
-		calculator.addWidget(b0);
-		calculator.addWidget(b1);
-		calculator.addWidget(b2);
-		calculator.addWidget(b3);
-		calculator.addWidget(b4);
-		calculator.addWidget(b5);
-		calculator.addWidget(b6);
-		calculator.addWidget(b7);
-		calculator.addWidget(b8);
-		calculator.addWidget(b9);
-		calculator.addWidget(bDot);*/
-
-
-		fpsLabel = new Label(Rect(0, 0, 30, 10));
-		fpsLabel.anchor = Sides.RIGHT | Sides.TOP;
-		fpsLabel.caption = "0";
-		fpsLabel.position = ivec2(width - 200, 10);
-		guiwin.addWidget(fpsLabel);
-		fpsHelper.onFpsUpdate = delegate(ref FpsHelper helper){fpsLabel.caption = "FPS: " ~ to!dstring(cast(uint)helper.fps) ~
-			" dt: " ~ to!dstring(helper.deltaTime);};
-		+/
 		renderer.enableAlphaBlending();
 		glEnable(GL_SCISSOR_TEST);
 		guiRenderer.fontManager.getFontAtlasTex;
@@ -287,34 +188,52 @@ class GuiTestWindow : GlfwWindow
 
 	override void windowResized(in uint newWidth, in uint newHeight)
 	{
-		fpsLabel.position = ivec2(newWidth - 200, 10);
-		reshape(newWidth, newHeight);
-		//guiwin.size = ivec2(newWidth, newHeight);
+		try
+		{
+			//writeln("windowResized");
+			//fpsLabel.position = ivec2(newWidth - 200, 10);
+			reshape(newWidth, newHeight);
+			gui.size = ivec2(newWidth, newHeight);
+		}
+		catch(Exception e)
+		{
+		}
 	}
 
 	override void mousePressed(in uint mouseButton)
 	{
-		/*auto event = new PointerPressEvent(getMousePosition, cast(PointerButton)mouseButton);
-		event.gui = gui;
-		gui.handleEvent(event);*/
-		gui.pointerPressed(getMousePosition, cast(PointerButton)mouseButton);
+		try
+		{
+			gui.pointerPressed(getMousePosition, cast(PointerButton)mouseButton);
+		}
+		catch(Exception e)
+		{
+		}
 	}
 
 	override void mouseReleased(in uint mouseButton)
 	{
-		auto event = new PointerReleaseEvent(getMousePosition, cast(PointerButton)mouseButton);
-		event.gui = gui;
-		gui.handleEvent(event);
+		try
+		{
+			gui.pointerReleased(getMousePosition, cast(PointerButton)mouseButton);
+		}
+		catch(Exception e)
+		{
+		}
 	}
 
 	override void mouseMoved(in int newX, in int newY)
 	{
-		ivec2 newPos = ivec2(newX, newY);
-		ivec2 deltaPos = newPos - pointerPosition;
-		pointerPosition = newPos;
-		auto event = new PointerMoveEvent(newPos, deltaPos);
-		event.gui = gui;
-		gui.handleEvent(event);
+		try
+		{
+			ivec2 newPos = ivec2(newX, newY);
+			ivec2 deltaPos = newPos - pointerPosition;
+			pointerPosition = newPos;
+			gui.pointerMoved(newPos, deltaPos);
+		}
+		catch(Exception e)
+		{
+		}
 	}
 
 	KeyModifiers getCurrentKeyModifiers()
@@ -331,33 +250,44 @@ class GuiTestWindow : GlfwWindow
 
 	override void keyPressed(in uint keyCode)
 	{
-		if (keyCode == GLFW_KEY_ESCAPE)
+		try
 		{
-			running = false;
-			return;
+			if (keyCode == GLFW_KEY_ESCAPE)
+			{
+				running = false;
+				return;
+			}
+			gui.keyPressed(cast(KeyCode)keyCode, getCurrentKeyModifiers());
 		}
-		auto event = new KeyPressEvent(cast(KeyCode)keyCode, getCurrentKeyModifiers());
-		event.gui = gui;
-		gui.handleEvent(event);
+		catch(Exception e)
+		{
+		}
 	}
 
 	override void keyReleased(in uint keyCode)
 	{
-		auto event = new KeyReleaseEvent(cast(KeyCode)keyCode, getCurrentKeyModifiers());
-		event.gui = gui;
-		gui.handleEvent(event);
+		try
+		{
+			gui.keyReleased(cast(KeyCode)keyCode, getCurrentKeyModifiers());
+		}
+		catch(Exception e)
+		{
+		}
 	}
 
 	override void charReleased(in dchar unicode)
 	{
-		auto event = new CharEnterEvent(unicode);
-		event.gui = gui;
-		gui.handleEvent(event);
+		try
+		{
+			gui.charEntered(unicode);
+		}
+		catch(Exception e)
+		{
+		}
 	}
 
 	Gui gui;
 	ivec2 pointerPosition;
-	//GuiWindow guiwin;
 	GuiSkin graySkin;
 
 	TimerManager timerManager;

@@ -36,8 +36,8 @@ public
 	import anchovy.gui.controls.checkbox;
 	import anchovy.gui.controls.radiobutton;
 	import anchovy.gui.controls.imagebutton;
-	
-	import anchovy.gui.controls.edit;
+	*/
+	import anchovy.gui.controls.edit;/*
 	import anchovy.gui.controls.guilayer;
 	import anchovy.gui.controls.frame;
 	import anchovy.gui.controls.guiwindow;

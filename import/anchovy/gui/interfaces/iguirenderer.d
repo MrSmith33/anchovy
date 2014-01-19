@@ -78,7 +78,7 @@ interface IGuiRenderer
 	void drawControlBack(IWidget widget, Rect staticRect);
 
 	/// draws text line with alignment specified relative to point
-	void drawTextLine(ref TextLine line, in int x, in int y, in AlignmentType alignment);
+	void drawTextLine(ref TextLine line, ivec2 position, in AlignmentType alignment);
 
 	/// draws text line with alignment specified relative to rectangle
 	void drawTextLine(ref TextLine line, in Rect area, in AlignmentType alignment);

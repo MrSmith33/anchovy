@@ -117,11 +117,11 @@ class SDLWindow : IWindow
 	void releaseMouse(){}
 
 	override
-	uvec2 getSize()
+	ivec2 getSize()
 	{
 		int width, height;
 		SDL_GetWindowSize(window, &width, &height);
-		return uvec2(width, height);
+		return ivec2(width, height);
 	}
 
 	override void processEvents()

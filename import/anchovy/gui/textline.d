@@ -53,7 +53,6 @@ public:
 
 	void font(Font newFont) @property
 	{
-		writeln("setting font ", newFont);
 		if (newFont is null) return;
 		_font = newFont;
 		if (!_isInited)
@@ -134,7 +133,6 @@ public:
 		_cursorY = _font.ascender;
 		
 		appendGlyphs(_text, _font);
-		writeln("append "~_text);
 		_isDirty = true;
 	}
 

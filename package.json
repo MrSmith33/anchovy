@@ -1,74 +1,74 @@
 {
-	"name" : "anchovy",
-	"authors" : [ "Andrey Penechko" ],
-	"dependencies" : {
-	  "anchovy:core" : "~master",
-	  "anchovy:graphics" : "~master",
-	  "anchovy:gui" : "~master",
-	  "anchovy:utils" : "~master"
-	},
-	"targetPath" : "lib",
-	"targetType" : "library",
-	"description" : "Set of multimedia libraries for games and gui applications",
-	"homepage" : "http://github.com/MrSmith33/anchovy",
-	"license" : "Boost",
-	"subPackages" : [
-	{
-		"name" : "core",
-		"dependencies" : {
-			"anchovy:utils" : "~master",
-			"derelict:freeimage" : "~master",
-			"derelict:freetype" : "~master",
-			"derelict:glfw3" : "~master",
-			"derelict:opengl3" : "~master",
-			"derelict:util" : "~master",
-			"dlib" : "~master"
-		},
-		"importPaths" : [ "import" ],
-		"sourcePaths" : [ "import/anchovy/core" ],
-		"targetPath" : "lib"
-	},
-	{
-		"name" : "graphics",
-		"dependencies" : {
-			"anchovy:core" : "~master",
-			"anchovy:utils" : "~master",
-			"derelict:freeimage" : "~master",
-			"derelict:freetype" : "~master",
-			"derelict:glfw3" : "~master",
-			"derelict:opengl3" : "~master",
-			"derelict:util" : "~master",
-			"dlib" : "~master"
-		},
-		"importPaths" : [ "import" ],
-		"sourcePaths" : [ "import/anchovy/graphics" ],
-		"targetPath" : "lib"
-	},
-	{
-		"name" : "gui",
-		"dependencies" : {
-			"anchovy:core" : "~master",
-			"anchovy:graphics" : "~master",
-			"anchovy:utils" : "~master",
-			"derelict:freeimage" : "~master",
-			"derelict:freetype" : "~master",
-			"derelict:glfw3" : "~master",
-			"derelict:opengl3" : "~master",
-			"derelict:util" : "~master",
-			"dlib" : "~master"
-		},
-		"importPaths" : [ "import" ],
-		"sourcePaths" : [ "import/anchovy/gui" ],
-		"targetPath" : "lib"
-	},
-	{
-		"name" : "utils",
-		"dependencies" : {
-			"anchovy:core" : "~master"
-		},
-		"importPaths" : [ "import" ],
-		"sourcePaths" : [ "import/anchovy/utils" ],
-		"targetPath" : "lib"
-	}
-	]
+   "authors" : [ "Andrey Penechko" ],
+   "dependencies" : {
+      "anchovy:core" : "~master",
+      "anchovy:graphics" : "~master",
+      "anchovy:gui" : "~master",
+      "anchovy:utils" : "~master"
+   },
+   "description" : "Set of multimedia libraries for games and gui applications",
+   "homepage" : "http://github.com/MrSmith33/anchovy",
+   "license" : "BSL-1.0",
+   "name" : "anchovy",
+   "subPackages" : [
+      {
+         "dependencies" : {
+            "anchovy:utils" : "~master",
+            "derelict-fi" : "~master",
+            "derelict-ft" : "~master",
+            "derelict-gl3" : "~master",
+            "derelict-glfw3" : "~master",
+            "dlib" : "~master"
+         },
+         "importPaths" : [ "import" ],
+         "name" : "core",
+         "sourcePaths" : [ "import/anchovy/core" ],
+         "targetPath" : "lib",
+         "targetType" : "library"
+      },
+      {
+         "dependencies" : {
+            "anchovy:core" : "~master",
+            "anchovy:utils" : "~master",
+            "derelict-fi" : "~master",
+            "derelict-ft" : "~master",
+            "derelict-gl3" : "~master",
+            "derelict-glfw3" : "~master",
+            "dlib" : "~master"
+         },
+         "importPaths" : [ "import" ],
+         "name" : "graphics",
+         "sourcePaths" : [ "import/anchovy/graphics" ],
+         "targetPath" : "lib",
+         "targetType" : "library"
+      },
+      {
+         "dependencies" : {
+            "anchovy:core" : "~master",
+            "anchovy:graphics" : "~master",
+            "anchovy:utils" : "~master",
+            "derelict-fi" : "~master",
+            "derelict-ft" : "~master",
+            "derelict-gl3" : "~master",
+            "derelict-glfw3" : "~master",
+            "dlib" : "~master"
+         },
+         "importPaths" : [ "import" ],
+         "name" : "gui",
+         "sourcePaths" : [ "import/anchovy/gui" ],
+         "targetPath" : "lib",
+         "targetType" : "library"
+      },
+      {
+         "dependencies" : {
+         },
+         "importPaths" : [ "import" ],
+         "name" : "utils",
+         "sourcePaths" : [ "import/anchovy/utils" ],
+         "targetPath" : "lib",
+         "targetType" : "library"
+      }
+   ],
+   "targetPath" : "lib",
+   "targetType" : "library"
 }

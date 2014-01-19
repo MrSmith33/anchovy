@@ -135,11 +135,11 @@ public:
 		glfwSetWindowSize(window, width, height);
 	}
 
-	override uvec2 getSize()
+	override ivec2 getSize()
 	{
 		int width, height;
 		glfwGetWindowSize(window, &width, &height);
-		return uvec2(width, height);
+		return ivec2(width, height);
 	}
 
 	override string getClipboard()
@@ -159,7 +159,8 @@ public:
 		return glfwGetKey(window, key) == GLFW_PRESS;
 	}
 
-	@property
+	nothrow{
+	@property 
 	{
 		override uint width(){ return w; }
 
@@ -168,6 +169,7 @@ public:
 		override uint height(){ return h; }
 
 		override uint height(in uint newHeight){ return h = newHeight;}
+	}
 	}
 
 protected:
@@ -185,8 +187,8 @@ protected:
 		}
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+		//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 
 		//glfwSetMonitorCallback(GLFWmonitorfun cbfun);
@@ -207,7 +209,7 @@ private:
 	static uint nextWinId = 1;
 }
 
-static GlfwWindow getWinFromUP(GLFWwindow* w)
+static GlfwWindow getWinFromUP(GLFWwindow* w) nothrow
 {
 	GlfwWindow win;
 	win = cast(GlfwWindow) glfwGetWindowUserPointer(w);
@@ -216,38 +218,38 @@ static GlfwWindow getWinFromUP(GLFWwindow* w)
 
 extern(C)
 {
-	static void errorfun(int errorCode, const(char)* msg)
+	static void errorfun(int errorCode, const(char)* msg) nothrow
 	{
 		throw new Error("GLFW error ocured ["~to!string(errorCode)~"] : "~ZToString(msg));
 	}
-	static void windowposfun(GLFWwindow* w, int nx, int ny)
+	static void windowposfun(GLFWwindow* w, int nx, int ny) nothrow
 	{
 		getWinFromUP(w).windowMoved(nx, ny);
 	}
-	static void windowsizefun(GLFWwindow* w, int nw, int nh)
+	static void windowsizefun(GLFWwindow* w, int nw, int nh) nothrow
 	{
 		GlfwWindow win = getWinFromUP(w);
 		win.width = nw;
 		win.height = nh;
 		win.windowResized(nw, nh);
 	}
-	static void windowclosefun(GLFWwindow* w)
+	static void windowclosefun(GLFWwindow* w) nothrow
 	{
 		getWinFromUP(w).quit();
 	}
-	static void windowrefreshfun(GLFWwindow* w)
+	static void windowrefreshfun(GLFWwindow* w) nothrow
 	{
 
 	}
-	static void windowfocusfun(GLFWwindow* w, int focus)
+	static void windowfocusfun(GLFWwindow* w, int focus) nothrow
 	{
 		getWinFromUP(w).focusChanged(cast(bool)focus);
 	}
-	static void windowiconifyfun(GLFWwindow* w, int iconified)
+	static void windowiconifyfun(GLFWwindow* w, int iconified) nothrow
 	{
 		getWinFromUP(w).windowIconified(cast(bool)iconified);
 	}
-	static void mousebuttonfun(GLFWwindow* w, int mouseButton, int action, int)
+	static void mousebuttonfun(GLFWwindow* w, int mouseButton, int action, int) nothrow
 	{
 		if(action == GLFW_RELEASE)
 		{
@@ -258,19 +260,19 @@ extern(C)
 			getWinFromUP(w).mousePressed(mouseButton);
 		}
 	}
-	static void cursorposfun(GLFWwindow* w, double nx, double ny)
+	static void cursorposfun(GLFWwindow* w, double nx, double ny) nothrow
 	{
 		getWinFromUP(w).mouseMoved(cast(int)nx, cast(int)ny);
 	}
-	static void scrollfun(GLFWwindow* w, double x, double y)
+	static void scrollfun(GLFWwindow* w, double x, double y) nothrow
 	{
 		getWinFromUP(w).wheelScrolled(x, y);
 	}
-	static void cursorenterfun(GLFWwindow* w, int)
+	static void cursorenterfun(GLFWwindow* w, int) nothrow
 	{
 
 	}
-	static void keyfun(GLFWwindow* w, int key, int, int action, int)
+	static void keyfun(GLFWwindow* w, int key, int, int action, int) nothrow
 	{
 		if (action == GLFW_RELEASE)
 		{
@@ -281,7 +283,7 @@ extern(C)
 			getWinFromUP(w).keyPressed(key);
 		}
 	}
-	static void charfun(GLFWwindow* w, uint unicode)
+	static void charfun(GLFWwindow* w, uint unicode) nothrow
 	{
 		getWinFromUP(w).charReleased(cast(dchar)unicode);
 	}

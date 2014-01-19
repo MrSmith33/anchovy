@@ -26,76 +26,26 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.gui.controls.radiobutton;
+module anchovy.gui.layouts.dockinglayout;
 
 import anchovy.gui.all;
 
-class RadioButton : Checkbox
-{
-public:
-	this(Rect initRect, in string initStyleName = "radiobutton", GuiSkin initSkin = null)
-	{
-		super(initRect, initStyleName, initSkin);
-	}
+public import anchovy.gui.interfaces.ilayout;
 
-	override void isChecked(bool checked) @property
+class DockingLayout : ILayout
+{
+	/// Called by container to update its children positions and sizes.
+	override void layoutContainer(in ivec2 clientAreaSize, IWidget[] children)
 	{
-		if (_isChecked != checked)
-		{
-			_isChecked = checked;
-			if (checked)
-			{
-				window.setCheckedForGroup(_group, this);
-			}
-			else
-			{
-				window.setCheckedForGroup(_group, null);
-			}
-			updateState();
-			if (_onToggle !is null) _onToggle(this);
-		}
+		
 	}
 	
-	override bool pointerReleased(ivec2 pointerPosition, PointerButton button)
-	{
-		if (!_staticRect.contains(pointerPosition)) return false;
-		if (button == PointerButton.PB_LEFT && window.inputOwnerWidget is this)
-		{
-			window.lastClickedWidget = this;
-
-			if (!_isChecked)
-				isChecked = true;
-			_isPressed = false;
-
-			if (_onClick !is null) _onClick(this, pointerPosition);
-			
-			updateState();
-			window.inputOwnerWidget = null;
-			
-			return true;
-		}
-		return false;
-	}
-
-	/// Used to set radio group.
+	/// Called by container when its size was changed.
 	/// 
-	/// Only one RadioButton within one group can be checked.
-	/// See_Also: GuiWindow.setCheckedForGroup(uint group, RadioButton rbutton);
-	uint group() @property
+	/// Container can choose which widgets must be layouted by passing only them.
+	/// This can be used if container has several client areas.
+	override void onContainerResized(ivec2 oldSize, ivec2 newSize, IWidget[] children)
 	{
-		return _group;
+		layoutContainer(newSize, children);
 	}
-
-	void group(uint newGroup) @property
-	{
-		if (newGroup != _group)
-		{
-			isChecked = false;
-			_group = newGroup;
-		}
-	}
-
-protected:
-
-	uint _group;
 }

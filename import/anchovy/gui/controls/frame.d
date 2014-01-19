@@ -32,19 +32,25 @@ import anchovy.gui.all;
 
 class Frame : WidgetContainer
 {
-	this(Rect rect, in string styleName = "frame", GuiSkin skin = null)
+	this()
 	{
-		super(rect, styleName, skin);
+		super();
+		style = "frame";
+		/*ImageButton ib = new ImageButton();
+		ib.style = "closeButton";
+		ib.position = ivec2(prefferedSize.width - (7 + 18), 6);
+		ib.anchor = Sides.RIGHT | Sides.TOP;
+		ib.addEventHandler(&closePressed);
+		ib.parent = this;
+		_children ~= ib;
+		++_internalCount;*/
+
+		_layout = new AbsoluteLayout();
+		
+		
 	}
 
-	override void addWidget(Widget widget)
-	{
-		widget.parent = this;
-		widget.calcStaticRect(_clientArea);
-		_children ~= widget;
-	}
-
-	override void calcStaticRect(Rect parentStaticRect) @trusted
+	/*override void calcStaticRect(Rect parentStaticRect) @trusted
 	{
 		_staticRect = _rect.relativeToParent(parentStaticRect);
 		foreach_reverse(widget; _children[0.._internalCount])
@@ -57,37 +63,16 @@ class Frame : WidgetContainer
 		{
 			widget.calcStaticRect(_clientArea);
 		}
-	}
+	}*/
 
-	override Widget[] children() @property
+	override IWidget[] children() @property
 	{
 		return _children[_internalCount..$];
 	}
 
-	override void drawContent(IGuiRenderer renderer)
+	/*bool pointerPressed(PointerPressEvent event,ivec2 pointerPosition, PointerButton button)
 	{
-		foreach_reverse(widget; _children)
-		{
-			widget.draw(renderer);
-		}
-	}
-
-	override void init()
-	{
-		ImageButton ib = new ImageButton(Rect(_rect.width - (7 + 18), 6, 18, 18), "closeButton");
-		ib.anchor = Sides.RIGHT | Sides.TOP;
-		ib.onClick = (IWidget widget, ivec2) => (cast(Frame)widget.parent).closePressed();
-		ib.parent = this;
-		_children ~= ib;
-		++_internalCount;
-
-		_layout = new AbsoluteLayout();
-	}
-
-	override bool pointerPressed(ivec2 pointerPosition, PointerButton button)
-	{
-		if (!_staticRect.contains(pointerPosition)) return false;
-		if (button == PointerButton.PB_LEFT)
+		if (event.button == PointerButton.PB_LEFT && event.sinking)
 		{
 			uint topBorder = _skin[_styleName]["normal"].fixedBorders.top;
 
@@ -196,36 +181,37 @@ class Frame : WidgetContainer
 			}
 		}
 		return true;
-	}
+	}*/
 
-	void onClose(RegularHandler newHandler) @property
+	void onClose(bool delegate(PointerClickEvent) newHandler) @property
 	{ 
-		_onClose = newHandler;
+		//_onClose = newHandler;
 	}
 
-	void closePressed()
+	/*bool closePressed(PointerClickEvent event)
 	{
 		if (_onClose !is null) _onClose(this);
-	}
+		return true;
+	}*/
 
 protected:
 
 	override void updateLayout()
 	{
-		if (_layout is null) return;
-		_layout.layoutContainer(size, _children[0.._internalCount]);
+		assert(_layout);
+		_layout.layoutContainer(prefferedSize, _children[0.._internalCount]);
 		_layout.layoutContainer(ivec2(_clientArea.width, _clientArea.height), _children[_internalCount..$]);
 	}
 	
 	override void updateLayoutResize(ivec2 deltaSize)
 	{
-		if (_layout is null) return;
-		_layout.onContainerResized(size, ivec2(size.x + deltaSize.x, size.y + deltaSize.y), _children[0.._internalCount]);
+		assert(_layout);
+		_layout.onContainerResized(prefferedSize, ivec2(prefferedSize.x + deltaSize.x, prefferedSize.y + deltaSize.y), _children[0.._internalCount]);
 		_layout.onContainerResized(ivec2(_clientArea.width, _clientArea.height),
 		                                  ivec2(_clientArea.width+deltaSize.x, _clientArea.height + deltaSize.y),
 		                                  _children[_internalCount..$]);
-		size = ivec2(size.x + deltaSize.x, size.y + deltaSize.y);
-		calcStaticRect(_parent.staticRect);
+		userSize = ivec2(userSize.x + deltaSize.x, userSize.y + deltaSize.y);
+		updateStaticPositionChildren();
 	}
 
 private:
@@ -246,7 +232,5 @@ private:
 	/// Count of internal widgets.
 	/// Will be moved to WidgetContainer.
 	uint _internalCount;
-
-	RegularHandler _onClose;
 }
 

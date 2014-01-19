@@ -30,6 +30,11 @@ module anchovy.gui.controls.button;
 
 import anchovy.gui.all;
 
+static this()
+{
+	widgetFactories["button"] = delegate IWidget(Variant[] properties){return new Button;};
+}
+
 class Button : Widget
 {
 public:
@@ -37,10 +42,13 @@ public:
 	{
 		super();
 		addEventHandler(&pointerPressed);
+		addEventHandler(&pointerReleased);
 		addEventHandler(&pointerMoved);
 		addEventHandler(&pointerEntered);
 		addEventHandler(&pointerLeaved);
-		addEventHandler(&pointerReleased);
+		
+		_isFocusable = true;
+		
 		style = "button";
 		_textLine = new TextLine("", null);
 	}
@@ -68,36 +76,30 @@ public:
 
 	bool pointerPressed(PointerPressEvent event)
 	{
-		writeln("pointer press");
-		//if (!staticRect.contains(event.pointerPosition)) return false;
 		if (event.button == PointerButton.PB_LEFT)
 		{
-			event.gui.inputOwnerWidget = this;
 			state = "pressed";
-			return true;
+		}
+		return true;
+	}
+	
+	bool pointerReleased(PointerReleaseEvent event)
+	{
+		if (event.button == PointerButton.PB_LEFT)
+		{
+			state = "hover";
 		}
 		return true;
 	}
 
 	bool pointerMoved(PointerMoveEvent event)
 	{
-		writeln("pointer move");
-		if (!staticRect.contains(event.newPointerPosition))
-		{
-			if (event.gui.inputOwnerWidget is this)
-				state = "normal";
-			return false;
-		}
-		if (event.gui.inputOwnerWidget is this)
-			state = "pressed";
-
-		event.gui.hoveredWidget = this;
 		return true;
 	}
 
 	bool pointerEntered(PointerEnterEvent event)
 	{
-		if (event.gui.inputOwnerWidget is this)
+		if (event.gui.pressedWidget is this)
 		{
 			state = "pressed";
 		}
@@ -114,31 +116,10 @@ public:
 		return true;
 	}
 
-	bool pointerReleased(PointerReleaseEvent event)
-	{
-		//
-		if (event.button == PointerButton.PB_LEFT && event.gui.inputOwnerWidget is this)
-		{
-			event.gui.lastClickedWidget = this;
-			event.gui.inputOwnerWidget = null;
-
-			if (!staticRect.contains(event.pointerPosition))
-			{
-				event.gui.hoveredWidget = null;
-				state = "normal";
-				return true;
-			}
-			state = "hover";
-
-			return true;
-		}
-		return true;
-	}
-
 	override protected void skinChanged()
 	{
 		writeln("button skin changed ", _skin, " ", _style);
-		_textLine.font = getStyleFont(skin, style);
+		_textLine.font = getStyleFont();
 	}
 	
 	protected:

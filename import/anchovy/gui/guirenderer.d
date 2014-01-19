@@ -50,7 +50,7 @@ void main()
 	gl_Position = vec4(((Position.x+gPosition.x)/gHalfTarget.x)-1, 1-((Position.y+gPosition.y)/gHalfTarget.y), 0.0, 1.0);
 	ivec2 texSize = textureSize(gSampler, 0);
 	TexCoord0 = TexCoord/texSize;
-};`;
+}`;
 
 string textfshader=`
 #version 330 
@@ -64,7 +64,7 @@ uniform vec4 gColor;
 void main()
 {
 	FragColor = texture2D(gSampler, TexCoord0).r*gColor;
-}; 	
+} 	
 `;
 
 class SkinnedGuiRenderer : IGuiRenderer
@@ -124,29 +124,29 @@ class SkinnedGuiRenderer : IGuiRenderer
 		}
 	}
 
-	override void drawTextLine(ref TextLine line, in int x, in int y, in AlignmentType alignment)
+	override void drawTextLine(ref TextLine line, ivec2 position, in AlignmentType alignment)
 	{
 		if (!line.isInited)
 		{
 			return;
 		}
 		line.update;
-
+		
 		int renderX, renderY;
 
 		if (alignment & HoriAlignment.LEFT)
-			renderX = x;
+			renderX = position.x;
 		else if (alignment & HoriAlignment.CENTER)
-			renderX = x - (line.width / 2);
+			renderX = position.x - (line.width / 2);
 		else 
-			renderX = x - line.width;
+			renderX = position.x - line.width;
 
 		if (alignment & VertAlignment.TOP)
-			renderY = y;
+			renderY = position.y;
 		else if (alignment & VertAlignment.CENTER)
-			renderY = y - (line.height / 2);
+			renderY = position.y - (line.height / 2);
 		else 
-			renderY = y - line.height;
+			renderY = position.y - line.height;
 
 		_renderer.drawTexRectArray(line.geometry, renderX , renderY, _fontTexture, _textShader);
 	}

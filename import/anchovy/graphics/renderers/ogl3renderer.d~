@@ -113,7 +113,8 @@ class Vao
 	uint handle;
 }
 
-string primVertTex2d = `#version 330
+string primVertTex2d = `
+#version 150 compatibility  
 layout (location = 0) in vec2 position;
 layout (location = 1) in vec2 texCoord;
 uniform sampler2D gSampler;
@@ -128,10 +129,11 @@ void main()
 					   0.0, 1.0);
 	ivec2 texSize = textureSize(gSampler, 0);
 	texCoord0 = vec2(texCoord.x/texSize.x, 1-texCoord.y/texSize.y);
-}
+};
 `;
 
-string primFragTex2d=`#version 330
+string primFragTex2d=`
+#version 150 compatibility  
 in vec2 texCoord0;
 out vec4 FragColor;
 
@@ -141,9 +143,10 @@ uniform vec4 gColor = vec4(1, 1, 1, 1);
 void main()
 {
 	FragColor = texture2D(gSampler, texCoord0)*gColor;
-}`;
+};`;
 
-string primVertFill2d = `#version 330  
+string primVertFill2d = `
+#version 150 compatibility  
 in vec2 position;
 
 uniform vec2 gHalfTarget;
@@ -155,17 +158,18 @@ void main()
 {
 	gl_Position = vec4(((position.x+0.5)/gHalfTarget.x)-1, 1-((position.y+0.5)/gHalfTarget.y), 0.0, 1.0);
 	theColor = gColor;
-}
+};
 `;
 //in smooth vec4 theColor DOESN'T works use smooth in unstead
-string primFragFill2d=`#version 330  
+string primFragFill2d=`
+#version 150 compatibility  
 smooth in vec4 theColor;
 out vec4 fragColor;
 
 void main()
 {
 	fragColor = theColor;
-}	
+}; 	
 `;
 
 class Ogl3Renderer : IRenderer

@@ -26,36 +26,44 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.gui.all;
+module anchovy.utils.flexibleobject.flexibleproperty;
 
-public
+import std.variant : Variant;
+
+import anchovy.utils.flexibleobject.flexibleobject : FlexibleObject;
+import anchovy.utils.signal : Signal;
+
+abstract class IProperty
 {
-	import std.conv: to;
-	import std.stdio;
+	// called when value changes. 
+	// Params: 
+	alias PropertyChangedSignal = Signal!(FlexibleObject, Variant, Variant*);
 
-	import dlib.math.vector;
-	import dlib.math.utils;
+	Variant value() @property;
+	Variant value(Variant) @property;
 
-	import anchovy.core.input;
-	import anchovy.core.math;
-	import anchovy.core.types;
-	import anchovy.graphics.all;
-	import anchovy.graphics.interfaces.irenderer;
+	PropertyChangedSignal valueChanged;
+	
+	alias value this;
+}
 
-	import anchovy.gui.gui;
+// Simple storage property
+class ValueProperty : IProperty
+{
+	this(Variant value)
+	{
+		_value = value;
+	}
 
-	import anchovy.gui.events,
-		anchovy.gui.eventpropagator,
-		anchovy.gui.guiskin,
-		anchovy.gui.widget,
-		anchovy.gui.widgetfactory,
-		anchovy.gui.widgetcontainer,
-		anchovy.gui.guirenderer;
-	import anchovy.gui.interfaces.iguiskinparser,
-		anchovy.gui.interfaces.iguirenderer;
-	import anchovy.gui.jsonguiskinparser;
-	import anchovy.gui.layouts.absolutelayout;
-	import anchovy.gui.textline;
-	import anchovy.gui.timermanager;
-	import anchovy.gui.controls.all;
+	override Variant value() @property
+	{
+		return _value;
+	}
+
+	override Variant value(Variant newValue) @property
+	{
+		return _value = newValue;
+	}
+
+	Variant _value;
 }
