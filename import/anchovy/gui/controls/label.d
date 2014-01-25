@@ -29,34 +29,30 @@ DEALINGS IN THE SOFTWARE.
 module anchovy.gui.controls.label;
 
 import anchovy.gui.all;
+import anchovy.gui.interfaces.iwidgetbehavior;
 
-class Label : Widget
+static this()
 {
+	widgetBehaviors["label"] = new LabelBehavior;
+}
 
+class LabelBehavior : IWidgetBehavior
+{
 public:
 
-	this()
+	override void attachTo(Widget widget)
 	{
-		super();
-		style = "label";
-		_textLine = new TextLine("abc", null);
-	}
-	
-	@property void caption(dstring newCaption)
-	{
-		_textLine.text = newCaption;
+		widget.addEventHandler(&handleDraw);
+
+		setProperty!"text"(widget, "");
 	}
 
-	override void doDraw(IGuiRenderer renderer) 
+	bool handleDraw(Widget widget, DrawEvent event)
 	{
-		//renderer.drawControlBack(this, staticRect);
-		renderer.renderer.setColor(Color(255, 255, 255, 255));
-		renderer.drawTextLine(_textLine, staticPosition, AlignmentType.LEFT_TOP);
-	}
-
-	override protected void skinChanged()
-	{
-		_textLine.font = getStyleFont();
+		event.guiRenderer.drawControlBack(widget, widget.getPropertyAs!("staticRect", Rect));
+		event.guiRenderer.renderer.setColor(Color(255, 255, 255, 255));
+		event.guiRenderer.drawTextLine(_textLine, widget.getPropertyAs!("staticPosition", ivec2), AlignmentType.LEFT_TOP);
+		return true;
 	}
 	
 	protected:

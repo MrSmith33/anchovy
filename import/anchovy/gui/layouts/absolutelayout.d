@@ -35,7 +35,7 @@ public import anchovy.gui.interfaces.ilayout;
 class AbsoluteLayout : ILayout
 {
 	/// Called by container to update its children positions and sizes.
-	override void layoutContainer(in ivec2 clientAreaSize, IWidget[] children)
+	override void layoutContainer(in ivec2 clientAreaSize, Widget[] children)
 	{
 		
 	}
@@ -44,50 +44,59 @@ class AbsoluteLayout : ILayout
 	/// 
 	/// Container can choose which widgets must be layouted by passing only them.
 	/// This can be used if container has several client areas.
-	override void onContainerResized(ivec2 oldSize, ivec2 newSize, IWidget[] children)
+	override void onContainerResized(ivec2 oldSize, ivec2 newSize, Widget[] children)
 	{
 		int dx = newSize.x - oldSize.x;
 		int dy = newSize.y - oldSize.y;
 
 		foreach(ref widget; children)
 		{
-			if ((widget.anchor & Sides.LEFT) && (widget.anchor & Sides.RIGHT))
+			int anchor;
+			ivec2 pos = widget.getPropertyAs!("position", int);
+			ivec2 userSize = widget.getPropertyAs!("userSize", ivec2);
+			anchor = widget.getPropertyAs!("anchor", int);
+
+			if ((anchor & Sides.LEFT) && (anchor & Sides.RIGHT))
 			{
-				int newWidth = widget.userSize.x + dx;
+				int newWidth = userSize.x + dx;
 				if (newWidth >= 0)
-					widget.userSize = ivec2(newWidth, widget.userSize.y);
+					userSize = ivec2(newWidth, userSize.y);
 				else
-					widget.userSize = ivec2(0, widget.userSize.y);
+					userSize = ivec2(0, userSize.y);
 			}
-			else if (widget.anchor & Sides.LEFT)
+			else if (anchor & Sides.LEFT)
 			{
 				// Do nothing. X position stays unchanged, as well as width
 			}
-			else if (widget.anchor & Sides.RIGHT)
+			else if (anchor & Sides.RIGHT)
 			{
-				widget.position = ivec2(widget.position.x + dx, widget.position.y);
+				pos = ivec2(pos.x + dx, pos.y);
 			}
 			else
 			{
 				assert(false); // Not yet implemented
 			}
 
-			if (widget.anchor & Sides.TOP && widget.anchor & Sides.BOTTOM)
+			if (anchor & Sides.TOP && anchor & Sides.BOTTOM)
 			{
-				widget.userSize = ivec2(widget.userSize.x, widget.userSize.y + dy);
+				userSize = ivec2(userSize.x, userSize.y + dy);
 			}
-			else if (widget.anchor & Sides.TOP)
+			else if (anchor & Sides.TOP)
 			{
 				// Do nothing. Y position stays unchanged, as well as height
 			}
-			else if (widget.anchor & Sides.BOTTOM)
+			else if (anchor & Sides.BOTTOM)
 			{
-				widget.position = ivec2(widget.position.x, widget.position.y + dy);
+				pos = ivec2(pos.x, pos.y + dy);
 			}
 			else
 			{
 				assert(false); // Not yet implemented
 			}
+
+			widget.setProperty!"position"(pos);
+			widget.setProperty!"userSize"(userSize);
+			widget.setProperty!"anchor"(anchor);
 		}
 	}
 }

@@ -31,6 +31,7 @@ module anchovy.utils.flexibleobject.flexibleobject;
 import std.variant : Variant;
 
 import anchovy.utils.flexibleobject.flexibleproperty : IProperty, ValueProperty;
+import anchovy.utils.flexibleobject.flexibleaccess;
 import anchovy.utils.signal : Signal;
 
 // Object that can have any number of properties
@@ -52,8 +53,9 @@ class FlexibleObject
 				if (property.value != value)
 				{
 					auto oldValue = property.value;
-					property.value = value;
-					property.valueChanged.emit(this, oldValue, property.value);
+					Variant var = Variant(value);
+					property.valueChanged.emit(this, oldValue, &var);
+					property.value = var;
 				}
 
 				return property.value;
@@ -70,8 +72,9 @@ class FlexibleObject
 				if (property.value != value)
 				{
 					auto oldValue = property.value;
-					property.value = Variant(value);
-					property.valueChanged.emit(this, oldValue, property.value);
+					Variant var = Variant(value);
+					property.valueChanged.emit(this, oldValue, &var);
+					property.value = var;
 				}
 
 				return property.value;
@@ -87,12 +90,12 @@ class FlexibleObject
 	{
 		IProperty property = properties.get(propName, new ValueProperty(Variant(null)));
 		Variant oldValue = property.value;
+		Variant var =  mixin("property.value " ~ op ~ " value;");
 
-		mixin("property.value " ~ op ~ "= value;");
-
-		if (oldValue != property.value)
+		if (oldValue != var)
 		{
-			property.valueChanged.emit(this, oldValue, property.value);
+			property.valueChanged.emit(this, oldValue, &var);
+			property.value = var;
 		}
 
 		return property.value;

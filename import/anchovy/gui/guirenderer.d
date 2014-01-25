@@ -69,12 +69,13 @@ void main()
 
 class SkinnedGuiRenderer : IGuiRenderer
 {
-	this(IRenderer renderer)
+	this(IRenderer renderer, GuiSkin skin = null)
 	{
 		_renderer = renderer;
 		_fontManager = new FontManager();
 		_fontTexture = renderer.registerTexture(_fontManager.getFontAtlasTex());
 		_textShader = new ShaderProgram(textvshader, textfshader);
+		_skin = skin;
 		if (!_textShader.compile)
 			writeln(_textShader.errorLog);
 		_renderer.bindShaderProgram(_textShader);
@@ -92,22 +93,21 @@ class SkinnedGuiRenderer : IGuiRenderer
 		return _fontManager;
 	}
 
-	override void drawControlBack(IWidget widget, Rect staticRect)
+	override void drawControlBack(Widget widget, Rect staticRect)
 	{
-		GuiStyle* styleptr;
+		/*GuiStyle* styleptr;
 		if (widget.skin !is null)
 		{
 			styleptr = widget.style in widget.skin.styles;
 		}
 
 		if (styleptr is null)
-		{
-			writeln("no style ", widget);
+		{*/
 			_renderer.setColor(Color(255, 255, 255, 255));
 			_renderer.fillRect(staticRect);
 			_renderer.setColor(Color(255, 0, 0, 255));
 			_renderer.drawRect(staticRect);
-		}
+		/*}
 		else
 		{
 			GuiStyle style = *styleptr;
@@ -121,7 +121,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 			                           staticRect.x - state.outline.left,
 			                           staticRect.y - state.outline.top,
 			                           widget.skin.texture);
-		}
+		}*/
 	}
 
 	override void drawTextLine(ref TextLine line, ivec2 position, in AlignmentType alignment)
@@ -209,7 +209,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 		return _renderer;
 	}
 
-	TexRectArray buildWidgetGeometry(ref IWidget widget, in GuiStyle style)
+	/*TexRectArray buildWidgetGeometry(ref Widget widget, in GuiStyle style)
 	{
 		TexRectArray geometry = new TexRectArray;
 		GuiStyleState state = style[widget.state];
@@ -290,7 +290,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 		}
 		geometry.load;
 		return geometry;
-	}
+	}*/
 
 private:
 	Rect[] _clientAreaStack;
@@ -298,5 +298,6 @@ private:
 	FontManager _fontManager;
 	ShaderProgram _textShader;
 	uint _fontTexture;
+	GuiSkin _skin;
 }
 

@@ -50,9 +50,9 @@ public:
 		_timerManager = timerManager;
 	}
 	
-	void addChild(IWidget widget)
+	void addChild(Widget widget)
 	{
-		widget.userSize = _guiRenderer.renderer.windowSize;
+		widget.setProperty!"userSize"(_guiRenderer.renderer.windowSize);
 		_rootWidgets ~= widget;
 	}
 	
@@ -60,9 +60,9 @@ public:
 //|                                Event handling                                 |
 //+-------------------------------------------------------------------------------+
 
-	static bool containsPointer(Event event, IWidget widget)
+	static bool containsPointer(Event event, Widget widget)
 	{
-		return widget.staticRect.contains((cast(PointerEvent)event).pointerPosition);
+		return widget.getPropertyAs!("staticRect", Rect).contains((cast(PointerEvent)event).pointerPosition);
 	}
 
 	void handleEvent(Event event)
@@ -240,30 +240,30 @@ public:
 	{
 		foreach(widget; _rootWidgets)
 		{
-			widget.userSize = newSize;
+			widget.setProperty!"userSize"(newSize);
 		}
 	}
 	
 	/// Used to get last clicked widget.
-	IWidget lastClickedWidget() @property @safe
+	Widget lastClickedWidget() @property @safe
 	{
 		return _lastClickedWidget;
 	}
 
 	/// Used to set last clicked widget.
-	void lastClickedWidget(IWidget widget) @property @safe
+	void lastClickedWidget(Widget widget) @property @safe
 	{
 		_lastClickedWidget = widget;
 	}
 
 	/// Used to get current hovered widget.
-	IWidget hoveredWidget() @property @safe
+	Widget hoveredWidget() @property @safe
 	{
 		return _hoveredWidget;
 	}
 
 	/// Used to set current hovered widget.
-	void hoveredWidget(IWidget widget) @property @trusted
+	void hoveredWidget(Widget widget) @property @trusted
 	{
 		if (_hoveredWidget !is widget)
 		{
@@ -284,37 +284,37 @@ public:
 	}
 
 	/// Used to get current focused input owner widget
-	IWidget inputOwnerWidget() @property @safe pure
+	Widget inputOwnerWidget() @property @safe pure
 	{
 		return _inputOwnerWidget;
 	}
 
 	/// Used to set current focused input owner widget
-	void inputOwnerWidget(IWidget widget) @property @trusted
+	void inputOwnerWidget(Widget widget) @property @trusted
 	{
 		_inputOwnerWidget = widget;
 	}
 	
 	/// Used to get current focused input owner widget
-	IWidget pressedWidget() @property @safe pure
+	Widget pressedWidget() @property @safe pure
 	{
 		return _pressedWidget;
 	}
 
 	/// Used to set current focused input owner widget
-	void pressedWidget(IWidget widget) @property @trusted
+	void pressedWidget(Widget widget) @property @trusted
 	{
 		_pressedWidget = widget;
 	}
 
 	/// Used to get current focused widget
-	IWidget focusedWidget() @property @safe pure
+	Widget focusedWidget() @property @safe pure
 	{
 		return _focusedWidget;
 	}
 
 	/// Used to set current focused widget
-	void focusedWidget(IWidget widget) @property
+	void focusedWidget(Widget widget) @property
 	{
 		if (_focusedWidget !is widget)
 		{
@@ -395,31 +395,31 @@ public:
 
 	/// Current input owner If set, this widget will receive all pointer moved events.
 	/// See_Also: inputOwnerWidget
-	IWidget		_inputOwnerWidget;
+	Widget		_inputOwnerWidget;
 
 	/// Currently dragging widget. Will receive onDrag events.
-	IWidget		_draggingWidget;
+	Widget		_draggingWidget;
 
 	/// Last clicked widget. Used for double-click checking.
 	/// See_Also: lastClickedWidget
-	IWidget		_lastClickedWidget;
+	Widget		_lastClickedWidget;
 	
-	IWidget		_pressedWidget;
+	Widget		_pressedWidget;
 
 	/// Hovered widget. Widget over which pointer is located.
 	/// See_Also: hoveredWidget
-	IWidget		_hoveredWidget;
+	Widget		_hoveredWidget;
 
 	/// Focused widget.
 	/// 
 	/// Will receive all key events if input is not grabbed by other widget.
-	IWidget		_focusedWidget;
+	Widget		_focusedWidget;
 
 	/// Stores checked radio button for each radio group.
 	/// See_Also: setCheckedForGroup
 	//RadioButton[uint] _checkGroups;
 
-	IWidget[] _rootWidgets;
+	Widget[] _rootWidgets;
 
 	/// This will be called when widget sets clipboard string.
 	void delegate(dstring newClipboardString) _setClipboardStringCallback;

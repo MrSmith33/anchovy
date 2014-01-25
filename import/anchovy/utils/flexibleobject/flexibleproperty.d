@@ -50,9 +50,14 @@ abstract class IProperty
 // Simple storage property
 class ValueProperty : IProperty
 {
-	this(Variant value)
+	this(Variant value = Variant(null))
 	{
 		_value = value;
+	}
+
+	this(T)(T value)
+	{
+		_value = Variant(value);
 	}
 
 	override Variant value() @property

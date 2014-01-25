@@ -30,117 +30,140 @@ module anchovy.gui.widget;
 
 import std.traits;
 import anchovy.gui.all;
-public import anchovy.gui.interfaces.iwidget;
-import anchovy.utils.flexibleobject;
+public import anchovy.utils.flexibleobject;
 
 enum defaultAnchor = Sides.LEFT | Sides.TOP;
 
-///
-abstract class Widget : IWidget
+/// Used to specify Widget.anchor.
+enum Sides
+{
+	LEFT = 1,
+	RIGHT = 2,
+	TOP = 4,
+	BOTTOM = 8,
+}
+
+static this()
+{
+	widgetFactories["widget"] = delegate Widget(Variant[]){return new Widget; };
+}
+
+/// Container for common properties
+class Widget : FlexibleObject
 {
 public:
 
 	this()
 	{
-		addEventHandler(&handleDraw);
-		addEventHandler(&handleUpdatePosition);
-	}
+		properties["type"] = new ValueProperty("widget");
+		properties["anchor"] = anchor = new ValueProperty(defaultAnchor);
+		properties["children"] = children = new ValueProperty(cast(Widget[])[]);
+		properties["parent"] = parent = new ValueProperty(null);
 
-//+-------------------------------------------------------------------------------+
-//|                                   Drawing                                     |
-//+-------------------------------------------------------------------------------+
+		properties["position"] = position = new ValueProperty(ivec2(0,0));
+		properties["staticPosition"] = staticPosition = new ValueProperty(ivec2(0,0));
 
-	bool handleDraw(DrawEvent event)
-	in
-	{
-		assert(event.guiRenderer !is null);
-	}
-	body
-	{
-		if (_isBackgroundVisible && event.sinking)
-			doDraw(event.guiRenderer);
+		properties["minSize"] = minSize = new ValueProperty(ivec2(0,0));
+		properties["userSize"] = userSize = new ValueProperty(ivec2(0,0));
+		properties["prefferedSize"] = prefferedSize = new ValueProperty(ivec2(0,0));
+		properties["staticRect"] = staticRect = new ValueProperty(Rect(0,0,0,0));
 
-		return true;
-	}
+		properties["skin"] = skin = new ValueProperty("");
+		properties["state"] = state = new ValueProperty("normal");
+		properties["style"] = style = new ValueProperty("");
 
-	void doDraw(IGuiRenderer renderer) 
-	{
-		renderer.drawControlBack(this, staticRect);
-	}
+		properties["isFocusable"] = isFocusable = new ValueProperty(false);
+		properties["isEnabled"] = isEnabled = new ValueProperty(true);
+		properties["isHovered"] = isHovered = new ValueProperty(false);
 
-//+-------------------------------------------------------------------------------+
-//|                                Event handling                                 |
-//+-------------------------------------------------------------------------------+
-
-	void updateStaticPosition()
-	{
-		scope event = new UpdatePositionEvent();
-		event.sinking = true;
-		handleEvent(new UpdatePositionEvent);
-	}
-	
-	void updateStaticPositionChildren()
-	{
-		scope event = new UpdatePositionEvent();
-		event.sinking = true;
-		recursiveHandleEvent(new UpdatePositionEvent);
-	}
-
-	void handleResize() @trusted
-	{
-	}
-	
-	bool handleUpdatePosition(UpdatePositionEvent event)
-	{
-		if (event.sinking)
-		{
-			if (_parent is null)
+		auto onParentChanged = (FlexibleObject obj, Variant old, Variant* newParent){
+			writeln("Parent changed to ", (*newParent).get!Widget["name"], " for ", obj["name"]);
+			if(auto parent = newParent.peek!Widget)
 			{
-				_staticPosition = _position;
+				obj["staticPosition"] = (*parent).getPropertyAs!("staticPosition", ivec2) + obj.getPropertyAs!("position", ivec2);
 			}
-			else
+		};
+
+		auto onPositionChanged = (FlexibleObject obj, Variant old, Variant* newPosition){
+			writeln("Position changed to ", (*newPosition).get!ivec2);
+			if (auto parent = obj.peekPropertyAs!("parent", Widget))
 			{
-				_staticPosition = _position + _parent.staticPosition;
+				obj["staticPosition"] = (*parent).getPropertyAs!("staticPosition", ivec2) + (*newPosition).get!ivec2;
 			}
-			
-		}
-		return false;
+		};
+
+		property("parent").valueChanged.connect(onParentChanged);
+		property("position").valueChanged.connect(onPositionChanged);
+
+		auto onStaticPositionChanged = (FlexibleObject obj, Variant old, Variant* newStaticPosition){
+			obj["staticRect"] = Rect((*newStaticPosition).get!ivec2, obj.getPropertyAs!("userSize", ivec2));
+			writeln(obj["staticRect"]);
+		};
+
+		auto onUserSizeChanged = (FlexibleObject obj, Variant old, Variant* newUserSize){
+			obj["staticRect"] = Rect(obj.getPropertyAs!("staticPosition", ivec2), (*newUserSize).get!ivec2);
+			writeln(obj["staticRect"]);
+		};
+		
+		property("staticPosition").valueChanged.connect(onStaticPositionChanged);
+		property("userSize").valueChanged.connect(onUserSizeChanged);
 	}
+
+
+	ValueProperty anchor;
+
+	ValueProperty children;
+	ValueProperty parent;
+
+	ValueProperty position;
+	ValueProperty staticPosition;
+
+	ValueProperty minSize;
+	ValueProperty userSize;
+	ValueProperty prefferedSize;
+	ValueProperty staticRect;
+
+	ValueProperty skin;
+	ValueProperty state;
+	ValueProperty style;
+
+	ValueProperty isFocusable;
+	ValueProperty isEnabled;
+	ValueProperty isHovered;
 	
 	void addEventHandler(T)(T handler)
 	{
 		static assert(isDelegate!T, "handler must be a delegate, not " ~ T.stringof);
-		alias ParameterTypeTuple!T[0] eventType;
+		alias widgetType = ParameterTypeTuple!T[0];
+		alias eventType = ParameterTypeTuple!T[1];
 		static assert(!is(eventType == Event), "handler's parameter must not be Event class but inherited one");
 		static assert(is(eventType : Event), "handler's parameter must be inherited from Event class");
-		static assert(ParameterTypeTuple!T.length == 1, "handler must have only one parameter, Event's descendant");
-		_eventHandlers[typeid(eventType)] ~= cast(bool delegate(Event))handler;
+		static assert(is(widgetType : Widget), "handler must accept Widget as first parameter");
+		static assert(ParameterTypeTuple!T.length == 2, "handler must have only two parameters, Widget's and Event's descendant");
+		_eventHandlers[typeid(eventType)] ~= cast(bool delegate(Widget, Event))handler;
 	}
 
 	/// Returns true if event was handled
 	/// This handler will be called by Gui class twice, before and after visiting its children.
 	/// In first case sinking flag will be true;
-	override bool handleEvent(Event e)
+	bool handleEvent(Event e)
 	{
 		bool result = false;
 		if (auto handlers = typeid(e) in _eventHandlers)
 		{
 			foreach(h; *handlers)
-				result |= h(e);
+				result |= h(this, e);
 		}
 		return result;
 	}
 
-	override bool recursiveHandleEvent(Event e)
+	bool recursiveHandleEvent(Event e)
 	{
 		e.sinking = true;
-		if (!handleEvent(e))
-		{
-			return false;
-		}
+		handleEvent(e);
 
 		bool handled = false;
-		foreach (widget; children) {
+		foreach (widget; this.getPropertyAs!("children", Widget[])) {
 			e.sinking = true;
 			handled |= widget.recursiveHandleEvent(e);
 		}
@@ -148,266 +171,14 @@ public:
 		e.bubbling = true;
 		return handleEvent(e) || handled;
 	}
+
 	
-//+-------------------------------------------------------------------------------+
-//|                                  Properties                                   |
-//+-------------------------------------------------------------------------------+
-
-	override void addChild(IWidget child)
-	{
-		assert(false);
-	}
-
-	@property
-	{
-		/** 
-		* Anchored sides of the widget.
-		* Can be constructed by ORing Anchor values.
-		* Examples:
-		* ---
-		* widget.anchor = Anchor.LEFT | Anchor.RIGHT;
-		*  ---
-		* See_Also:
-		* 	_anchor
-		*/
-		override uint anchor()
-		{
-			return _anchor;
-		}
-
-		/// ditto
-		override void anchor(uint newAnchor)
-		{
-			_anchor = newAnchor;
-		}
-
-		// Used internally by gui renderer.
-		override ref TexRectArray[string] geometry()
-		{
-			return _geometry;
-		}
-
-		ivec2 minSize()
-		{
-			return _minSize;
-		}
-		
-		override IWidget[] children()
-		{
-			return null;
-		}
-
-		override void parent(IWidget newParent)
-		{
-			if (newParent is null) return;
-			_parent = newParent;
-			updateStaticPosition();
-			
-			if (_skin is null && _isInheritsSkin)
-			{
-				skin = _parent.skin;
-			}
-		}
-
-		override IWidget parent()
-		{
-			return _parent;
-		}
-
-		override void position(ivec2 newPosition)
-		{
-			_position = newPosition;
-			updateStaticPosition();
-		}
-
-		override ivec2 position()
-		{
-			return _position;
-		}
-		
-		override ivec2 staticPosition()
-		{
-			return _staticPosition;
-		}
-		
-		override void userSize(ivec2 newSize)
-		{
-			_userSize = newSize;
-
-			discardGeometry();//TODO: add check if size is the same
-			handleResize();
-		}
-
-		override ivec2 userSize()
-		{
-			return _userSize;
-		}
-		
-		override ivec2 prefferedSize()
-		{
-			return max(_userSize, _minSize);
-		}
-
-		override void skin(GuiSkin newSkin)
-		{
-			if (newSkin is null || newSkin == _skin) return;
-			_skin = newSkin;
-			
-			if (auto style = _skin[_style])
-			{
-				_minSize = style["normal"].minSize;
-			}
-			discardGeometry(); //TODO: add check if size is the same
-			skinChanged();
-		}
-
-		override GuiSkin skin()
-		{
-			return _skin;
-		}
-		
-		bool isInheritsSkin()
-		{
-			return _isInheritsSkin;
-		}
-
-		void isInheritsSkin(bool inherits)
-		{
-			if (_isInheritsSkin == inherits) return;
-
-			_isInheritsSkin = inherits;
-
-			if (_isInheritsSkin && parent !is null)
-			{
-				GuiSkin parentSkin = parent.skin;
-
-				if (_skin != parentSkin)
-					skin = parentSkin;
-			}
-		}
-
-		override string state()
-		{
-			return _state;
-		}
-
-		override void state(string newState)
-		{
-			_state = newState;
-			if (_skin is null || _skin[_style] is null) return;
-			_minSize = _skin[_style][_state].minSize;
-		}
-
-		override string style()
-		{
-			return _style;
-		}
-
-		override void style(string newStyle)
-		{
-			_style = newStyle;
-		}
-
-		override bool isFocusable()
-		{
-			return _isFocusable;
-		}
-
-		override void isFocusable(bool newIsFocusable)
-		{
-			_isFocusable = newIsFocusable;
-		}
-	}
-
-	protected Font getStyleFont()
-	{
-		//writeln("skin: ", skin);
-		//writeln("styleName: ", styleName);
-		//writeln("skin[styleName]: ", skin[styleName]);
-		if (_skin[_style] is null) return null;
-		string font = _skin[_style].fontName;
-		//writeln("fontName: ", font);
-		Font* fontPtr = font in _skin.fonts;
-		//writeln("fontPtr: ", fontPtr);
-		if (fontPtr is null) return null;
-		//writeln("font found");
-		return *fontPtr;
-	}
-
-	void handleParentSkinChange()
-	{
-		if (_isInheritsSkin)
-		{
-			skin = parent.skin;
-		}
-	}
-
-	protected void skinChanged()
-	{
-	}
-
-protected:
-
-	void discardGeometry() @safe
-	{
-		_geometry = null;
-	}
-
-	/** Stores sides to which this widget is anchored.
-	See_Also:
-	 	anchor
-	*/
-	uint _anchor = defaultAnchor;
-
-	/// GuiRenderer can save here widgets geometry.
-	/// This geometry can be shared between few widgets.
-	TexRectArray[string] _geometry;
-
-	/// Widget name. Mainly used when assembling anchovy.gui.
-	string _name;
-
-	/// Parent of this widget. Can be null if have no parent.
-	IWidget	_parent;
-
-	/// Position is relative to parent's position.
-	ivec2 _position;
-
-	/// Position is relative to window origin.
-	/// Calculated in calculateStaticRect
-	ivec2 _staticPosition;
-
-	/// Widget size specified when creating widget.
-	/// Used by layout manager to decide widgets preffered size. 
-	/// Currrently used as minimal size for frame.
-	ivec2 _userSize;
-
-	/// Minimal size of the widget, specified by skin;
-	ivec2 _minSize;
-	
-	///
-	bool _isFocusable = false;
-
-	/// 
-	bool _isEnabled = true;
-
-	/// True if widget inherits skin of parent.
-	bool _isInheritsSkin = true;
-
-	/// if true 
-	bool _isContentVisible = true;
-
-	/// 
-	bool _isBackgroundVisible = true;
-
-	/// Individual skin of the widget. Must be initialized as null if inherited from parent.
-	GuiSkin		_skin;
-
-	/// Current style state.
-	string		_state = "normal";
-
-	/// Style name in current skin.
-	string		_style;
-
 	/// Event handlers.
-	bool delegate(Event)[][TypeInfo] _eventHandlers;
+	bool delegate(Widget, Event)[][TypeInfo] _eventHandlers;
+}
+
+void addChild(Widget widget, Widget child)
+{
+	widget.setProperty!"children"(widget["children"] ~ child);
+	child.setProperty!"parent"(widget);
 }

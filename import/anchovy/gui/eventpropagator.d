@@ -40,12 +40,12 @@ struct EventPropagator
 	/// Widget chain that have handled event.
 	///
 	/// Actual event consumer is first, its parent second...
-	IWidget[] eventConsumerChain;
+	Widget[] eventConsumerChain;
 
 	/// does actual event propagation.
 	///
 	/// Returns: true if event was handled.
-	bool propagateEvent(alias fun, Event, IWidget)(Event event, IWidget widget)
+	bool propagateEvent(alias fun)(Event event, Widget widget)
 	{
 		bool widgetHandledEvent;
 		
@@ -63,7 +63,7 @@ struct EventPropagator
 
 			// Phase 2: event sinking into each widget's child.
 			bool anyChildHandledEvent = false;
-			foreach (ref child; widget.children)
+			foreach (ref child; widget.getPropertyAs!("children", Widget[]))
 			{
 				event.sinking = true;
 				anyChildHandledEvent |= propagateEvent!(fun)(event, child);

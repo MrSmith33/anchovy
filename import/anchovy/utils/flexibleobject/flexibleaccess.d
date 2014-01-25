@@ -34,6 +34,7 @@ DEALINGS IN THE SOFTWARE.
 module anchovy.utils.flexibleobject.flexibleaccess;
 
 import std.traits : hasMember;
+import std.variant : Variant;
 import anchovy.utils.flexibleobject.flexibleobject : FlexibleObject;
 
 
@@ -65,7 +66,7 @@ static Variant getProperty(string propname, FlexibleObjectType : FlexibleObject)
 //
 //
 //
-static T getPropertyAs(T)(FlexibleObject w, string propname)
+static T getPropertyAs(T)(string propname, FlexibleObject w)
 {
 	return w[propname].get!T;
 }
@@ -75,11 +76,31 @@ static T getPropertyAs(string propname, T, FlexibleObjectType : FlexibleObject)(
 {
 	static if(hasStaticProperty!(FlexibleObjectType, propname))
 	{
-		return mixin("w."~propname~".get!T");
+		return mixin("w."~propname~".value.get!T");
 	}
 	else
 	{
 		return w[propname].get!T;
+	}
+}
+
+
+// Peek property value
+static T* peekPropertyAs(T)(string propname, FlexibleObject w)
+{
+	return w[propname].peek!T;
+}
+
+// ditto
+static T* peekPropertyAs(string propname, T, FlexibleObjectType : FlexibleObject)(FlexibleObjectType w)
+{
+	static if(hasStaticProperty!(FlexibleObjectType, propname))
+	{
+		return mixin("w."~propname~".value.peek!T");
+	}
+	else
+	{
+		return w[propname].peek!T;
 	}
 }
 
@@ -96,7 +117,7 @@ static T coercePropertyAs(string propname, T, FlexibleObjectType : FlexibleObjec
 {
 	static if(hasStaticProperty!(FlexibleObjectType, propname))
 	{
-		return mixin("w."~propname~".coerce!T");
+		return mixin("w."~propname~".value.coerce!T");
 	}
 	else
 	{
@@ -117,7 +138,24 @@ static void setProperty(string propname, ValueType, FlexibleObjectType : Flexibl
 {
 	static if(hasStaticProperty!(FlexibleObjectType, propname))
 	{
-		mixin("w."~propname~" = value");
+		auto property = mixin("w."~propname);
+		if (property.value != value)
+		{
+			auto oldValue = property.value;
+
+			static if (is(ValueType:Variant))
+			{
+				Variant var = value;
+				property.valueChanged.emit(w, oldValue, &var);
+				property.value = var;
+			}
+			else
+			{
+				Variant var = Variant(value);
+				property.valueChanged.emit(w, oldValue, &var);
+				property.value = var;
+			}
+		}
 	}
 	else
 	{

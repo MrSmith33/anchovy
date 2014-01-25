@@ -35,7 +35,7 @@ public import anchovy.gui.interfaces.ilayout;
 class DockingLayout : ILayout
 {
 	/// Called by container to update its children positions and sizes.
-	override void layoutContainer(in ivec2 clientAreaSize, IWidget[] children)
+	override void layoutContainer(in ivec2 clientAreaSize, Widget[] children)
 	{
 		
 	}
@@ -44,7 +44,7 @@ class DockingLayout : ILayout
 	/// 
 	/// Container can choose which widgets must be layouted by passing only them.
 	/// This can be used if container has several client areas.
-	override void onContainerResized(ivec2 oldSize, ivec2 newSize, IWidget[] children)
+	override void onContainerResized(ivec2 oldSize, ivec2 newSize, Widget[] children)
 	{
 		layoutContainer(newSize, children);
 	}

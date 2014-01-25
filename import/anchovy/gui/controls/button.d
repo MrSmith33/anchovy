@@ -29,100 +29,82 @@ DEALINGS IN THE SOFTWARE.
 module anchovy.gui.controls.button;
 
 import anchovy.gui.all;
+import anchovy.gui.interfaces.iwidgetbehavior;
+import std.stdio;
 
 static this()
 {
-	widgetFactories["button"] = delegate IWidget(Variant[] properties){return new Button;};
+	widgetBehaviors["button"] = new ButtonBehavior;
 }
 
-class Button : Widget
+class ButtonBehavior : IWidgetBehavior
 {
 public:
-	this()
+
+	override void attachTo(Widget widget)
 	{
-		super();
-		addEventHandler(&pointerPressed);
-		addEventHandler(&pointerReleased);
-		addEventHandler(&pointerMoved);
-		addEventHandler(&pointerEntered);
-		addEventHandler(&pointerLeaved);
-		
-		_isFocusable = true;
-		
-		style = "button";
-		_textLine = new TextLine("", null);
-	}
-	
-	void caption(dstring newCaption) @property
-	{
-		_textLine.text = newCaption;
+		widget.addEventHandler(&pointerPressed);
+		widget.addEventHandler(&pointerReleased);
+		widget.addEventHandler(&pointerMoved);
+		widget.addEventHandler(&pointerEntered);
+		widget.addEventHandler(&pointerLeaved);
+		widget.addEventHandler(&handleDraw);
+
+		widget.setProperty!"isFocusable"(true);
+		widget.setProperty!"style"("button");
 	}
 
-	override void doDraw(IGuiRenderer renderer) 
+	bool handleDraw(Widget widget, DrawEvent event)
 	{
-		renderer.drawControlBack(this, staticRect);
-		assert(_textLine);
-		renderer.pushClientArea(staticRect);
-
-		int offx, offy;
-		if (state == "pressed")
-		{
-			offx = 1;
-			offy = 1;
-		}
-		renderer.drawTextLine(_textLine, staticRect, AlignmentType.CENTER_CENTER);
-		renderer.popClientArea;
+		event.guiRenderer.drawControlBack(widget, widget["staticRect"].get!Rect);
+		return true;
 	}
 
-	bool pointerPressed(PointerPressEvent event)
+	bool pointerPressed(Widget widget, PointerPressEvent event)
 	{
 		if (event.button == PointerButton.PB_LEFT)
 		{
-			state = "pressed";
+			widget.setProperty!"state"("pressed");
+			writeln("pressed");
 		}
 		return true;
 	}
 	
-	bool pointerReleased(PointerReleaseEvent event)
+	bool pointerReleased(Widget widget, PointerReleaseEvent event)
 	{
 		if (event.button == PointerButton.PB_LEFT)
 		{
-			state = "hover";
+			widget.setProperty!"state"("hover");
+			writeln("hovered");
 		}
 		return true;
 	}
 
-	bool pointerMoved(PointerMoveEvent event)
+	bool pointerMoved(Widget widget, PointerMoveEvent event)
 	{
 		return true;
 	}
 
-	bool pointerEntered(PointerEnterEvent event)
+	bool pointerEntered(Widget widget, PointerEnterEvent event)
 	{
 		if (event.gui.pressedWidget is this)
 		{
-			state = "pressed";
+			widget.setProperty!"state"("pressed");
+			writeln("pressed");
 		}
 		else
 		{
-			state = "hover";
+			widget.setProperty!"state"("hover");
+			writeln("hovered");
 		}
 		return true;
 	}
 	
-	bool pointerLeaved(PointerLeaveEvent event)
+	bool pointerLeaved(Widget widget, PointerLeaveEvent event)
 	{
-		state = "normal";
+		widget.setProperty!"state"("normal");
+		writeln("normal");
 		return true;
 	}
-
-	override protected void skinChanged()
-	{
-		writeln("button skin changed ", _skin, " ", _style);
-		_textLine.font = getStyleFont();
-	}
-	
-	protected:
-	TextLine _textLine;
 }
 

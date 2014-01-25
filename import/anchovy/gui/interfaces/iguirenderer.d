@@ -75,7 +75,7 @@ interface IGuiRenderer
 {
 	uint getFontTexture();
 	ref FontManager fontManager() @property;
-	void drawControlBack(IWidget widget, Rect staticRect);
+	void drawControlBack(Widget widget, Rect staticRect);
 
 	/// draws text line with alignment specified relative to point
 	void drawTextLine(ref TextLine line, ivec2 position, in AlignmentType alignment);

@@ -35,11 +35,11 @@ import anchovy.gui.all;
 interface ILayout
 {
 	/// Called by container to update its children positions and sizes.
-	void layoutContainer(in ivec2 clientAreaSize, IWidget[] children);
+	void layoutContainer(in ivec2 clientAreaSize, Widget[] children);
 
 	/// Called by container when its size was changed.
 	/// 
 	/// Container can choose which widgets must be layouted by passing only them.
 	/// This can be used if container has several client areas.
-	void onContainerResized(ivec2 oldSize, ivec2 newSize, IWidget[] children);
+	void onContainerResized(ivec2 oldSize, ivec2 newSize, Widget[] children);
 }

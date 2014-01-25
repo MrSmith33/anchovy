@@ -53,7 +53,10 @@ import anchovy.gui.timermanager;
 
 import anchovy.utils.string : ZToString;
 
-pragma(lib, "dl");
+version(linux)
+{
+	pragma(lib, "dl");
+}
 
 class GuiTestWindow : GlfwWindow
 {
@@ -125,42 +128,29 @@ renderer = new Ogl3Renderer(this);
 		gui = new Gui(guiRenderer, timerManager, graySkin);
 		gui.setClipboardStringCallback = (dstring newStr) => setClipboard(to!string(newStr));
 		gui.getClipboardStringCallback = delegate dstring(){return to!dstring(getClipboard());};
-		//setClipboard("abc");
-		auto mainLayer = new WidgetContainer();
-		mainLayer.skin = graySkin;
+
+		auto mainLayer = new Widget();
+		mainLayer["name"] = "mainLayer";
 		gui.addChild(mainLayer);
 
-		auto button1 = cast(Button)createWidget("button");
-		//button1.skin = graySkin;
-		button1.userSize = ivec2(50, 50);
-		button1.position = ivec2(20, 20);
-		button1.caption = "Click me!";
-		button1.addEventHandler(delegate bool(PointerClickEvent event){button1.caption = to!dstring(event.pointerPosition); return true;});
-		button1.addEventHandler(delegate bool(PointerLeaveEvent event){button1.caption = "Click me!";return true;});
+		auto button1 = createWidget("button");
+		button1["name"] = "button1";
+		button1.setProperty!"userSize"(ivec2(50, 50));
+		button1.setProperty!"position"(ivec2(20, 20));
+		button1.setProperty!"caption"("Click me!");
+		button1.addEventHandler(delegate bool(Widget widget, PointerClickEvent event){
+			widget["caption"] = to!dstring(event.pointerPosition);
+			writeln("Clicked at ", event.pointerPosition);
+			return true;
+		});
+		button1.addEventHandler(delegate bool(Widget widget, PointerLeaveEvent event){widget["caption"] = "Click me!";return true;});
 		mainLayer.addChild(button1);
-		
-		Label l = new Label();
-		l.skin = graySkin;
-		l.position = ivec2(20, 100);
-		l.caption = "Click me";
-		mainLayer.addChild(l);
-
-		Edit edit1 = new Edit(); 
-		edit1.userSize = ivec2(120, 24);
-		edit1.position = ivec2(20, 120);
-		edit1.skin = graySkin;
-		edit1.text = "edit me!";
-		edit1.anchor = Sides.LEFT| Sides.TOP | Sides.RIGHT;
-		mainLayer.addChild(edit1);
 
 		//--------------------------------------------------------------
 
 		renderer.enableAlphaBlending();
 		glEnable(GL_SCISSOR_TEST);
 		guiRenderer.fontManager.getFontAtlasTex;
-
-		//Frame bigFrame = new Frame(Rect(500, 20, 1000, 1000));
-		//mainLayer.addWidget(bigFrame);
 	}
 
 	void draw()
@@ -170,9 +160,7 @@ renderer = new Ogl3Renderer(this);
 		renderer.fillRect(0, 0, 50, 50);
 		renderer.setColor(Color(255, 255, 255));
 		renderer.drawTexRect(width - 255, height - 255, 256, 256, 0, 0, 256, 256, guiRenderer.getFontTexture);
-		/*renderer.setColor(Color4f(1 ,0.5,0,0.5));
-		renderer.drawRect(50, 0, 100, 50);
-		renderer.drawTexRect(50, 100, 32, 32, 0, 0, 32, 32, testTexture);*/
+
 		auto event = new DrawEvent(guiRenderer);
 		event.gui = gui;
 		gui.handleEvent(event);
@@ -292,7 +280,7 @@ renderer = new Ogl3Renderer(this);
 
 	TimerManager timerManager;
 
-	Label fpsLabel;
+	Widget fpsLabel;
 
 	uint testTexture;
 

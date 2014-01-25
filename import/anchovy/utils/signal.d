@@ -56,7 +56,6 @@ struct Signal(Args...)
 		{
 			slots ~= toDelegate(slot);
 		}
-
 	}
 
 	void disconnect(Slot)(Slot slot)
