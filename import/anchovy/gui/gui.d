@@ -60,9 +60,9 @@ public:
 //|                                Event handling                                 |
 //+-------------------------------------------------------------------------------+
 
-	static bool containsPointer(Event event, Widget widget)
+	static bool containsPointer(Widget widget, ivec2 pointerPosition)
 	{
-		return widget.getPropertyAs!("staticRect", Rect).contains((cast(PointerEvent)event).pointerPosition);
+		return widget.getPropertyAs!("staticRect", Rect).contains(pointerPosition);
 	}
 
 	void handleEvent(Event event)
@@ -126,27 +126,27 @@ public:
 	/// Must be called by user application.
 	bool pointerPressed(ivec2 pointerPosition, PointerButton button)
 	{	
-		EventPropagator propagator;
 		auto event = new PointerPressEvent(pointerPosition, button);
 		event.gui = this;
 		
 		foreach_reverse(rootWidget; _rootWidgets)
 		{
-			if (propagator.propagateEvent!(containsPointer)(event, rootWidget))
+			Widget[] widgetChain = buildPathToLeaf!(containsPointer)(rootWidget, pointerPosition);
+
+			Widget[] eventConsumerChain = propagateEventSinkBubble(widgetChain, event);
+
+			if (eventConsumerChain.length > 0)
+			{
+				if (eventConsumerChain[$-1].isFocusable)
+					focusedWidget = eventConsumerChain[$-1];
+				
+				pressedWidget = eventConsumerChain[$-1];
+				
 				break;
+			}
 		}
-		
-		if (propagator.eventConsumerChain.length > 0)
-		{
-			if (propagator.eventConsumerChain[0].isFocusable)
-				focusedWidget = propagator.eventConsumerChain[0];
-			
-			pressedWidget = propagator.eventConsumerChain[0];
-		}
-		else
-		{
-			focusedWidget = null;
-		}
+
+		focusedWidget = null;
 
 		return false;
 	}
@@ -156,32 +156,27 @@ public:
 	/// Must be called by user application.
 	bool pointerReleased(ivec2 pointerPosition, PointerButton button)
 	{
-		EventPropagator propagator;
 		scope event = new PointerReleaseEvent(pointerPosition, button);
 		event.gui = this;
 		
 		foreach_reverse(rootWidget; _rootWidgets)
 		{
-			if (propagator.propagateEvent!(containsPointer)(event, rootWidget))
+			Widget[] widgetChain = buildPathToLeaf!(containsPointer)(rootWidget, pointerPosition);
+
+			Widget[] eventConsumerChain = propagateEventSinkBubble(widgetChain, event);
+
+			if (eventConsumerChain.length > 0)
+			{
+				if (pressedWidget is eventConsumerChain[$-1])
+				{
+					scope clickEvent = new PointerClickEvent(pointerPosition, button);
+					clickEvent.gui = this;
+
+					pressedWidget.handleEvent(clickEvent);
+
+					lastClickedWidget = pressedWidget;
+				}
 				break;
-		}
-		
-		if (propagator.eventConsumerChain.length > 0 &&
-			pressedWidget is propagator.eventConsumerChain[0])
-		{
-			if (lastClickedWidget !is null)
-			{
-				scope doubleClickEvent = new PointerClickEvent(pointerPosition, button);
-				doubleClickEvent.gui = this;
-				pressedWidget.handleEvent(doubleClickEvent);
-				lastClickedWidget = null;
-			}
-			else
-			{
-				scope clickEvent = new PointerClickEvent(pointerPosition, button);
-				clickEvent.gui = this;
-				pressedWidget.handleEvent(clickEvent);
-				lastClickedWidget = pressedWidget;
 			}
 		}
 
@@ -199,35 +194,36 @@ public:
 		auto event = new PointerMoveEvent(newPointerPosition, delta);
 		event.gui = this;
 		
-		EventPropagator propagator;
-		
 		if (pressedWidget !is null)
 		{
-			bool hits = containsPointer(event, pressedWidget);
 			bool handled = pressedWidget.handleEvent(event);
+
 			if (handled)
 			{
-				propagator.eventConsumerChain ~= pressedWidget;
+				hoveredWidget = pressedWidget;
+
+				return false;
 			}
 		}
 		else
 		{	
 			foreach_reverse(rootWidget; _rootWidgets)
 			{
-				if (propagator.propagateEvent!(containsPointer)(event, rootWidget))
-					break;
+				Widget[] widgetChain = buildPathToLeaf!(containsPointer)(rootWidget, newPointerPosition);
+
+				Widget[] eventConsumerChain = propagateEventSinkBubble(widgetChain, event);
+
+				if (eventConsumerChain.length > 0)
+				{
+					hoveredWidget = eventConsumerChain[$-1];
+
+					return false;
+				}
 			}
 		}
-		
-		if (propagator.eventConsumerChain.length > 0)
-		{
-			hoveredWidget = propagator.eventConsumerChain[0];
-		}
-		else
-		{
-			hoveredWidget = null;
-		}
 
+		hoveredWidget = null;
+		
 		return false;
 	}
 

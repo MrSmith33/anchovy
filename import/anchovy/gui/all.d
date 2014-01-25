@@ -45,7 +45,7 @@ public
 	import anchovy.gui.gui;
 
 	import anchovy.gui.events,
-		anchovy.gui.eventpropagator,
+		anchovy.gui.eventpropagators,
 		anchovy.gui.guiskin,
 		anchovy.gui.widget,
 		anchovy.gui.widgetfactory,
