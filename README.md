@@ -21,19 +21,15 @@ API can change with every version.
 * |-util
 * |-opengl3
 * |-glfw3
-* |-sdl2 // currenntly optional.
+* |-sdl2 // currently optional.
 * |-freeimage
 * |-freetype
 
 ##Contributing:
 Any improvements, bug reports, feature-requests are appreciated.
 
-##TODO
-todo list is located at [trello](https://trello.com/board/anchovy/51c5d5e99f73cd373e00105a)
-
-##Building
-###Important: build file is currently not finished!!!
-###Windows
+##Building (Now builds and works in linux too)
+###Windows and linux
 Go to deps folder.
 Execute there:
 
@@ -44,14 +40,12 @@ Compile __Derelict3__ using its __build/build.d__ script
 
 and __dlib__ using
 
-	dub build
+	dub build --arch=x86
+x86_64 is not tested and probably won't work.
 
 Build __build.d__ file located in root folder and run it. All .lib files will be located in __/lib__ folder. Gui demo will be located in __bin__ folder.
 
 In order to run compiled example you will need to download resourses from [latest release](https://github.com/MrSmith33/anchovy/releases).
 
-###Linux and MacOS
-
-Building on these platforms was not tested but in theory will work.
-
-You will need to receive or build glfw library.
+###Linux
+You will need to install __glfw3__ library.
