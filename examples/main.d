@@ -125,13 +125,13 @@ renderer = new Ogl3Renderer(this);
 
 		//--------------------------------------------------------------
 
-		gui = new Gui(guiRenderer, timerManager, graySkin);
-		gui.setClipboardStringCallback = (dstring newStr) => setClipboard(to!string(newStr));
-		gui.getClipboardStringCallback = delegate dstring(){return to!dstring(getClipboard());};
+		context = new GuiContext(guiRenderer, timerManager, graySkin);
+		context.setClipboardStringCallback = (dstring newStr) => setClipboard(to!string(newStr));
+		context.getClipboardStringCallback = delegate dstring(){return to!dstring(getClipboard());};
 
 		auto mainLayer = new Widget();
 		mainLayer["name"] = "mainLayer";
-		gui.addChild(mainLayer);
+		context.addRoot(mainLayer);
 
 		auto button1 = createWidget("button");
 		button1["name"] = "button1";
@@ -162,8 +162,8 @@ renderer = new Ogl3Renderer(this);
 		renderer.drawTexRect(width - 255, height - 255, 256, 256, 0, 0, 256, 256, guiRenderer.getFontTexture);
 
 		auto event = new DrawEvent(guiRenderer);
-		event.gui = gui;
-		gui.handleEvent(event);
+		event.context = context;
+		context.handleEvent(event);
 
 		glUseProgram(0);
 	}
@@ -181,7 +181,7 @@ renderer = new Ogl3Renderer(this);
 			//writeln("windowResized");
 			//fpsLabel.position = ivec2(newWidth - 200, 10);
 			reshape(newWidth, newHeight);
-			gui.size = ivec2(newWidth, newHeight);
+			context.size = ivec2(newWidth, newHeight);
 		}
 		catch(Exception e)
 		{
@@ -192,7 +192,7 @@ renderer = new Ogl3Renderer(this);
 	{
 		try
 		{
-			gui.pointerPressed(getMousePosition, cast(PointerButton)mouseButton);
+			context.pointerPressed(getMousePosition, cast(PointerButton)mouseButton);
 		}
 		catch(Exception e)
 		{
@@ -203,7 +203,7 @@ renderer = new Ogl3Renderer(this);
 	{
 		try
 		{
-			gui.pointerReleased(getMousePosition, cast(PointerButton)mouseButton);
+			context.pointerReleased(getMousePosition, cast(PointerButton)mouseButton);
 		}
 		catch(Exception e)
 		{
@@ -217,7 +217,7 @@ renderer = new Ogl3Renderer(this);
 			ivec2 newPos = ivec2(newX, newY);
 			ivec2 deltaPos = newPos - pointerPosition;
 			pointerPosition = newPos;
-			gui.pointerMoved(newPos, deltaPos);
+			context.pointerMoved(newPos, deltaPos);
 		}
 		catch(Exception e)
 		{
@@ -245,7 +245,7 @@ renderer = new Ogl3Renderer(this);
 				running = false;
 				return;
 			}
-			gui.keyPressed(cast(KeyCode)keyCode, getCurrentKeyModifiers());
+			context.keyPressed(cast(KeyCode)keyCode, getCurrentKeyModifiers());
 		}
 		catch(Exception e)
 		{
@@ -256,7 +256,7 @@ renderer = new Ogl3Renderer(this);
 	{
 		try
 		{
-			gui.keyReleased(cast(KeyCode)keyCode, getCurrentKeyModifiers());
+			context.keyReleased(cast(KeyCode)keyCode, getCurrentKeyModifiers());
 		}
 		catch(Exception e)
 		{
@@ -267,14 +267,14 @@ renderer = new Ogl3Renderer(this);
 	{
 		try
 		{
-			gui.charEntered(unicode);
+			context.charEntered(unicode);
 		}
 		catch(Exception e)
 		{
 		}
 	}
 
-	Gui gui;
+	GuiContext context;
 	ivec2 pointerPosition;
 	GuiSkin graySkin;
 
@@ -295,7 +295,7 @@ void main(string[] args)
 {
 	GuiTestWindow window;
 		window = new GuiTestWindow();
-		window.init(512, 512, "GUI testing");
+		window.init(512, 512, "Gui testing");
 		window.run(args);
 	window.releaseWindow;
 }

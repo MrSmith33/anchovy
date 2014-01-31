@@ -75,6 +75,7 @@ public:
 		properties["isFocusable"] = isFocusable = new ValueProperty(false);
 		properties["isEnabled"] = isEnabled = new ValueProperty(true);
 		properties["isHovered"] = isHovered = new ValueProperty(false);
+		properties["context"] = context = new ValueProperty(null);
 
 		auto onParentChanged = (FlexibleObject obj, Variant old, Variant* newParent){
 			writeln("Parent changed to ", (*newParent).get!Widget["name"], " for ", obj["name"]);
@@ -114,6 +115,7 @@ public:
 
 	ValueProperty children;
 	ValueProperty parent;
+	ValueProperty context;
 
 	ValueProperty position;
 	ValueProperty staticPosition;

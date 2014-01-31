@@ -57,8 +57,8 @@ abstract class Event
 	/// Set automatically by EventPropagator
 	bool handled;
 
-	/// Reference to Gui class, used to obtain some global information.
-	Gui gui;
+	/// Reference to GuiContext class, used to obtain some global information.
+	GuiContext context;
 }
 
 abstract class PointerEvent : Event
