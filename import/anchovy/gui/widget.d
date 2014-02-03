@@ -184,3 +184,9 @@ void addChild(Widget widget, Widget child)
 	widget.setProperty!"children"(widget["children"] ~ child);
 	child.setProperty!"parent"(widget);
 }
+
+/// Says to global layout manager that this widget needs layout update.
+void invalidateLayout(Widget widget)
+{
+	widget.getPropertyAs!("context", GuiContext).invalidateWidgetLayout(widget);
+}

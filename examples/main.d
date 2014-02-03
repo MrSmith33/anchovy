@@ -83,6 +83,7 @@ class GuiTestWindow : GlfwWindow
 	{
 		fpsHelper.update(dt);
 		timerManager.updateTimers(glfwGetTime());
+		context.update(dt);
 	}
 	
 	string[] getHardwareInfo()

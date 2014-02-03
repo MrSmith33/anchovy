@@ -31,6 +31,7 @@ module anchovy.gui.guicontext;
 import anchovy.gui.all;
 import anchovy.gui.interfaces.iwidgetbehavior : IWidgetBehavior;
 
+
 class GuiContext
 {
 	alias WidgetCreator = Widget delegate();
@@ -39,10 +40,29 @@ class GuiContext
 	IWidgetBehavior[string] widgetBehaviors;
 
 	Widget[] roots;
+
+	bool isLayoutInvalid; // Will be updated in update method
+
+	void invalidateWidgetLayout(Widget container)
+	{
+		isLayoutInvalid = false;
+	}
+
+	void doLayout()
+	{
+
+	}
+
+	void update(double deltaTime)
+	{
+		if (isLayoutInvalid) doLayout();
+		writeln("update");
+	}
+
 	//InputManager inputManager;
 	//EventManager eventManager;
-
-	KeyModifiers modifiers; /// TODO: Incapsulation
+protected:
+	KeyModifiers modifiers;
 
 	/// Gui renderer used for drawing all children widgets.
 	IGuiRenderer	_guiRenderer;
@@ -78,6 +98,7 @@ class GuiContext
 	/// This will be called when widget requests clipboard string.
 	dstring delegate() _getClipboardStringCallback;
 
+public:
 
 	this(IGuiRenderer guiRenderer, TimerManager timerManager, GuiSkin skin)
 	in
