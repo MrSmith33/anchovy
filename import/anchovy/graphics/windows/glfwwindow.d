@@ -73,7 +73,7 @@ public:
 
 		glfwSetWindowUserPointer(window, cast(void*)this);
 		glfwSetWindowPosCallback(window, &windowposfun);
-		glfwSetWindowSizeCallback(window, &windowsizefun);
+		glfwSetFramebufferSizeCallback(window, &windowsizefun);
 		glfwSetWindowCloseCallback(window, &windowclosefun);
 		//glfwSetWindowRefreshCallback(window, &windowrefreshfun);
 		glfwSetWindowFocusCallback(window, &windowfocusfun);
@@ -100,7 +100,7 @@ public:
 
 	override void reshape(in uint width, in uint height)
 	{
-		glViewport(0, 0, cast(GLsizei) width, cast(GLsizei) height);
+		glViewport(0, 0, cast(int)width, cast(int)height);
 	}
 
 	override void releaseWindow()
