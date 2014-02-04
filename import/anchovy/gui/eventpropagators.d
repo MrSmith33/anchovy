@@ -88,6 +88,36 @@ Widget[] propagateEventSinkBubble(OnHandle onHandle = OnHandle.StopTraversing)(W
 	return [];
 }
 
+void propagateEventParentFirst(Widget root, Event event)
+{
+	void propagateEvent(Widget root)
+	{
+		root.handleEvent(event);
+		
+		foreach(child; root.getPropertyAs!("children", Widget[]))
+		{
+			propagateEvent(child);
+		}
+	}
+
+	propagateEvent(root);
+}
+
+void propagateEventChildrenFirst(Widget root, Event event)
+{
+	void propagateEvent(Widget root)
+	{
+		foreach(child; root.getPropertyAs!("children", Widget[]))
+		{
+			propagateEvent(child);
+		}
+
+		root.handleEvent(event);
+	}
+
+	propagateEvent(root);
+}
+
 /// Tests all root's children with pred.
 /// Then calls itself with found child.
 /// Adds widgets satisfying pred to returned array.

@@ -50,13 +50,16 @@ class GuiContext
 
 	void doLayout()
 	{
-
+		foreach(root; roots)
+		{
+			root.propagateEventChildrenFirst(new MinimizeLayoutEvent);
+			root.propagateEventChildrenFirst(new ExpandLayoutEvent);
+		}
 	}
 
 	void update(double deltaTime)
 	{
 		if (isLayoutInvalid) doLayout();
-		writeln("update");
 	}
 
 	//InputManager inputManager;
