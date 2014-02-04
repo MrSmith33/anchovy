@@ -127,7 +127,7 @@ public:
 		roots ~= root;
 	}
 
-	Widget createWidget(string type)
+	Widget createWidget(string type, Widget parent = null)
 	{
 		Widget widget;
 
@@ -143,6 +143,7 @@ public:
 		widget["type"] = type;
 		widget["style"] = type;
 		widget["context"] = this;
+		widget["parent"] = parent;
 
 		
 		if (auto behavior = type in widgetBehaviors)

@@ -113,6 +113,7 @@ public:
 		{
 			layout.expand(widget);
 		}
+		writeln("expand");
 
 		return true;
 	}
@@ -123,7 +124,7 @@ public:
 		{
 			layout.minimize(widget);
 		}
-
+		writeln("minimize");
 		return true;
 	}
 

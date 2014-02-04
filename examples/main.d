@@ -136,7 +136,7 @@ renderer = new Ogl3Renderer(this);
 		mainLayer["name"] = "mainLayer";
 		context.addRoot(mainLayer);
 
-		auto button1 = context.createWidget("button");
+		auto button1 = context.createWidget("button", mainLayer);
 		button1["name"] = "button1";
 		button1.setProperty!"userSize"(ivec2(50, 50));
 		button1.setProperty!"position"(ivec2(20, 20));
@@ -147,7 +147,6 @@ renderer = new Ogl3Renderer(this);
 			return true;
 		});
 		button1.addEventHandler(delegate bool(Widget widget, PointerLeaveEvent event){widget["caption"] = "Click me!";return true;});
-		mainLayer.addChild(button1);
 
 		//--------------------------------------------------------------
 
