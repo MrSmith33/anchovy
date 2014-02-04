@@ -31,10 +31,6 @@ module anchovy.gui.controls.label;
 import anchovy.gui.all;
 import anchovy.gui.interfaces.iwidgetbehavior;
 
-static this()
-{
-	widgetBehaviors["label"] = new LabelBehavior;
-}
 
 class LabelBehavior : IWidgetBehavior
 {

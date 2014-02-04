@@ -32,10 +32,6 @@ import anchovy.gui.all;
 import anchovy.gui.interfaces.iwidgetbehavior;
 import std.stdio;
 
-static this()
-{
-	widgetBehaviors["button"] = new ButtonBehavior;
-}
 
 class ButtonBehavior : IWidgetBehavior
 {

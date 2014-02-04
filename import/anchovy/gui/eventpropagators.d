@@ -90,6 +90,8 @@ Widget[] propagateEventSinkBubble(OnHandle onHandle = OnHandle.StopTraversing)(W
 
 void propagateEventParentFirst(Widget root, Event event)
 {
+	event.sinking = true;
+
 	void propagateEvent(Widget root)
 	{
 		root.handleEvent(event);
@@ -105,6 +107,8 @@ void propagateEventParentFirst(Widget root, Event event)
 
 void propagateEventChildrenFirst(Widget root, Event event)
 {
+	event.bubbling = true;
+
 	void propagateEvent(Widget root)
 	{
 		foreach(child; root.getPropertyAs!("children", Widget[]))

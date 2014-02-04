@@ -52,6 +52,7 @@ import fpshelper;
 import anchovy.gui.timermanager;
 
 import anchovy.utils.string : ZToString;
+import anchovy.gui.behaviors.defaultbehaviors;
 
 version(linux)
 {
@@ -129,12 +130,13 @@ renderer = new Ogl3Renderer(this);
 		context = new GuiContext(guiRenderer, timerManager, graySkin);
 		context.setClipboardStringCallback = (dstring newStr) => setClipboard(to!string(newStr));
 		context.getClipboardStringCallback = delegate dstring(){return to!dstring(getClipboard());};
+		context.attachDefaultBehaviors();
 
-		auto mainLayer = new Widget();
+		auto mainLayer = context.createWidget("widget");
 		mainLayer["name"] = "mainLayer";
 		context.addRoot(mainLayer);
 
-		auto button1 = createWidget("button");
+		auto button1 = context.createWidget("button");
 		button1["name"] = "button1";
 		button1.setProperty!"userSize"(ivec2(50, 50));
 		button1.setProperty!"position"(ivec2(20, 20));
@@ -179,7 +181,7 @@ renderer = new Ogl3Renderer(this);
 	{
 		try
 		{
-			//writeln("windowResized");
+			writeln("windowResized ", newWidth, " ", newHeight);
 			//fpsLabel.position = ivec2(newWidth - 200, 10);
 			reshape(newWidth, newHeight);
 			context.size = ivec2(newWidth, newHeight);

@@ -43,10 +43,6 @@ enum Sides
 	BOTTOM = 8,
 }
 
-static this()
-{
-	widgetFactories["widget"] = delegate Widget(Variant[]){return new Widget; };
-}
 
 /// Container for common properties
 class Widget : FlexibleObject
@@ -78,7 +74,6 @@ public:
 		properties["context"] = context = new ValueProperty(null);
 
 		auto onParentChanged = (FlexibleObject obj, Variant old, Variant* newParent){
-			writeln("Parent changed to ", (*newParent).get!Widget["name"], " for ", obj["name"]);
 			if(auto parent = newParent.peek!Widget)
 			{
 				obj["staticPosition"] = (*parent).getPropertyAs!("staticPosition", ivec2) + obj.getPropertyAs!("position", ivec2);
@@ -86,7 +81,6 @@ public:
 		};
 
 		auto onPositionChanged = (FlexibleObject obj, Variant old, Variant* newPosition){
-			writeln("Position changed to ", (*newPosition).get!ivec2);
 			if (auto parent = obj.peekPropertyAs!("parent", Widget))
 			{
 				obj["staticPosition"] = (*parent).getPropertyAs!("staticPosition", ivec2) + (*newPosition).get!ivec2;
@@ -98,16 +92,39 @@ public:
 
 		auto onStaticPositionChanged = (FlexibleObject obj, Variant old, Variant* newStaticPosition){
 			obj["staticRect"] = Rect((*newStaticPosition).get!ivec2, obj.getPropertyAs!("userSize", ivec2));
-			writeln(obj["staticRect"]);
 		};
 
 		auto onUserSizeChanged = (FlexibleObject obj, Variant old, Variant* newUserSize){
 			obj["staticRect"] = Rect(obj.getPropertyAs!("staticPosition", ivec2), (*newUserSize).get!ivec2);
-			writeln(obj["staticRect"]);
+			if (auto layout = this.peekPropertyAs!("layout", ILayout)) layout.onContainerResized(this, old.get!ivec2, (*newUserSize).get!ivec2);
+			(cast(Widget)obj).invalidateLayout;
 		};
 		
 		property("staticPosition").valueChanged.connect(onStaticPositionChanged);
 		property("userSize").valueChanged.connect(onUserSizeChanged);
+
+		addEventHandler(&handleExpand);
+		addEventHandler(&handleMinimize);
+	}
+
+	bool handleExpand(Widget widget, ExpandLayoutEvent event)
+	{
+		if (auto layout = widget.peekPropertyAs!("layout", ILayout))
+		{
+			layout.expand(widget);
+		}
+
+		return true;
+	}
+
+	bool handleMinimize(Widget widget, MinimizeLayoutEvent event)
+	{
+		if (auto layout = widget.peekPropertyAs!("layout", ILayout))
+		{
+			layout.minimize(widget);
+		}
+
+		return true;
 	}
 
 

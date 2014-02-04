@@ -34,12 +34,12 @@ import anchovy.gui.all;
 /// Relative positions will be only affected. Static positions must be updated by container.
 interface ILayout
 {
-	/// Called by container to update its children positions and sizes.
-	void layoutContainer(in ivec2 clientAreaSize, Widget[] children);
+	/// Called by widget when MinimizeLayout event occurs.
+	void minimize(Widget root);
 
-	/// Called by container when its size was changed.
-	/// 
-	/// Container can choose which widgets must be layouted by passing only them.
-	/// This can be used if container has several client areas.
-	void onContainerResized(ivec2 oldSize, ivec2 newSize, Widget[] children);
+	/// Called by widget when ExpandLayout event occurs.
+	void expand(Widget root);
+
+	/// Called by container to update its children positions and sizes.
+	void onContainerResized(Widget root, ivec2 oldSize, ivec2 newSize);
 }

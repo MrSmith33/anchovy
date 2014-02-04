@@ -41,11 +41,11 @@ class GuiContext
 
 	Widget[] roots;
 
-	bool isLayoutInvalid; // Will be updated in update method
+	bool isLayoutValid; // Will be updated in update method
 
 	void invalidateWidgetLayout(Widget container)
 	{
-		isLayoutInvalid = false;
+		isLayoutValid = false;
 	}
 
 	void doLayout()
@@ -59,7 +59,12 @@ class GuiContext
 
 	void update(double deltaTime)
 	{
-		if (isLayoutInvalid) doLayout();
+		if (!isLayoutValid)
+		{
+			doLayout();
+			isLayoutValid = true;
+		}
+
 	}
 
 	//InputManager inputManager;
@@ -138,6 +143,7 @@ public:
 		widget["type"] = type;
 		widget["style"] = type;
 		widget["context"] = this;
+
 		
 		if (auto behavior = type in widgetBehaviors)
 		{

@@ -48,7 +48,6 @@ public
 		anchovy.gui.eventpropagators,
 		anchovy.gui.guiskin,
 		anchovy.gui.widget,
-		anchovy.gui.widgetfactory,
 		anchovy.gui.guirenderer;
 	import anchovy.gui.interfaces.iguiskinparser,
 		anchovy.gui.interfaces.iguirenderer;
