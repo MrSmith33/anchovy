@@ -107,30 +107,33 @@ class GuiTestWindow : GlfwWindow
 		foreach(item; getHardwareInfo())
 			writeln(item);
 		writeln("========");
-		dstring russianChars = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяє"d;
-renderer = new Ogl3Renderer(this);
+		dstring cyrillicChars = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяє"d;
+
+		//-------------- Setting context --------------
+
+		renderer = new Ogl3Renderer(this);
+		renderer.setClearColor(Color(50, 10, 45));
 		guiRenderer = new SkinnedGuiRenderer(renderer);
+		guiRenderer.fontManager.charCache ~= cyrillicChars;
+
 		fpsHelper.maxFps = 120;
 		timerManager = new TimerManager(delegate double(){return glfwGetTime();});
-
-		assert(renderer !is null);
-		assert(guiRenderer !is null);
-		assert(guiRenderer.fontManager !is null);
-		guiRenderer.fontManager.charCache ~= russianChars;
-
-		renderer.setClearColor(Color(50, 10, 45));
+		
+		//-------------- Skin loading --------------
+		
 		string graySkinSource = cast(string)read("skingray.json");
 		auto skinParser = new JsonGuiSkinParser;
 		graySkin = skinParser.parse(graySkinSource);
-		//writeln(graySkin);
 		graySkin.loadResources(guiRenderer);
 
-		//--------------------------------------------------------------
+		//-------------- Setting context --------------
 
 		context = new GuiContext(guiRenderer, timerManager, graySkin);
 		context.setClipboardStringCallback = (dstring newStr) => setClipboard(to!string(newStr));
 		context.getClipboardStringCallback = delegate dstring(){return to!dstring(getClipboard());};
 		context.attachDefaultBehaviors();
+
+		//-------------- Creating widgets --------------------
 
 		auto mainLayer = context.createWidget("widget");
 		mainLayer["name"] = "mainLayer";
@@ -148,16 +151,17 @@ renderer = new Ogl3Renderer(this);
 		});
 		button1.addEventHandler(delegate bool(Widget widget, PointerLeaveEvent event){widget["caption"] = "Click me!";return true;});
 
-		//--------------------------------------------------------------
+		//--------------- Rendering settings---------------------------
 
 		renderer.enableAlphaBlending();
 		glEnable(GL_SCISSOR_TEST);
-		guiRenderer.fontManager.getFontAtlasTex;
+		guiRenderer.fontManager.getFontAtlasTex; //Needs proper invalidation mechanis.
 	}
 
 	void draw()
 	{
-		glClear(GL_COLOR_BUFFER_BIT); 
+		glClear(GL_COLOR_BUFFER_BIT);
+
 		renderer.setColor(Color4f(1 ,0.5,0,0.5));
 		renderer.fillRect(0, 0, 50, 50);
 		renderer.setColor(Color(255, 255, 255));
@@ -180,8 +184,6 @@ renderer = new Ogl3Renderer(this);
 	{
 		try
 		{
-			writeln("windowResized ", newWidth, " ", newHeight);
-			//fpsLabel.position = ivec2(newWidth - 200, 10);
 			reshape(newWidth, newHeight);
 			context.size = ivec2(newWidth, newHeight);
 		}
