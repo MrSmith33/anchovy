@@ -53,11 +53,10 @@ class LinearLayout(bool vertical) : ILayout
 			childrenLength += *(childSize.length);
 			minRootWidth = maxWidth(childSize, rootSize);
 
-			if (child.peekPropertyAs!("isExpandable")) ++numExpandableChildren;
-
-			minRootLength += spacing;
+			if (child.isExpandableLength) ++numExpandableChildren;
 		}
 
+		minRootLength += (children.length-1) * spacing;
 		minRootLength += childrenLength;
 		minRootWidth += padding * 2;
 
@@ -72,10 +71,26 @@ class LinearLayout(bool vertical) : ILayout
 	{
 		Widget[] children = root.getPropertyAs!("children", Widget[]);
 		uint numExpandableChildren = root.getPropertyAs!("numExpandable", uint);
+		ivec2 rootUserSize = root.getPropertyAs!("userSize", ivec2);
+		ivec2 rootPrefSize = root.getPropertyAs!("prefSize", ivec2);
+
+		int extraLength = *(rootUserSize.length) - *(rootPrefSize.length);
+		int extraPerWidget = extraLength / numExpandableChildren;
+
+		int topOffset = padding - spacing;
 
 		foreach(child; children)
 		{
-			
+			topOffset += spacing;
+			child.setProperty!("position")(ivec2(padding, topOffset));
+
+			ivec2 childSize = child.getPropertyAs!("prefSize", ivec2);
+			if (child.isExpandableLength)
+			{
+				*(childSize.length) += extraPerWidget;
+				topOffset += *(childSize.length); // Offset for next child
+			}
+			child.setProperty!("userSize")(childSize);
 		}
 	}
 
@@ -84,6 +99,22 @@ class LinearLayout(bool vertical) : ILayout
 	}
 
 private:
+
+	static pure bool isExpandableWidth(Widget Widget)
+	{
+		static if (vertical)
+			return Widget.peekPropertyAs!("hexpand") !is null;
+		else
+			return Widget.peekPropertyAs!("vexpand") !is null;
+	}
+
+	static pure bool isExpandableLength(Widget Widget)
+	{
+		static if (vertical)
+			return Widget.peekPropertyAs!("vexpand") !is null;
+		else
+			return Widget.peekPropertyAs!("hexpand") !is null;
+	}
 
 	static pure int* length(ivec2 vector)
 	{
