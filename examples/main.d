@@ -53,6 +53,7 @@ import anchovy.gui.timermanager;
 
 import anchovy.utils.string : ZToString;
 import anchovy.gui.behaviors.defaultbehaviors;
+import anchovy.gui.layouts.linearlayout;
 
 version(linux)
 {
@@ -134,14 +135,17 @@ class GuiTestWindow : GlfwWindow
 		context.attachDefaultBehaviors();
 
 		//-------------- Creating widgets --------------------
-
+		writeln("mainLayer before");
 		auto mainLayer = context.createWidget("widget");
+		writeln("mainLayer created 1");
 		mainLayer["name"] = "mainLayer";
+		writeln("mainLayer created 2");
+		mainLayer.setProperty!("layout")(cast(ILayout)new LinearLayout!true());
 		context.addRoot(mainLayer);
 
 		auto button1 = context.createWidget("button", mainLayer);
 		button1["name"] = "button1";
-		button1.setProperty!"userSize"(ivec2(50, 50));
+		button1.setProperty!"prefSize"(ivec2(50, 50));
 		button1.setProperty!"position"(ivec2(20, 20));
 		button1.setProperty!"caption"("Click me!");
 		button1.addEventHandler(delegate bool(Widget widget, PointerClickEvent event){
@@ -151,6 +155,9 @@ class GuiTestWindow : GlfwWindow
 		});
 		button1.addEventHandler(delegate bool(Widget widget, PointerLeaveEvent event){widget["caption"] = "Click me!";return true;});
 
+		auto button = context.createWidget("button", mainLayer);
+		button.setProperty!"prefSize"(ivec2(50, 50));
+		button.setProperty!"vexpand"(true);
 		//--------------- Rendering settings---------------------------
 
 		renderer.enableAlphaBlending();

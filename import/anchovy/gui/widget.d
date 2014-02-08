@@ -61,7 +61,7 @@ public:
 
 		properties["minSize"] = minSize = new ValueProperty(ivec2(0,0));
 		properties["userSize"] = userSize = new ValueProperty(ivec2(0,0));
-		properties["prefferedSize"] = prefferedSize = new ValueProperty(ivec2(0,0));
+		properties["prefSize"] = prefferedSize = new ValueProperty(ivec2(0,0));
 		properties["staticRect"] = staticRect = new ValueProperty(Rect(0,0,0,0));
 
 		properties["skin"] = skin = new ValueProperty("");
@@ -74,9 +74,12 @@ public:
 		properties["context"] = context = new ValueProperty(null);
 
 		auto onParentChanged = (FlexibleObject obj, Variant old, Variant* newParent){
-			if(auto parent = newParent.peek!Widget)
+			if (auto parent = newParent.peek!Widget)
 			{
-				obj["staticPosition"] = (*parent).getPropertyAs!("staticPosition", ivec2) + obj.getPropertyAs!("position", ivec2);
+				if (*parent !is null)
+				{
+					obj["staticPosition"] = (*parent).getPropertyAs!("staticPosition", ivec2) + obj.getPropertyAs!("position", ivec2);
+				}
 			}
 		};
 
@@ -96,7 +99,15 @@ public:
 
 		auto onUserSizeChanged = (FlexibleObject obj, Variant old, Variant* newUserSize){
 			obj["staticRect"] = Rect(obj.getPropertyAs!("staticPosition", ivec2), (*newUserSize).get!ivec2);
-			if (auto layout = this.peekPropertyAs!("layout", ILayout)) layout.onContainerResized(this, old.get!ivec2, (*newUserSize).get!ivec2);
+			if (auto layout = this.peekPropertyAs!("layout", ILayout))
+			{
+				if (*layout !is null)
+				{
+					writeln(*layout);
+					//layout.onContainerResized(cast(Widget)obj, old.get!ivec2, (*newUserSize).get!ivec2);
+				}
+			}
+
 			(cast(Widget)obj).invalidateLayout;
 		};
 		
@@ -113,7 +124,7 @@ public:
 		{
 			layout.expand(widget);
 		}
-		writeln("expand");
+		writeln("expand ", widget["type"], " ", widget["name"]);
 
 		return true;
 	}
@@ -123,8 +134,9 @@ public:
 		if (auto layout = widget.peekPropertyAs!("layout", ILayout))
 		{
 			layout.minimize(widget);
+			writeln(layout);
 		}
-		writeln("minimize");
+		writeln("minimize ", widget["type"]);
 		return true;
 	}
 

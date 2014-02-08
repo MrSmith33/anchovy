@@ -53,7 +53,7 @@ class GuiContext
 		foreach(root; roots)
 		{
 			root.propagateEventChildrenFirst(new MinimizeLayoutEvent);
-			root.propagateEventChildrenFirst(new ExpandLayoutEvent);
+			root.propagateEventParentFirst(new ExpandLayoutEvent);
 		}
 	}
 
@@ -143,7 +143,15 @@ public:
 		widget["type"] = type;
 		widget["style"] = type;
 		widget["context"] = this;
-		widget["parent"] = parent;
+
+		if (parent !is null)
+		{
+			addChild(parent, widget);
+		}
+		else
+		{
+			widget["parent"] = null;
+		}
 
 		
 		if (auto behavior = type in widgetBehaviors)

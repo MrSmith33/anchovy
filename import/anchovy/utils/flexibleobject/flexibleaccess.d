@@ -84,6 +84,42 @@ static T getPropertyAs(string propname, T, FlexibleObjectType : FlexibleObject)(
 	}
 }
 
+//
+//
+//
+static T getPropertyAsBase(T)(string propname, FlexibleObject w)
+{
+	auto property = w[propname];
+
+	if (property.convertsTo!T)
+		return property.get!T;
+	else
+		return null;
+}
+
+// ditto
+static T getPropertyAsBase(string propname, T, FlexibleObjectType : FlexibleObject)(FlexibleObjectType w)
+{
+	static if(hasStaticProperty!(FlexibleObjectType, propname))
+	{
+		auto property = mixin("w."~propname~".value");
+	
+		if (property.convertsTo!T)
+			return property.get!T;
+		else
+			return null;
+	}
+	else
+	{
+		auto property = w[propname];
+	
+		if (property.convertsTo!T)
+			return property.get!T;
+		else
+			return null;
+	}
+}
+
 
 // Peek property value
 static T* peekPropertyAs(T)(string propname, FlexibleObject w)

@@ -42,7 +42,7 @@ class LinearLayout(bool vertical) : ILayout
 		Widget[] children = root.getPropertyAs!("children", Widget[]);
 		ivec2 rootSize = root.getPropertyAs!("userSize", ivec2);
 
-		uint minRootWidth = uint.max; // Will be max child width. Then padding will be added
+		int minRootWidth = int.min; // Will be max child width. Then padding will be added
 		uint minRootLength = padding * 2;
 		uint childrenLength;
 		uint numExpandableChildren;
@@ -50,21 +50,28 @@ class LinearLayout(bool vertical) : ILayout
 		foreach(child; children)
 		{
 			ivec2 childSize = child.getPropertyAs!("prefSize", ivec2);
-			childrenLength += *(childSize.length);
-			minRootWidth = maxWidth(childSize, rootSize);
+			childrenLength += *sizeLength(childSize);
+			minRootWidth = max(*sizeWidth(childSize), minRootWidth);
 
-			if (child.isExpandableLength) ++numExpandableChildren;
+			if (isExpandableLength(child)) ++numExpandableChildren;
 		}
 
 		minRootLength += (children.length-1) * spacing;
 		minRootLength += childrenLength;
 		minRootWidth += padding * 2;
 
-		*(rootSize.width) = minRootWidth;
-		*(rootSize.length) = minRootLength;
+		writeln("minRootLength ", minRootLength);
+		writeln("minRootWidth ", minRootWidth);
+		writeln("rootSize ", rootSize);
+
+		*sizeWidth(rootSize) = minRootWidth;
+		*sizeLength(rootSize) = minRootLength;
+		writeln("rootSize ", rootSize);
 
 		root.setProperty!("prefSize")(rootSize);
 		root.setProperty!("numExpandable")(numExpandableChildren);
+
+		writeln("minimize linear");
 	}
 
 	override void expand(Widget root)
@@ -74,9 +81,12 @@ class LinearLayout(bool vertical) : ILayout
 		ivec2 rootUserSize = root.getPropertyAs!("userSize", ivec2);
 		ivec2 rootPrefSize = root.getPropertyAs!("prefSize", ivec2);
 
-		int extraLength = *(rootUserSize.length) - *(rootPrefSize.length);
-		int extraPerWidget = extraLength / numExpandableChildren;
-
+		int extraLength = *sizeLength(rootUserSize) - *sizeLength(rootPrefSize);
+		int extraPerWidget = extraLength / (numExpandableChildren > 0 ? numExpandableChildren : 1);
+		writeln("numExpandableChildren ", numExpandableChildren);
+		writeln("extraPerWidget ", extraPerWidget);
+		writeln("extraLength ", extraLength);
+		writeln("rootPrefSize ", rootPrefSize);
 		int topOffset = padding - spacing;
 
 		foreach(child; children)
@@ -85,13 +95,18 @@ class LinearLayout(bool vertical) : ILayout
 			child.setProperty!("position")(ivec2(padding, topOffset));
 
 			ivec2 childSize = child.getPropertyAs!("prefSize", ivec2);
-			if (child.isExpandableLength)
+
+			if (isExpandableLength(child))
 			{
-				*(childSize.length) += extraPerWidget;
-				topOffset += *(childSize.length); // Offset for next child
+				writeln("expandable ", child["type"]);
+				*sizeLength(childSize) += extraPerWidget;
 			}
+			topOffset += *sizeLength(childSize); // Offset for next child
+
 			child.setProperty!("userSize")(childSize);
 		}
+
+		writeln("minimize linear");
 	}
 
 	override void onContainerResized(Widget root, ivec2 oldSize, ivec2 newSize)
@@ -100,43 +115,40 @@ class LinearLayout(bool vertical) : ILayout
 
 private:
 
-	static pure bool isExpandableWidth(Widget Widget)
+	static bool isExpandableWidth(Widget widget)
 	{
 		static if (vertical)
-			return Widget.peekPropertyAs!("hexpand") !is null;
+			return widget.peekPropertyAs!("hexpand", bool) !is null;
 		else
-			return Widget.peekPropertyAs!("vexpand") !is null;
+			return widget.peekPropertyAs!("vexpand", bool) !is null;
 	}
 
-	static pure bool isExpandableLength(Widget Widget)
+	static bool isExpandableLength(Widget widget)
 	{
 		static if (vertical)
-			return Widget.peekPropertyAs!("vexpand") !is null;
+			return widget.peekPropertyAs!("vexpand", bool) !is null;
 		else
-			return Widget.peekPropertyAs!("hexpand") !is null;
+			return widget.peekPropertyAs!("hexpand", bool) !is null;
 	}
 
-	static pure int* length(ivec2 vector)
+	static pure int* sizeLength(ref ivec2 vector)
 	{
 		static if (vertical)
-			return &vector.y;
+			return &(vector.arrayof[1]);
 		else
-			return &vector.x;
+			return &(vector.arrayof[0]);
 	}
 
-	static pure int* width(ivec2 vector)
+	static pure int* sizeWidth(ref ivec2 vector)
 	{
 		static if (vertical)
-			return &vector.x;
+			return &(vector.arrayof[0]);
 		else
-			return &vector.y;
+			return &(vector.arrayof[1]);
 	}
 
-	static pure int maxWidth(ivec2 a, ivec2 b)
+	static pure int max(int a, int b)
 	{
-		static if (vertical)
-			return a.x > b.x ? a.x : b.x;
-		else
-			return a.y > b.y ? a.y : b.y;
+		return a > b ? a : b;
 	}
 }
