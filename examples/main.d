@@ -158,6 +158,13 @@ class GuiTestWindow : GlfwWindow
 		auto button = context.createWidget("button", mainLayer);
 		button.setProperty!"prefSize"(ivec2(50, 50));
 		button.setProperty!"vexpand"(true);
+		button = context.createWidget("button", mainLayer);
+		button.setProperty!"prefSize"(ivec2(50, 50));
+		button.setProperty!"hexpand"(true);
+		button = context.createWidget("button", mainLayer);
+		button.setProperty!"prefSize"(ivec2(50, 50));
+		button.setProperty!"hexpand"(true);
+		button.setProperty!"vexpand"(true);
 		//--------------- Rendering settings---------------------------
 
 		renderer.enableAlphaBlending();

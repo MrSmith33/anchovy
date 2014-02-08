@@ -77,16 +77,22 @@ class LinearLayout(bool vertical) : ILayout
 	override void expand(Widget root)
 	{
 		Widget[] children = root.getPropertyAs!("children", Widget[]);
+
 		uint numExpandableChildren = root.getPropertyAs!("numExpandable", uint);
+
 		ivec2 rootUserSize = root.getPropertyAs!("userSize", ivec2);
 		ivec2 rootPrefSize = root.getPropertyAs!("prefSize", ivec2);
 
+		int maxChildWidth = *sizeWidth(rootUserSize) - padding * 2;
+
 		int extraLength = *sizeLength(rootUserSize) - *sizeLength(rootPrefSize);
 		int extraPerWidget = extraLength / (numExpandableChildren > 0 ? numExpandableChildren : 1);
+
 		writeln("numExpandableChildren ", numExpandableChildren);
 		writeln("extraPerWidget ", extraPerWidget);
 		writeln("extraLength ", extraLength);
 		writeln("rootPrefSize ", rootPrefSize);
+
 		int topOffset = padding - spacing;
 
 		foreach(child; children)
@@ -100,6 +106,11 @@ class LinearLayout(bool vertical) : ILayout
 			{
 				writeln("expandable ", child["type"]);
 				*sizeLength(childSize) += extraPerWidget;
+			}
+			if (isExpandableWidth(child))
+			{
+				writeln("expandable width ", child["type"]);
+				*sizeWidth(childSize) = maxChildWidth;
 			}
 			topOffset += *sizeLength(childSize); // Offset for next child
 
