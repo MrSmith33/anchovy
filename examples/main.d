@@ -179,6 +179,7 @@ class GuiTestWindow : GlfwWindow
 
 	void draw()
 	{
+		guiRenderer.setClientArea(Rect(0, 0, width, height));
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		renderer.setColor(Color4f(1 ,0.5,0,0.5));

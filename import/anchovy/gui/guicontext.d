@@ -54,6 +54,7 @@ class GuiContext
 		{
 			root.propagateEventChildrenFirst(new MinimizeLayoutEvent);
 			root.propagateEventParentFirst(new ExpandLayoutEvent);
+			root.propagateEventParentFirst(new UpdatePositionEvent);
 		}
 	}
 

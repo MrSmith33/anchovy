@@ -75,20 +75,11 @@ public:
 		properties["context"] = context = new ValueProperty(null);
 
 		auto onParentChanged = (FlexibleObject obj, Variant old, Variant* newParent){
-			if (auto parent = newParent.peek!Widget)
-			{
-				if (*parent !is null)
-				{
-					obj["staticPosition"] = (*parent).getPropertyAs!("staticPosition", ivec2) + obj.getPropertyAs!("position", ivec2);
-				}
-			}
+			(cast(Widget)obj).invalidateLayout;
 		};
 
 		auto onPositionChanged = (FlexibleObject obj, Variant old, Variant* newPosition){
-			if (auto parent = obj.peekPropertyAs!("parent", Widget))
-			{
-				obj["staticPosition"] = (*parent).getPropertyAs!("staticPosition", ivec2) + (*newPosition).get!ivec2;
-			}
+			(cast(Widget)obj).invalidateLayout;
 		};
 
 		property("parent").valueChanged.connect(onParentChanged);
@@ -118,6 +109,7 @@ public:
 		addEventHandler(&handleExpand);
 		addEventHandler(&handleMinimize);
 		addEventHandler(&handleDraw);
+		addEventHandler(&handleUpdatePosition);
 	}
 
 	bool handleExpand(Widget widget, ExpandLayoutEvent event)
@@ -128,6 +120,24 @@ public:
 		}
 		writeln("expand ", widget["type"], " ", widget["name"]);
 
+		return true;
+	}
+
+	bool handleUpdatePosition(Widget widget, UpdatePositionEvent event)
+	{
+		if (auto parent = widget.peekPropertyAs!("parent", Widget))
+		{
+			if (*parent !is null)
+			{
+				ivec2 parentPos = (*parent).getPropertyAs!("staticPosition", ivec2);
+				ivec2 childPos = widget.getPropertyAs!("position", ivec2);
+				ivec2 newStaticPosition = parentPos + childPos; // Workaround bug with direct summ.
+				widget["staticPosition"] = newStaticPosition;
+				widget["staticRect"] = Rect(newStaticPosition, widget.getPropertyAs!("userSize", ivec2));
+			}
+		}
+		
+		writeln("expand ", widget["type"], " ", widget["name"]);
 		return true;
 	}
 
