@@ -68,6 +68,7 @@ public:
 		properties["state"] = state = new ValueProperty("normal");
 		properties["style"] = style = new ValueProperty("");
 
+		properties["isVisible"] = isVisible = new ValueProperty(true);
 		properties["isFocusable"] = isFocusable = new ValueProperty(false);
 		properties["isEnabled"] = isEnabled = new ValueProperty(true);
 		properties["isHovered"] = isHovered = new ValueProperty(false);
@@ -99,12 +100,12 @@ public:
 
 		auto onUserSizeChanged = (FlexibleObject obj, Variant old, Variant* newUserSize){
 			obj["staticRect"] = Rect(obj.getPropertyAs!("staticPosition", ivec2), (*newUserSize).get!ivec2);
-			if (auto layout = this.peekPropertyAs!("layout", ILayout))
+			if (auto layout = obj.peekPropertyAs!("layout", ILayout))
 			{
 				if (*layout !is null)
 				{
-					writeln(*layout);
-					//layout.onContainerResized(cast(Widget)obj, old.get!ivec2, (*newUserSize).get!ivec2);
+					writefln("onUserSizeChanged %s %s %s %s", *layout, cast(Widget)obj, old.get!ivec2, (*newUserSize).get!ivec2);
+					//(*layout).onContainerResized(null, ivec2(0,0), ivec2(0,0));
 				}
 			}
 
@@ -116,6 +117,7 @@ public:
 
 		addEventHandler(&handleExpand);
 		addEventHandler(&handleMinimize);
+		addEventHandler(&handleDraw);
 	}
 
 	bool handleExpand(Widget widget, ExpandLayoutEvent event)
@@ -134,9 +136,16 @@ public:
 		if (auto layout = widget.peekPropertyAs!("layout", ILayout))
 		{
 			layout.minimize(widget);
-			writeln(layout);
 		}
 		writeln("minimize ", widget["type"]);
+		return true;
+	}
+
+	bool handleDraw(Widget widget, DrawEvent event)
+	{
+		
+		if(widget.getPropertyAs!("isVisible", bool))
+			event.guiRenderer.drawControlBack(widget, widget["staticRect"].get!Rect);
 		return true;
 	}
 
@@ -162,6 +171,7 @@ public:
 	ValueProperty isFocusable;
 	ValueProperty isEnabled;
 	ValueProperty isHovered;
+	ValueProperty isVisible;
 	
 	void addEventHandler(T)(T handler)
 	{

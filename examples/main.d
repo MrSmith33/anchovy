@@ -111,7 +111,6 @@ class GuiTestWindow : GlfwWindow
 		dstring cyrillicChars = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяє"d;
 
 		//-------------- Setting context --------------
-
 		renderer = new Ogl3Renderer(this);
 		renderer.setClearColor(Color(50, 10, 45));
 		guiRenderer = new SkinnedGuiRenderer(renderer);
@@ -121,14 +120,12 @@ class GuiTestWindow : GlfwWindow
 		timerManager = new TimerManager(delegate double(){return glfwGetTime();});
 		
 		//-------------- Skin loading --------------
-		
 		string graySkinSource = cast(string)read("skingray.json");
 		auto skinParser = new JsonGuiSkinParser;
 		graySkin = skinParser.parse(graySkinSource);
 		graySkin.loadResources(guiRenderer);
 
 		//-------------- Setting context --------------
-
 		context = new GuiContext(guiRenderer, timerManager, graySkin);
 		context.setClipboardStringCallback = (dstring newStr) => setClipboard(to!string(newStr));
 		context.getClipboardStringCallback = delegate dstring(){return to!dstring(getClipboard());};
@@ -139,8 +136,9 @@ class GuiTestWindow : GlfwWindow
 		auto mainLayer = context.createWidget("widget");
 		writeln("mainLayer created 1");
 		mainLayer["name"] = "mainLayer";
+		mainLayer["isVisible"] = false;
 		writeln("mainLayer created 2");
-		mainLayer.setProperty!("layout")(cast(ILayout)new LinearLayout!true());
+		mainLayer.setProperty!("layout")(cast(ILayout)new VerticalLayout);
 		context.addRoot(mainLayer);
 
 		auto button1 = context.createWidget("button", mainLayer);
@@ -155,18 +153,25 @@ class GuiTestWindow : GlfwWindow
 		});
 		button1.addEventHandler(delegate bool(Widget widget, PointerLeaveEvent event){widget["caption"] = "Click me!";return true;});
 
-		auto button = context.createWidget("button", mainLayer);
+		auto button = context.createWidget("widget", mainLayer);
 		button.setProperty!"prefSize"(ivec2(50, 50));
 		button.setProperty!"vexpand"(true);
-		button = context.createWidget("button", mainLayer);
+		
+		button = context.createWidget("widget", mainLayer);
 		button.setProperty!"prefSize"(ivec2(50, 50));
 		button.setProperty!"hexpand"(true);
-		button = context.createWidget("button", mainLayer);
-		button.setProperty!"prefSize"(ivec2(50, 50));
-		button.setProperty!"hexpand"(true);
-		button.setProperty!"vexpand"(true);
-		//--------------- Rendering settings---------------------------
+		
+		auto container = context.createWidget("widget", mainLayer);
+		container.setProperty!("layout")(cast(ILayout)new HorizontalLayout);
+		container.setProperty!"prefSize"(ivec2(50, 50));
+		container.setProperty!"hexpand"(true);
+		container.setProperty!"vexpand"(true);
 
+		button = context.createWidget("button", container);
+		button.setProperty!"prefSize"(ivec2(50, 50));
+		button.setProperty!"vexpand"(true);
+
+		//--------------- Rendering settings---------------------------
 		renderer.enableAlphaBlending();
 		glEnable(GL_SCISSOR_TEST);
 		guiRenderer.fontManager.getFontAtlasTex; //Needs proper invalidation mechanis.
@@ -181,9 +186,7 @@ class GuiTestWindow : GlfwWindow
 		renderer.setColor(Color(255, 255, 255));
 		renderer.drawTexRect(width - 255, height - 255, 256, 256, 0, 0, 256, 256, guiRenderer.getFontTexture);
 
-		auto event = new DrawEvent(guiRenderer);
-		event.context = context;
-		context.handleEvent(event);
+		context.draw();
 
 		glUseProgram(0);
 	}

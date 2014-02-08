@@ -318,6 +318,17 @@ public:
 		}
 	}
 
+	void draw()
+	{
+		auto event = new DrawEvent(_guiRenderer);
+		event.context = this;
+
+		foreach(root; roots)
+		{
+			root.propagateEventParentFirst(event);
+		}
+	}
+
 	/// Handler for key press event.
 	/// 
 	/// Must be called by user application.

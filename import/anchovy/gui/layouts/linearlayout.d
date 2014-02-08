@@ -32,6 +32,9 @@ import anchovy.gui.all;
 
 public import anchovy.gui.interfaces.ilayout;
 
+alias VerticalLayout = LinearLayout!true;
+alias HorizontalLayout = LinearLayout!false;
+
 class LinearLayout(bool vertical) : ILayout
 {
 	uint spacing = 2; // Between children
@@ -43,8 +46,8 @@ class LinearLayout(bool vertical) : ILayout
 		ivec2 rootSize = root.getPropertyAs!("userSize", ivec2);
 
 		int minRootWidth = int.min; // Will be max child width. Then padding will be added
-		uint minRootLength = padding * 2;
-		uint childrenLength;
+		int minRootLength = padding * 2;
+		int childrenLength;
 		uint numExpandableChildren;
 
 		foreach(child; children)
@@ -122,6 +125,7 @@ class LinearLayout(bool vertical) : ILayout
 
 	override void onContainerResized(Widget root, ivec2 oldSize, ivec2 newSize)
 	{
+		writeln("onContainerResized");
 	}
 
 private:

@@ -44,16 +44,9 @@ public:
 		widget.addEventHandler(&pointerMoved);
 		widget.addEventHandler(&pointerEntered);
 		widget.addEventHandler(&pointerLeaved);
-		widget.addEventHandler(&handleDraw);
 
 		widget.setProperty!"isFocusable"(true);
 		widget.setProperty!"style"("button");
-	}
-
-	bool handleDraw(Widget widget, DrawEvent event)
-	{
-		event.guiRenderer.drawControlBack(widget, widget["staticRect"].get!Rect);
-		return true;
 	}
 
 	bool pointerPressed(Widget widget, PointerPressEvent event)
