@@ -89,7 +89,8 @@ class LinearLayout(bool vertical) : ILayout
 		int maxChildWidth = *sizeWidth(rootUserSize) - padding * 2;
 
 		int extraLength = *sizeLength(rootUserSize) - *sizeLength(rootPrefSize);
-		int extraPerWidget = extraLength / (numExpandableChildren > 0 ? numExpandableChildren : 1);
+		int extraPerWidget = extraLength / cast(int)(numExpandableChildren > 0 ? numExpandableChildren : 1);
+		extraPerWidget = extraPerWidget > 0 ? extraPerWidget : 0;
 
 		writeln("numExpandableChildren ", numExpandableChildren);
 		writeln("extraPerWidget ", extraPerWidget);

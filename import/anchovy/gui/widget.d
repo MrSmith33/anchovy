@@ -64,9 +64,9 @@ public:
 		properties["prefSize"] = prefferedSize = new ValueProperty(ivec2(0,0));
 		properties["staticRect"] = staticRect = new ValueProperty(Rect(0,0,0,0));
 
-		properties["skin"] = skin = new ValueProperty("");
 		properties["state"] = state = new ValueProperty("normal");
 		properties["style"] = style = new ValueProperty("");
+		properties["geometry"] = geometry = new ValueProperty((TexRectArray[string]).init);
 
 		properties["isVisible"] = isVisible = new ValueProperty(true);
 		properties["isFocusable"] = isFocusable = new ValueProperty(false);
@@ -95,10 +95,11 @@ public:
 			{
 				if (*layout !is null)
 				{
-					writefln("onUserSizeChanged %s %s %s %s", *layout, cast(Widget)obj, old.get!ivec2, (*newUserSize).get!ivec2);
+					//writefln("onUserSizeChanged %s %s %s %s", *layout, cast(Widget)obj, old.get!ivec2, (*newUserSize).get!ivec2);
 					//(*layout).onContainerResized(null, ivec2(0,0), ivec2(0,0));
 				}
 			}
+			obj.setProperty!("geometry")((TexRectArray[string]).init);
 
 			(cast(Widget)obj).invalidateLayout;
 		};
@@ -174,9 +175,9 @@ public:
 	ValueProperty prefferedSize;
 	ValueProperty staticRect;
 
-	ValueProperty skin;
 	ValueProperty state;
 	ValueProperty style;
+	ValueProperty geometry;
 
 	ValueProperty isFocusable;
 	ValueProperty isEnabled;

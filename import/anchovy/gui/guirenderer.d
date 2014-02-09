@@ -69,7 +69,7 @@ void main()
 
 class SkinnedGuiRenderer : IGuiRenderer
 {
-	this(IRenderer renderer, GuiSkin skin = null)
+	this(IRenderer renderer, GuiSkin skin)
 	{
 		_renderer = renderer;
 		_fontManager = new FontManager();
@@ -95,33 +95,49 @@ class SkinnedGuiRenderer : IGuiRenderer
 
 	override void drawControlBack(Widget widget, Rect staticRect)
 	{
-		/*GuiStyle* styleptr;
-		if (widget.skin !is null)
-		{
-			styleptr = widget.style in widget.skin.styles;
-		}
+		string styleName = widget.getPropertyAs!("style", string);
+		string stateName = widget.getPropertyAs!("state", string);
+
+		GuiStyle* styleptr = styleName in _skin.styles;
 
 		if (styleptr is null)
-		{*/
+		{
 			_renderer.setColor(Color(255, 255, 255, 255));
 			_renderer.fillRect(staticRect);
 			_renderer.setColor(Color(255, 0, 0, 255));
 			_renderer.drawRect(staticRect);
-		/*}
+		}
 		else
 		{
 			GuiStyle style = *styleptr;
-			if ((widget.state in widget.geometry) is null)
+
+			if (!(stateName in style.states))
 			{
-				widget.geometry[widget.state] = buildWidgetGeometry(widget, style);
+				stateName = "normal";
 			}
-			GuiStyleState state = style[widget.state];
+			GuiStyleState state = style[stateName];
+
+			TexRectArray[string] geometryList = widget.getPropertyAs!("geometry", TexRectArray[string]);
+
+			TexRectArray* geometry = stateName in geometryList;
+
+			if (geometry is null)
+			{
+				ivec2 userSize = widget.getPropertyAs!("userSize", ivec2);
+				TexRectArray newGeometry = buildWidgetGeometry(userSize, state);
+
+				geometry = &newGeometry;
+				geometryList[stateName] = newGeometry;
+
+				widget.setProperty!"geometry"(geometryList);
+			}
+
 			_renderer.setColor(Color(255, 255, 255, 255));
-			_renderer.drawTexRectArray(widget.geometry[widget.state],
+			_renderer.drawTexRectArray(*geometry,
 			                           staticRect.x - state.outline.left,
 			                           staticRect.y - state.outline.top,
-			                           widget.skin.texture);
-		}*/
+			                           _skin.texture);
+		}
 	}
 
 	override void drawTextLine(ref TextLine line, ivec2 position, in AlignmentType alignment)
@@ -209,13 +225,12 @@ class SkinnedGuiRenderer : IGuiRenderer
 		return _renderer;
 	}
 
-	/*TexRectArray buildWidgetGeometry(ref Widget widget, in GuiStyle style)
+	TexRectArray buildWidgetGeometry(ivec2 size, in GuiStyleState state)
 	{
 		TexRectArray geometry = new TexRectArray;
-		GuiStyleState state = style[widget.state];
 		RectOffset fb = state.fixedBorders;
-		int widgetHeight = widget.prefferedSize.y + state.outline.top + state.outline.bottom;
-		int widgetWidth = widget.prefferedSize.x + state.outline.left + state.outline.right;
+		int widgetHeight = size.y + state.outline.top + state.outline.bottom;
+		int widgetWidth = size.x + state.outline.left + state.outline.right;
 		//writeln("w: ", widgetWidth, ", h: ", widgetHeight);
 		assert(geometry !is null);
 		if (fb.left > 0)
@@ -290,7 +305,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 		}
 		geometry.load;
 		return geometry;
-	}*/
+	}
 
 private:
 	Rect[] _clientAreaStack;

@@ -110,20 +110,22 @@ class GuiTestWindow : GlfwWindow
 		writeln("========");
 		dstring cyrillicChars = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяє"d;
 
-		//-------------- Setting context --------------
+		//-------------- Setting renderer --------------
 		renderer = new Ogl3Renderer(this);
 		renderer.setClearColor(Color(50, 10, 45));
-		guiRenderer = new SkinnedGuiRenderer(renderer);
-		guiRenderer.fontManager.charCache ~= cyrillicChars;
 
-		fpsHelper.maxFps = 120;
-		timerManager = new TimerManager(delegate double(){return glfwGetTime();});
-		
 		//-------------- Skin loading --------------
 		string graySkinSource = cast(string)read("skingray.json");
 		auto skinParser = new JsonGuiSkinParser;
 		graySkin = skinParser.parse(graySkinSource);
+
+		//-------------- Gui renderer --------------
+		guiRenderer = new SkinnedGuiRenderer(renderer, graySkin);
+		guiRenderer.fontManager.charCache ~= cyrillicChars;
 		graySkin.loadResources(guiRenderer);
+
+		fpsHelper.maxFps = 120;
+		timerManager = new TimerManager(delegate double(){return glfwGetTime();});
 
 		//-------------- Setting context --------------
 		context = new GuiContext(guiRenderer, timerManager, graySkin);
@@ -156,6 +158,7 @@ class GuiTestWindow : GlfwWindow
 		auto button = context.createWidget("widget", mainLayer);
 		button.setProperty!"prefSize"(ivec2(50, 50));
 		button.setProperty!"vexpand"(true);
+		button.setProperty!"style"("button");
 		
 		button = context.createWidget("widget", mainLayer);
 		button.setProperty!"prefSize"(ivec2(50, 50));

@@ -122,7 +122,7 @@ struct GuiStyleState
 	/// Defines offset of content rect from widget borders.
 	RectOffset contentPadding;
 
-	/// Defines outline of skin rect. Useful for drawing outlines.
+	/// Defines outline of skin rect. Useful for drawing highlighting.
 	RectOffset outline;
 	
 	/// Defines non-stretchable borders of texture.
