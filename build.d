@@ -102,14 +102,14 @@ void buildPackage(ref packageSettings settings, string flags)
 
 void main()
 {
-	auto imports = ["import", "deps/dlib", "deps/derelict-fi-master/source", "deps/derelict-sdl2-master/source", "deps/derelict-ft-master/source", "deps/derelict-gl3-master/source", "deps/derelict-glfw3-master/source", "deps/derelict-util-1.0.0/source", "deps/sdlang-d-0.8.4"];
+	auto imports = ["import", "deps/dlib", "deps/derelict-fi-master/source", "deps/derelict-sdl2-master/source", "deps/derelict-ft-master/source", "deps/derelict-gl3-master/source", "deps/derelict-glfw3-master/source", "deps/derelict-util-1.0.0/source", "deps/sdlang-d-0.8.4/src"];
 	auto packages = [
 	pack("core", "import/anchovy/core", imports, [], "lib/debug/core", staticLib), 
 	pack("graphics", "import/anchovy/graphics", imports,[], "lib/debug/graphics", staticLib), 
 	pack("gui", "import/anchovy/gui", imports,[], "lib/debug/gui", staticLib), 
 	pack("utils", "import/anchovy/utils", imports,[], "lib/debug/utils", staticLib), 
 	pack("examples", "examples", imports,
-		["deps/derelict-util-1.0.0/lib/DerelictUtil","deps/derelict-glfw3-master/lib/DerelictGLFW3", "deps/derelict-gl3-master/lib/DerelictGL3", "deps/derelict-ft-master/lib/DerelictFT", "deps/derelict-fi-master/lib/DerelictFI", "deps/dlib/dlib","lib/debug/utils", "lib/debug/core", "lib/debug/graphics", "deps/sdlang-d-0.8.4/sdlang-d.lib", "lib/debug/gui"].retro.array, "bin/guidemo", executable)];
+		["deps/derelict-util-1.0.0/lib/DerelictUtil","deps/derelict-glfw3-master/lib/DerelictGLFW3", "deps/derelict-gl3-master/lib/DerelictGL3", "deps/derelict-ft-master/lib/DerelictFT", "deps/derelict-fi-master/lib/DerelictFI", "deps/dlib/dlib","lib/debug/utils", "lib/debug/core", "lib/debug/graphics", "deps/sdlang-d-0.8.4/sdlang-d", "lib/debug/gui"].retro.array, "bin/guidemo", executable)];
 	
 	foreach(ref pack; packages)
 		buildPackage(pack, "-debug -gc -m32");

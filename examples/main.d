@@ -55,6 +55,9 @@ import anchovy.utils.string : ZToString;
 import anchovy.gui.behaviors.defaultbehaviors;
 import anchovy.gui.layouts.linearlayout;
 
+import anchovy.gui.templateparser;
+import anchovy.gui.widgettemplate;
+
 version(linux)
 {
 	pragma(lib, "dl");
@@ -126,6 +129,12 @@ class GuiTestWindow : GlfwWindow
 
 		fpsHelper.maxFps = 120;
 		timerManager = new TimerManager(delegate double(){return glfwGetTime();});
+
+		//-------------- Template loading --------------
+
+		auto templateParser = new TemplateParser;
+		string exampleTemplate = cast(string)read("appLayout.sdl");
+		templateParser.parse(exampleTemplate, "appLayout.sdl");
 
 		//-------------- Setting context --------------
 		context = new GuiContext(guiRenderer, timerManager, graySkin);
