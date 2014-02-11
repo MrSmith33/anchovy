@@ -44,7 +44,7 @@ class SubwidgetTemplate
 	string toStringImpl(string padding)
 	{
 		string result;
-		result ~= padding ~ to!string(properties["name"]);
+		result ~= padding ~ to!string(properties["type"]);
 		foreach(key; properties.byKey)
 		{
 			result ~= " " ~key ~":" ~ to!string(properties[key]);
@@ -82,7 +82,7 @@ class WidgetTemplate
 
 			foreach(name; path)
 			{
-				auto index = countUntil!( (SubwidgetTemplate a, string b) => a.properties.get("name", Variant("")).get!string == b)
+				auto index = countUntil!( (SubwidgetTemplate a, string b) => a.properties.get("type", Variant("")).get!string == b)
 								(subwidget.subwidgets, name);
 
 				if (index == -1)

@@ -95,7 +95,7 @@ class TemplateParser
 				subwidget.properties[value.get!string] = Variant(true);
 			}
 
-			subwidget.properties["name"] = section.name;
+			subwidget.properties["type"] = section.name;
 
 			return subwidget;
 		}
@@ -119,7 +119,7 @@ class TemplateParser
 		}
 
 		templ.tree = parseTreeSection(treeTag);
-		templ.tree.properties["name"] = templateTag.name;
+		templ.tree.properties["type"] = templateTag.name;
 
 		writeln(templ.tree);
 
