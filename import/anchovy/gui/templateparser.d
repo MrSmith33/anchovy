@@ -77,22 +77,24 @@ class TemplateParser
 		{
 			auto subwidget = new SubwidgetTemplate;
 
-			//writeln("tree ");
-			//writeln(section.toDebugString);
+			// Adding subwidgets.
 			foreach(sub; section.tags)
 			{
 				subwidget.subwidgets ~= parseTreeSection(sub);
-				foreach(prop; section.attributes)
-				{
-					subwidget.properties[prop.name] = cast(Variant)prop.value;
-				}
-
-				foreach(value; section.values)
-				{
-					subwidget.properties[value.get!string] = Variant(true);
-				}
-				
 			}
+
+			// Adding widget properties.
+			foreach(prop; section.attributes)
+			{
+				subwidget.properties[prop.name] = cast(Variant)prop.value;
+			}
+
+			// Adding widget flags.
+			foreach(value; section.values)
+			{
+				subwidget.properties[value.get!string] = Variant(true);
+			}
+
 			subwidget.properties["name"] = section.name;
 
 			return subwidget;
