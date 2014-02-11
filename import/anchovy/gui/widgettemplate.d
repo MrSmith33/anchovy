@@ -35,6 +35,29 @@ class SubwidgetTemplate
 {
 	Variant[string] properties;
 	SubwidgetTemplate[] subwidgets;
+
+	override string toString()
+	{
+		return toStringImpl("");
+	}
+
+	string toStringImpl(string padding)
+	{
+		string result;
+		result ~= padding ~ to!string(properties["name"]);
+		foreach(key; properties.byKey)
+		{
+			result ~= " " ~key ~":" ~ to!string(properties[key]);
+		}
+		result ~= "\n";
+
+		foreach(sub; subwidgets)
+		{
+			result ~= sub.toStringImpl(padding ~ "  ");
+		}
+
+		return result;
+	}
 }
 
 struct ForwardedProperty
@@ -46,6 +69,10 @@ struct ForwardedProperty
 
 class WidgetTemplate
 {
+	ForwardedProperty[] forwardedProperties; //indexed by property name.
+	SubwidgetTemplate tree; // the widget itself.
+	SubwidgetTemplate childrenContainer; // by default root itself.
+
 	Widget create(GuiContext context)
 	{
 		// returns null if not found.
@@ -93,8 +120,4 @@ class WidgetTemplate
 
 		return result;
 	}
-
-	ForwardedProperty[] forwardedProperties; //indexed by property name.
-	SubwidgetTemplate tree; // the widget itself.
-	SubwidgetTemplate childrenContainer; // by default root itself.
 }

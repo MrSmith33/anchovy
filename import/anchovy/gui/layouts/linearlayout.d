@@ -63,18 +63,18 @@ class LinearLayout(bool vertical) : ILayout
 		minRootLength += childrenLength;
 		minRootWidth += padding * 2;
 
-		writeln("minRootLength ", minRootLength);
-		writeln("minRootWidth ", minRootWidth);
-		writeln("rootSize ", rootSize);
+		//writeln("minRootLength ", minRootLength);
+		//writeln("minRootWidth ", minRootWidth);
+		//writeln("rootSize ", rootSize);
 
 		*sizeWidth(rootSize) = minRootWidth;
 		*sizeLength(rootSize) = minRootLength;
-		writeln("rootSize ", rootSize);
+		//writeln("rootSize ", rootSize);
 
 		root.setProperty!("prefSize")(rootSize);
 		root.setProperty!("numExpandable")(numExpandableChildren);
 
-		writeln("minimize linear");
+		//writeln("minimize linear");
 	}
 
 	override void expand(Widget root)
@@ -92,10 +92,10 @@ class LinearLayout(bool vertical) : ILayout
 		int extraPerWidget = extraLength / cast(int)(numExpandableChildren > 0 ? numExpandableChildren : 1);
 		extraPerWidget = extraPerWidget > 0 ? extraPerWidget : 0;
 
-		writeln("numExpandableChildren ", numExpandableChildren);
-		writeln("extraPerWidget ", extraPerWidget);
-		writeln("extraLength ", extraLength);
-		writeln("rootPrefSize ", rootPrefSize);
+		//writeln("numExpandableChildren ", numExpandableChildren);
+		//writeln("extraPerWidget ", extraPerWidget);
+		//writeln("extraLength ", extraLength);
+		//writeln("rootPrefSize ", rootPrefSize);
 
 		int topOffset = padding - spacing;
 
@@ -108,12 +108,12 @@ class LinearLayout(bool vertical) : ILayout
 
 			if (isExpandableLength(child))
 			{
-				writeln("expandable ", child["type"]);
+				//writeln("expandable ", child["type"]);
 				*sizeLength(childSize) += extraPerWidget;
 			}
 			if (isExpandableWidth(child))
 			{
-				writeln("expandable width ", child["type"]);
+				//writeln("expandable width ", child["type"]);
 				*sizeWidth(childSize) = maxChildWidth;
 			}
 			topOffset += *sizeLength(childSize); // Offset for next child
@@ -121,7 +121,7 @@ class LinearLayout(bool vertical) : ILayout
 			child.setProperty!("userSize")(childSize);
 		}
 
-		writeln("minimize linear");
+		//writeln("minimize linear");
 	}
 
 	override void onContainerResized(Widget root, ivec2 oldSize, ivec2 newSize)

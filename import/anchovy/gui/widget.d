@@ -119,7 +119,7 @@ public:
 		{
 			layout.expand(widget);
 		}
-		writeln("expand ", widget["type"], " ", widget["name"]);
+		//writeln("expand ", widget["type"], " ", widget["name"]);
 
 		return true;
 	}
@@ -138,7 +138,7 @@ public:
 			}
 		}
 		
-		writeln("expand ", widget["type"], " ", widget["name"]);
+		//writeln("expand ", widget["type"], " ", widget["name"]);
 		return true;
 	}
 
@@ -148,7 +148,7 @@ public:
 		{
 			layout.minimize(widget);
 		}
-		writeln("minimize ", widget["type"]);
+		//writeln("minimize ", widget["type"]);
 		return true;
 	}
 
