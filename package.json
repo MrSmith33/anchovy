@@ -51,7 +51,8 @@
             "derelict-ft" : "~master",
             "derelict-gl3" : "~master",
             "derelict-glfw3" : "~master",
-            "dlib" : "~master"
+            "dlib" : "~master",
+            "sdlang-d" : "v0.8.4"
          },
          "importPaths" : [ "import" ],
          "name" : "gui",
