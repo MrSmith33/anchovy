@@ -64,38 +64,26 @@ struct ForwardedProperty
 {
 	string propertyName; // property that will be created in root.
 	string targetPropertyName; // property to bind to.
-	string[] path; // sequence of children, last of them must have 'targetPropertyName' property.
+	string targetName; // target child.
 }
 
 class WidgetTemplate
 {
 	ForwardedProperty[] forwardedProperties; //indexed by property name.
 	SubwidgetTemplate tree; // the widget itself.
+	SubwidgetTemplate[string] subwidgetsmap;
 	SubwidgetTemplate childrenContainer; // by default root itself.
 
 	Widget create(GuiContext context)
 	{
 		// returns null if not found.
-		SubwidgetTemplate findSubwidget(SubwidgetTemplate root, string[] path)
+		SubwidgetTemplate findSubwidgetByName(string name)
 		{
-			SubwidgetTemplate subwidget = root;
+			SubwidgetTemplate* subwidget;
 
-			foreach(name; path)
-			{
-				auto index = countUntil!( (SubwidgetTemplate a, string b) => a.properties.get("type", Variant("")).get!string == b)
-								(subwidget.subwidgets, name);
+			subwidget = name in subwidgetsmap;
 
-				if (index == -1)
-				{
-					return null;
-				}
-				else
-				{
-					subwidget = subwidget.subwidgets[index];
-				}
-			}
-
-			return subwidget;
+			return *subwidget;
 		}
 
 		Widget createSubwidget(SubwidgetTemplate sub, Widget parent = null)
@@ -109,7 +97,7 @@ class WidgetTemplate
 
 			foreach(forwardedProperty; forwardedProperties)
 			{
-				SubwidgetTemplate widget = findSubwidget(sub, forwardedProperty.path);
+				SubwidgetTemplate widget = findSubwidgetByName(forwardedProperty.targetName);
 				// add binding to property
 			}
 

@@ -80,7 +80,13 @@ class TemplateParser
 			// Adding subwidgets.
 			foreach(sub; section.tags)
 			{
-				subwidget.subwidgets ~= parseTreeSection(sub);
+				auto subsub = parseTreeSection(sub);
+				subwidget.subwidgets ~= subsub;
+
+				if (auto nameProperty = "name" in subsub.properties)
+				{
+					templ.subwidgetsmap[nameProperty.coerce!string] = subsub;
+				}
 			}
 
 			// Adding widget properties.
@@ -92,7 +98,7 @@ class TemplateParser
 			// Adding widget flags.
 			foreach(value; section.values)
 			{
-				subwidget.properties[value.get!string] = Variant(true);
+				subwidget.properties[value.coerce!string] = Variant(true);
 			}
 
 			subwidget.properties["type"] = section.name;
@@ -122,6 +128,7 @@ class TemplateParser
 		templ.tree.properties["type"] = templateTag.name;
 
 		writeln(templ.tree);
+		writeln(templ.subwidgetsmap);
 
 		return templ;
 	}
