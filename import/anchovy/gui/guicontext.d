@@ -68,8 +68,6 @@ class GuiContext
 
 	}
 
-	//InputManager inputManager;
-	//EventManager eventManager;
 protected:
 	KeyModifiers modifiers;
 
@@ -78,6 +76,8 @@ protected:
 
 	/// Used for timers.
 	TimerManager	_timerManager;
+
+	TemplateManager _templateManager;
 
 	/// Current input owner If set, this widget will receive all pointer moved events.
 	/// See_Also: inputOwnerWidget
@@ -109,7 +109,7 @@ protected:
 
 public:
 
-	this(IGuiRenderer guiRenderer, TimerManager timerManager, GuiSkin skin)
+	this(IGuiRenderer guiRenderer, TimerManager timerManager, TemplateManager templateManager, GuiSkin skin)
 	in
 	{
 		assert(guiRenderer);
@@ -120,6 +120,7 @@ public:
 	{
 		_guiRenderer = guiRenderer;
 		_timerManager = timerManager;
+		_templateManager = templateManager;
 	}
 
 	void addRoot(Widget root)
@@ -142,7 +143,10 @@ public:
 		}
 
 		widget["type"] = type;
-		widget["style"] = type;
+		if (widget["style"] == Variant(null))
+		{
+			widget["style"] = type;
+		}
 		widget["context"] = this;
 
 		if (parent !is null)

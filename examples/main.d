@@ -133,55 +133,53 @@ class GuiTestWindow : GlfwWindow
 		//-------------- Template loading --------------
 
 		auto templateParser = new TemplateParser;
-		string exampleTemplate = cast(string)read("appLayout.sdl");
-		templateParser.parse(exampleTemplate, "appLayout.sdl");
+		auto templateManager = new TemplateManager(templateParser);
+		templateManager.parseFile("appLayout.sdl");
 
 		//-------------- Setting context --------------
-		context = new GuiContext(guiRenderer, timerManager, graySkin);
+		context = new GuiContext(guiRenderer, timerManager, templateManager, graySkin);
 		context.setClipboardStringCallback = (dstring newStr) => setClipboard(to!string(newStr));
 		context.getClipboardStringCallback = delegate dstring(){return to!dstring(getClipboard());};
 		context.attachDefaultBehaviors();
 
 		//-------------- Creating widgets --------------------
-		writeln("mainLayer before");
 		auto mainLayer = context.createWidget("widget");
-		writeln("mainLayer created 1");
-		mainLayer["name"] = "mainLayer";
-		mainLayer["isVisible"] = false;
-		writeln("mainLayer created 2");
-		mainLayer.setProperty!("layout")(cast(ILayout)new VerticalLayout);
+			mainLayer["name"] = "mainLayer";
+			mainLayer["isVisible"] = false;
+			mainLayer.setProperty!("layout")(cast(ILayout)new VerticalLayout);
 		context.addRoot(mainLayer);
 
 		auto button1 = context.createWidget("button", mainLayer);
-		button1["name"] = "button1";
-		button1.setProperty!"prefSize"(ivec2(50, 50));
-		button1.setProperty!"position"(ivec2(20, 20));
-		button1.setProperty!"caption"("Click me!");
-		button1.addEventHandler(delegate bool(Widget widget, PointerClickEvent event){
-			widget["caption"] = to!dstring(event.pointerPosition);
-			writeln("Clicked at ", event.pointerPosition);
-			return true;
-		});
-		button1.addEventHandler(delegate bool(Widget widget, PointerLeaveEvent event){widget["caption"] = "Click me!";return true;});
+			button1["name"] = "button1";
+			button1.setProperty!"prefSize"(ivec2(50, 50));
+			button1.setProperty!"position"(ivec2(20, 20));
+			button1.setProperty!"caption"("Click me!");
+			button1.addEventHandler(delegate bool(Widget widget, PointerClickEvent event){
+				widget["caption"] = to!dstring(event.pointerPosition);
+				writeln("Clicked at ", event.pointerPosition);
+				return true;
+			});
+			button1.addEventHandler(delegate bool(Widget widget, PointerLeaveEvent event)
+											{widget["caption"] = "Click me!";return true;});
 
 		auto button = context.createWidget("widget", mainLayer);
-		button.setProperty!"prefSize"(ivec2(50, 50));
-		button.setProperty!"vexpand"(true);
-		button.setProperty!"style"("button");
+			button.setProperty!"prefSize"(ivec2(50, 50));
+			button.setProperty!"vexpand"(true);
+			button.setProperty!"style"("button");
 		
 		button = context.createWidget("widget", mainLayer);
-		button.setProperty!"prefSize"(ivec2(50, 50));
-		button.setProperty!"hexpand"(true);
+			button.setProperty!"prefSize"(ivec2(50, 50));
+			button.setProperty!"hexpand"(true);
 		
 		auto container = context.createWidget("widget", mainLayer);
-		container.setProperty!("layout")(cast(ILayout)new HorizontalLayout);
-		container.setProperty!"prefSize"(ivec2(50, 50));
-		container.setProperty!"hexpand"(true);
-		container.setProperty!"vexpand"(true);
+			container.setProperty!("layout")(cast(ILayout)new HorizontalLayout);
+			container.setProperty!"prefSize"(ivec2(50, 50));
+			container.setProperty!"hexpand"(true);
+			container.setProperty!"vexpand"(true);
 
 		button = context.createWidget("button", container);
-		button.setProperty!"prefSize"(ivec2(50, 50));
-		button.setProperty!"vexpand"(true);
+			button.setProperty!"prefSize"(ivec2(50, 50));
+			button.setProperty!"vexpand"(true);
 
 		//--------------- Rendering settings---------------------------
 		renderer.enableAlphaBlending();

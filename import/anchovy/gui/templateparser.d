@@ -65,7 +65,6 @@ class TemplateParser
 		WidgetTemplate templ = new WidgetTemplate;
 		Tag propertiesTag;
 		Tag treeTag;
-		Tag subwidgetsTag;
 
 		void parsePropertiesSection(Tag section)
 		{
@@ -116,9 +115,6 @@ class TemplateParser
 				case "tree":
 					treeTag = section;
 					break;
-				case "subwidgets":
-					subwidgetsTag = section;
-					break;
 				default:
 					writeln("unknown template section found: ", section.name);
 			}
@@ -126,9 +122,6 @@ class TemplateParser
 
 		templ.tree = parseTreeSection(treeTag);
 		templ.tree.properties["type"] = templateTag.name;
-
-		writeln(templ.tree);
-		writeln(templ.subwidgetsmap);
 
 		return templ;
 	}

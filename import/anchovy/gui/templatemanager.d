@@ -26,39 +26,51 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.gui.all;
+module anchovy.gui.templatemanager;
 
-public
+import std.file : read;
+
+import anchovy.gui.all;
+
+import anchovy.gui.widgettemplate;
+import anchovy.gui.templateparser;
+
+class TemplateManager
 {
-	import std.conv: to;
-	import std.stdio;
+	private WidgetTemplate[string] templates;
+	private TemplateParser parser;
 
-	import dlib.math.vector;
-	import dlib.math.utils;
+	this(TemplateParser parser)
+	{
+		assert(parser);
+		this.parser = parser;
+	}
 
-	import anchovy.core.input;
-	import anchovy.core.math;
-	import anchovy.core.types;
-	import anchovy.graphics.all;
-	import anchovy.graphics.interfaces.irenderer;
+	void parseFile(string filename)
+	{
+		string file = cast(string)read(filename);
+		parseString(file, filename);
+	}
 
-	import anchovy.gui.guicontext;
+	void parseString(string str, string filename = null)
+	{
+		auto parsedTemplates = parser.parse(str, filename);
+		
+		foreach(templ; parsedTemplates)
+		{
+			templates[templ.tree.properties["type"].get!string] = templ;
+		}
+	}
 
-	import anchovy.gui.events,
-		anchovy.gui.eventpropagators,
-		anchovy.gui.guiskin,
-		anchovy.gui.widget,
-		anchovy.gui.guirenderer;
+	/// Returns true if given type name exists.
+	bool typeExists(string type)
+	{
+		return !!(type in templates);
+	}
 
-	import anchovy.gui.interfaces.iguiskinparser,
-		anchovy.gui.interfaces.iguirenderer;
-	import anchovy.gui.jsonguiskinparser;
-	import anchovy.gui.layouts.absolutelayout;
-	import anchovy.gui.textline;
-	import anchovy.gui.timermanager;
-	import anchovy.gui.controls.all;
-
-	import anchovy.gui.widgettemplate;
-	import anchovy.gui.templateparser;
-	import anchovy.gui.templatemanager;
+	/// Returns null if not found.
+	WidgetTemplate getTemplate(string type)
+	{
+		return templates.get(type, null);
+	}
 }
