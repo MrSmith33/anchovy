@@ -73,39 +73,5 @@ class WidgetTemplate
 	SubwidgetTemplate tree; // the widget itself.
 	SubwidgetTemplate[string] subwidgetsmap;
 	SubwidgetTemplate childrenContainer; // by default root itself.
-
-	Widget create(GuiContext context)
-	{
-		// returns null if not found.
-		SubwidgetTemplate findSubwidgetByName(string name)
-		{
-			SubwidgetTemplate* subwidget;
-
-			subwidget = name in subwidgetsmap;
-
-			return *subwidget;
-		}
-
-		Widget createSubwidget(SubwidgetTemplate sub, Widget parent = null)
-		{
-			Widget subwidget = context.createWidget(sub.properties["type"].get!string, parent);
-			
-			foreach(propertyKey; sub.properties.byKey)
-			{
-				subwidget[propertyKey] = sub.properties[propertyKey];
-			}
-
-			foreach(forwardedProperty; forwardedProperties)
-			{
-				SubwidgetTemplate widget = findSubwidgetByName(forwardedProperty.targetName);
-				// add binding to property
-			}
-
-			return subwidget;
-		}
-
-		Widget result = createSubwidget(tree);
-
-		return result;
-	}
+	string baseType;
 }

@@ -177,9 +177,15 @@ class GuiTestWindow : GlfwWindow
 			container.setProperty!"hexpand"(true);
 			container.setProperty!"vexpand"(true);
 
-		button = context.createWidget("button", container);
+		templateManager.parseString(`
+					template:mybutton extends="button" {
+						tree "vexpand" style="button"
+					}`);
+		button = context.createWidget("mybutton", container);
 			button.setProperty!"prefSize"(ivec2(50, 50));
 			button.setProperty!"vexpand"(true);
+
+		writeln(templateManager.templates);
 
 		//--------------- Rendering settings---------------------------
 		renderer.enableAlphaBlending();

@@ -123,8 +123,8 @@ class SkinnedGuiRenderer : IGuiRenderer
 
 			if (geometry is null)
 			{
-				ivec2 userSize = widget.getPropertyAs!("userSize", ivec2);
-				TexRectArray newGeometry = buildWidgetGeometry(userSize, state);
+				ivec2 size = widget.getPropertyAs!("size", ivec2);
+				TexRectArray newGeometry = buildWidgetGeometry(size, state);
 
 				geometry = &newGeometry;
 				geometryList[stateName] = newGeometry;

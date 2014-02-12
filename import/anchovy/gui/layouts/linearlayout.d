@@ -43,7 +43,7 @@ class LinearLayout(bool vertical) : ILayout
 	override void minimize(Widget root)
 	{
 		Widget[] children = root.getPropertyAs!("children", Widget[]);
-		ivec2 rootSize = root.getPropertyAs!("userSize", ivec2);
+		ivec2 rootSize = root.getPropertyAs!("size", ivec2);
 
 		int minRootWidth = int.min; // Will be max child width. Then padding will be added
 		int minRootLength = padding * 2;
@@ -83,12 +83,12 @@ class LinearLayout(bool vertical) : ILayout
 
 		uint numExpandableChildren = root.getPropertyAs!("numExpandable", uint);
 
-		ivec2 rootUserSize = root.getPropertyAs!("userSize", ivec2);
+		ivec2 rootSize = root.getPropertyAs!("size", ivec2);
 		ivec2 rootPrefSize = root.getPropertyAs!("prefSize", ivec2);
 
-		int maxChildWidth = *sizeWidth(rootUserSize) - padding * 2;
+		int maxChildWidth = *sizeWidth(rootSize) - padding * 2;
 
-		int extraLength = *sizeLength(rootUserSize) - *sizeLength(rootPrefSize);
+		int extraLength = *sizeLength(rootSize) - *sizeLength(rootPrefSize);
 		int extraPerWidget = extraLength / cast(int)(numExpandableChildren > 0 ? numExpandableChildren : 1);
 		extraPerWidget = extraPerWidget > 0 ? extraPerWidget : 0;
 
@@ -118,7 +118,7 @@ class LinearLayout(bool vertical) : ILayout
 			}
 			topOffset += *sizeLength(childSize); // Offset for next child
 
-			child.setProperty!("userSize")(childSize);
+			child.setProperty!("size")(childSize);
 		}
 
 		//writeln("minimize linear");

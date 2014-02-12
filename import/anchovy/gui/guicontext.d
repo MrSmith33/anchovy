@@ -125,30 +125,100 @@ public:
 
 	void addRoot(Widget root)
 	{
-		root.setProperty!"userSize"(_guiRenderer.renderer.windowSize);
+		root.setProperty!"size"(_guiRenderer.renderer.windowSize);
 		roots ~= root;
+	}
+
+	Widget createBaseWidget(string type)
+	{
+		if (auto factory = type in widgetFactories)
+		{
+			return widgetFactories[type]();
+		}
+		else
+		{
+			return new Widget;
+		}
 	}
 
 	Widget createWidget(string type, Widget parent = null)
 	{
 		Widget widget;
 
-		if (auto factory = type in widgetFactories)
+		//----------------------- Instatiating templates ---------------------------
+
+		writeln("template for ", type, " is ", _templateManager.getTemplate(type));
+		if (auto templ = _templateManager.getTemplate(type))
 		{
-			widget = widgetFactories[type]();
+			//---------------------------- Helpers ---------------------------------
+			SubwidgetTemplate findSubwidgetByName(string name)
+			{
+				SubwidgetTemplate* subwidget;
+
+				subwidget = name in templ.subwidgetsmap;
+
+				return *subwidget;
+			}
+
+			Widget createSubwidget(SubwidgetTemplate sub, Widget subwidget)
+			{
+				foreach(propertyKey; sub.properties.byKey)
+				{
+					subwidget[propertyKey] = sub.properties[propertyKey];
+				}
+
+				foreach(subtemplate; sub.subwidgets)
+				{
+					createSubwidget(subtemplate, createWidget(subtemplate.properties["type"].get!string, subwidget));
+				}
+
+				return subwidget;
+			}
+
+			//----------------------- Base type construction -----------------------
+
+			Widget baseWidget;
+
+			if (templ.baseType != "widget")
+			{
+				baseWidget = createWidget(templ.baseType);
+			}
+			else
+			{
+				baseWidget = createBaseWidget(type);
+			}
+
+			baseWidget["type"] = type;
+			baseWidget["context"] = this; // widget may access context before construction ends.
+
+			//----------------------- Template construction ------------------------
+
+			widget = createSubwidget(templ.tree, baseWidget);
+
+			foreach(forwardedProperty; templ.forwardedProperties)
+			{
+				SubwidgetTemplate target = findSubwidgetByName(forwardedProperty.targetName);
+				// add binding to property
+			}
+
+			widget["template"] = templ;
+			writeln("style: ",widget["style"]);
 		}
 		else
 		{
-			widget = new Widget;
+			// if there is no template, lets create regular one.
+			widget = createBaseWidget(type);
 		}
 
-		widget["type"] = type;
+		// default style
 		if (widget["style"] == Variant(null))
 		{
 			widget["style"] = type;
 		}
-		widget["context"] = this;
 
+		widget["context"] = this; // if widget attempts to override context.
+
+		// adding parent
 		if (parent !is null)
 		{
 			addChild(parent, widget);
@@ -158,7 +228,8 @@ public:
 			widget["parent"] = null;
 		}
 
-		
+		//----------------------- Attaching behaviors ---------------------------
+
 		if (auto behavior = type in widgetBehaviors)
 		{
 			behavior.attachTo(widget);
@@ -178,7 +249,7 @@ public:
 	{
 		foreach(widget; roots)
 		{
-			widget.setProperty!"userSize"(newSize);
+			widget.setProperty!"size"(newSize);
 		}
 	}
 	

@@ -54,7 +54,7 @@ class TemplateParser
 
 		foreach(templ; root.maybe.namespaces["template"].tags)
 		{
-			parseTemplate(templ);
+			templates ~= parseTemplate(templ);
 		}
 
 		return templates;
@@ -117,6 +117,20 @@ class TemplateParser
 					break;
 				default:
 					writeln("unknown template section found: ", section.name);
+			}
+		}
+
+		templ.baseType = "widget"; // default super is widget or widget factory with the same type.
+
+		foreach(prop; templateTag.attributes)
+		{
+			switch(prop.name)
+			{
+				case "extends":
+					templ.baseType = prop.value.coerce!string;
+					break;
+				default:
+					writeln("unknown template property found: ", prop.name);
 			}
 		}
 

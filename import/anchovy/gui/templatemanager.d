@@ -37,7 +37,7 @@ import anchovy.gui.templateparser;
 
 class TemplateManager
 {
-	private WidgetTemplate[string] templates;
+	WidgetTemplate[string] templates;
 	private TemplateParser parser;
 
 	this(TemplateParser parser)

@@ -60,7 +60,7 @@ public:
 		properties["staticPosition"] = staticPosition = new ValueProperty(ivec2(0,0));
 
 		properties["minSize"] = minSize = new ValueProperty(ivec2(0,0));
-		properties["userSize"] = userSize = new ValueProperty(ivec2(0,0));
+		properties["size"] = size = new ValueProperty(ivec2(0,0));
 		properties["prefSize"] = prefferedSize = new ValueProperty(ivec2(0,0));
 		properties["staticRect"] = staticRect = new ValueProperty(Rect(0,0,0,0));
 
@@ -86,16 +86,16 @@ public:
 		property("position").valueChanged.connect(onPositionChanged);
 
 		auto onStaticPositionChanged = (FlexibleObject obj, Variant old, Variant* newStaticPosition){
-			obj["staticRect"] = Rect((*newStaticPosition).get!ivec2, obj.getPropertyAs!("userSize", ivec2));
+			obj["staticRect"] = Rect((*newStaticPosition).get!ivec2, obj.getPropertyAs!("size", ivec2));
 		};
 
-		auto onUserSizeChanged = (FlexibleObject obj, Variant old, Variant* newUserSize){
-			obj["staticRect"] = Rect(obj.getPropertyAs!("staticPosition", ivec2), (*newUserSize).get!ivec2);
+		auto onSizeChanged = (FlexibleObject obj, Variant old, Variant* newSize){
+			obj["staticRect"] = Rect(obj.getPropertyAs!("staticPosition", ivec2), (*newSize).get!ivec2);
 			if (auto layout = obj.peekPropertyAs!("layout", ILayout))
 			{
 				if (*layout !is null)
 				{
-					//writefln("onUserSizeChanged %s %s %s %s", *layout, cast(Widget)obj, old.get!ivec2, (*newUserSize).get!ivec2);
+					//writefln("onSizeChanged %s %s %s %s", *layout, cast(Widget)obj, old.get!ivec2, (*newSize).get!ivec2);
 					//(*layout).onContainerResized(null, ivec2(0,0), ivec2(0,0));
 				}
 			}
@@ -105,7 +105,7 @@ public:
 		};
 		
 		property("staticPosition").valueChanged.connect(onStaticPositionChanged);
-		property("userSize").valueChanged.connect(onUserSizeChanged);
+		property("size").valueChanged.connect(onSizeChanged);
 
 		addEventHandler(&handleExpand);
 		addEventHandler(&handleMinimize);
@@ -134,7 +134,7 @@ public:
 				ivec2 childPos = widget.getPropertyAs!("position", ivec2);
 				ivec2 newStaticPosition = parentPos + childPos; // Workaround bug with direct summ.
 				widget["staticPosition"] = newStaticPosition;
-				widget["staticRect"] = Rect(newStaticPosition, widget.getPropertyAs!("userSize", ivec2));
+				widget["staticRect"] = Rect(newStaticPosition, widget.getPropertyAs!("size", ivec2));
 			}
 		}
 		
@@ -171,7 +171,7 @@ public:
 	ValueProperty staticPosition;
 
 	ValueProperty minSize;
-	ValueProperty userSize;
+	ValueProperty size;
 	ValueProperty prefferedSize;
 	ValueProperty staticRect;
 

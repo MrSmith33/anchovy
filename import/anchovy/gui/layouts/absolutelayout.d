@@ -53,16 +53,16 @@ class AbsoluteLayout : ILayout
 		{
 			int anchor;
 			ivec2 pos = widget.getPropertyAs!("position", int);
-			ivec2 userSize = widget.getPropertyAs!("userSize", ivec2);
+			ivec2 size = widget.getPropertyAs!("size", ivec2);
 			anchor = widget.getPropertyAs!("anchor", int);
 
 			if ((anchor & Sides.LEFT) && (anchor & Sides.RIGHT))
 			{
-				int newWidth = userSize.x + dx;
+				int newWidth = size.x + dx;
 				if (newWidth >= 0)
-					userSize = ivec2(newWidth, userSize.y);
+					size = ivec2(newWidth, size.y);
 				else
-					userSize = ivec2(0, userSize.y);
+					size = ivec2(0, size.y);
 			}
 			else if (anchor & Sides.LEFT)
 			{
@@ -79,7 +79,7 @@ class AbsoluteLayout : ILayout
 
 			if (anchor & Sides.TOP && anchor & Sides.BOTTOM)
 			{
-				userSize = ivec2(userSize.x, userSize.y + dy);
+				size = ivec2(size.x, size.y + dy);
 			}
 			else if (anchor & Sides.TOP)
 			{
@@ -95,7 +95,7 @@ class AbsoluteLayout : ILayout
 			}
 
 			widget.setProperty!"position"(pos);
-			widget.setProperty!"userSize"(userSize);
+			widget.setProperty!"size"(size);
 			widget.setProperty!"anchor"(anchor);
 		}
 	}
