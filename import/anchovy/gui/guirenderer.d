@@ -134,8 +134,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 
 			_renderer.setColor(Color(255, 255, 255, 255));
 			_renderer.drawTexRectArray(*geometry,
-			                           staticRect.x - state.outline.left,
-			                           staticRect.y - state.outline.top,
+										ivec2(staticRect.x - state.outline.left,staticRect.y - state.outline.top),
 			                           _skin.texture);
 		}
 	}
@@ -164,7 +163,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 		else 
 			renderY = position.y - line.height;
 
-		_renderer.drawTexRectArray(line.geometry, renderX , renderY, _fontTexture, _textShader);
+		_renderer.drawTexRectArray(line.geometry, ivec2(renderX , renderY), _fontTexture, _textShader);
 	}
 
 	override void drawTextLine(ref TextLine line, in Rect area, in AlignmentType alignment)
@@ -195,7 +194,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 		else
 			renderY = area.y + line.y;
 		
-		_renderer.drawTexRectArray(line.geometry, renderX , renderY, _fontTexture, _textShader);
+		_renderer.drawTexRectArray(line.geometry, ivec2(renderX , renderY), _fontTexture, _textShader);
 	}
 
 	override void pushClientArea(Rect area)

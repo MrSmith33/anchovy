@@ -41,7 +41,7 @@ private {
 	import anchovy.graphics.shaderprogram;
 }
 
-abstract class IRenderer
+interface IRenderer
 {
 	void bindShaderProgram(uint shaderName);
 	void bindShaderProgram(ref ShaderProgram program);
@@ -55,14 +55,12 @@ abstract class IRenderer
 	uint registerShaderProgram(ShaderProgram program);
 	void drawRect(Rect rect);
 	void fillRect(Rect rect);
-	void drawRect(int x1, int y1, int x2, int y2);
-	void fillRect(int x1, int y1, int x2, int y2);
-	void drawTexRect(int x1, int y1, int tx1, int ty1, int tw, int th, uint texture)
+	final void drawTexRect(Rect target, ivec2 sourcePos, uint texture)
 	{
-		drawTexRect(x1, y1, tw, th, tx1, ty1, tw, th, texture);
+		drawTexRect(target, Rect(sourcePos, target.size), texture);
 	}
-	void drawTexRect(int x1, int y1, int w, int h, int tx1, int ty1, int tw, int th, uint texture);
-	void drawTexRectArray(TexRectArray array, int x, int y, uint textureId, ShaderProgram customProgram = null);
+	void drawTexRect(Rect target, Rect source, uint texture);
+	void drawTexRectArray(TexRectArray array, ivec2 position, uint textureId, ShaderProgram customProgram = null);
 	void setColor(in Color newColor);
 	void setColor(in Color4f newColor);
 	void setClearColor(in Color color);

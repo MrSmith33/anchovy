@@ -307,42 +307,35 @@ class Ogl3Renderer : IRenderer
 
 	override void drawRect(Rect rect)
 	{
-		drawRect(rect.x, rect.y, rect.x + rect.width, rect.y + rect.height);
-	}
-
-	override void fillRect(Rect rect)
-	{
-		fillRect(rect.x, rect.y, rect.x + rect.width, rect.y + rect.height);
-	}
-
-	///x1, y1 - upper left corner, x2, y2 - lower right
-	override void drawRect(int x1, int y1, int x2, int y2)
-	{
 		bindShaderProgram(primShader);
 		primShader.setUniform2!float("gHalfTarget", window.width/2, window.height/2);
 		primShader.setUniform4!float("gColor", curColor.r, curColor.g, curColor.b, curColor.a);
 		rectVao.bind;
-		rectVbo.data = cast(short[])[x1, y2, x1, y1, x2, y1, x2, y2];
+		rectVbo.data = cast(short[])[rect.x, rect.y + rect.height, rect.x, rect.y,
+					rect.x + rect.width, rect.y, rect.x + rect.width, rect.y + rect.height];
 		glDrawArrays(GL_LINE_LOOP, 0, 4);
 		rectVao.unbind;
 	}
 
-	override void fillRect(int x1, int y1, int x2, int y2)
+	override void fillRect(Rect rect)
 	{
 		bindShaderProgram(primShader);
 		primShader.setUniform2!float("gHalfTarget", window.width/2, window.height/2);
 		primShader.setUniform4!float("gColor", curColor.r, curColor.g, curColor.b, curColor.a);
 		rectVao.bind;
-		rectVbo.data = cast(short[])[x1, y2, x1, y1, x2, y1, x1, y2, x2, y1, x2, y2];
+		rectVbo.data = cast(short[])[rect.x, rect.y + rect.height, rect.x, rect.y,
+					rect.x + rect.width, rect.y, rect.x, rect.y + rect.height,
+					rect.x + rect.width, rect.y, rect.x + rect.width, rect.y + rect.height];
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		rectVao.unbind;
 	}
 
 	/+++++
 	 + Draws textured rectangle to the current target
-	 + x1, y1 - upper left corner, w, h - target rectangle, 
+	 + target - position and size on the screen.
+	 + source - position and size of rectangle in texture
 	 +++++/
-	override void drawTexRect(int x1, int y1, int w, int h, int tx1, int ty1, int tw, int th, uint texture)
+	override void drawTexRect(Rect target, Rect source, uint texture)
 	{
 		Texture tex = textures[texture];
 		if (tex is null)
@@ -350,39 +343,39 @@ class Ogl3Renderer : IRenderer
 
 		bindShaderProgram(primTexShader);
 		primTexShader.setUniform2!float("gHalfTarget", window.width/2, window.height/2);
-		primTexShader.setUniform2!float("gPosition", x1, y1);
+		primTexShader.setUniform2!float("gPosition", target.x, target.y);
 		primTexShader.setUniform4!float("gColor", curColor.r, curColor.g, curColor.b, curColor.a);
 
 		tex.validateBind();
 		texRectVao.bind;
-		int ty2 = ty1 + th;
-		int tx2 = tx1 + tw;
-		int y2 = y1 + h;
-		int x2 = x1 + w;
-		texRectVbo.data = cast(short[])[0, w, tx1, ty2,
-		                             0, 0, tx1, ty1,
-		                             w, 0, tx2, ty1,
-		                             0, w, tx1, ty2,
-		                             h, 0, tx2, ty1,
-									 h, w, tx2, ty2];
+		int ty2 = source.y + source.height;
+		int tx2 = source.x + source.width;
+		int y2 = target.y + target.height;
+		int x2 = target.x + target.width;
+		texRectVbo.data = cast(short[])[0, target.width, source.x, ty2,
+		                             0, 0, source.x, source.y,
+		                             target.width, 0, tx2, source.y,
+		                             0, target.width, source.x, ty2,
+		                             target.height, 0, tx2, source.y,
+									 target.height, target.width, tx2, ty2];
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		texRectVao.unbind;
 		tex.unbind;
 	}
 
-	override void drawTexRectArray(TexRectArray array, int x, int y, uint textureId, ShaderProgram customProgram = null)
+	override void drawTexRectArray(TexRectArray array, ivec2 position, uint textureId, ShaderProgram customProgram = null)
 	{
 		Texture tex = textures[textureId];
 		ShaderProgram program = customProgram;
 		if (customProgram is null) program = primTexShader;
-		drawTexRectArrayImpl(array, x, y, tex, program);
+		drawTexRectArrayImpl(array, position, tex, program);
 	}
 
-	private void drawTexRectArrayImpl(TexRectArray array, int x, int y, Texture tex, ShaderProgram program)
+	private void drawTexRectArrayImpl(TexRectArray array, ivec2 position, Texture tex, ShaderProgram program)
 	{
 		bindShaderProgram(program);
 		program.setUniform2!float("gHalfTarget", cast(float)window.width / 2, cast(float)window.height / 2);
-		program.setUniform2!float("gPosition", x, y);
+		program.setUniform2!float("gPosition", position.x, position.y);
 		program.setUniform4!float("gColor", curColor.r, curColor.g, curColor.b, curColor.a);
 		
 		tex.validateBind();
