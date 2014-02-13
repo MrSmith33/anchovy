@@ -141,6 +141,22 @@ public:
 		}
 	}
 
+	//---------------------------- Helpers ---------------------------------
+	Widget createSubwidget(SubwidgetTemplate sub, Widget subwidget)
+	{
+		foreach(propertyKey; sub.properties.byKey)
+		{
+			subwidget[propertyKey] = sub.properties[propertyKey];
+		}
+
+		foreach(subtemplate; sub.subwidgets)
+		{
+			createSubwidget(subtemplate, createWidget(subtemplate.properties["type"].get!string, subwidget));
+		}
+
+		return subwidget;
+	}
+
 	Widget createWidget(string type, Widget parent = null)
 	{
 		Widget widget;
@@ -148,33 +164,8 @@ public:
 		//----------------------- Instatiating templates ---------------------------
 
 		writeln("template for ", type, " is ", _templateManager.getTemplate(type));
-		if (auto templ = _templateManager.getTemplate(type))
+		if (WidgetTemplate templ = _templateManager.getTemplate(type))
 		{
-			//---------------------------- Helpers ---------------------------------
-			SubwidgetTemplate findSubwidgetByName(string name)
-			{
-				SubwidgetTemplate* subwidget;
-
-				subwidget = name in templ.subwidgetsmap;
-
-				return *subwidget;
-			}
-
-			Widget createSubwidget(SubwidgetTemplate sub, Widget subwidget)
-			{
-				foreach(propertyKey; sub.properties.byKey)
-				{
-					subwidget[propertyKey] = sub.properties[propertyKey];
-				}
-
-				foreach(subtemplate; sub.subwidgets)
-				{
-					createSubwidget(subtemplate, createWidget(subtemplate.properties["type"].get!string, subwidget));
-				}
-
-				return subwidget;
-			}
-
 			//----------------------- Base type construction -----------------------
 
 			Widget baseWidget;
@@ -197,7 +188,7 @@ public:
 
 			foreach(forwardedProperty; templ.forwardedProperties)
 			{
-				SubwidgetTemplate target = findSubwidgetByName(forwardedProperty.targetName);
+				SubwidgetTemplate target = templ.findSubwidgetByName(forwardedProperty.targetName);
 				// add binding to property
 			}
 

@@ -74,4 +74,13 @@ class WidgetTemplate
 	SubwidgetTemplate[string] subwidgetsmap;
 	SubwidgetTemplate childrenContainer; // by default root itself.
 	string baseType;
+
+	SubwidgetTemplate findSubwidgetByName(string name)
+	{
+		SubwidgetTemplate* subwidget;
+
+		subwidget = name in subwidgetsmap;
+
+		return *subwidget;
+	}
 }
