@@ -32,6 +32,7 @@ import std.stdio;
 
 import anchovy.utils.rectbinpacker;
 import anchovy.graphics.texture;
+import anchovy.graphics.bitmap;
 import anchovy.core.math;
 import anchovy.core.types;
 

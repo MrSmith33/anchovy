@@ -35,6 +35,7 @@ import derelict.freetype.ft;
 
 import anchovy.core.types;
 import anchovy.graphics.texture;
+import anchovy.graphics.bitmap;
 
 import anchovy.graphics.font.fterrors;
 import anchovy.graphics.font.textureatlas;

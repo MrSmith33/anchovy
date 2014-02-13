@@ -29,7 +29,6 @@ DEALINGS IN THE SOFTWARE.
 module anchovy.graphics.texture;
 
 public import derelict.opengl3.gl3;
-import derelict.freeimage.freeimage;
 
 import std.conv, std.file;
 import std.stdio;
@@ -37,116 +36,9 @@ import std.string;
 
 import anchovy.core.types;
 import anchovy.graphics.glerrors;
-
-import anchovy.utils.signal;
+import anchovy.graphics.bitmap;
 
 //version = debugTexture;
-
-Bitmap createBitmapFromFile(string filename)
-{
-	auto bitmap = new Bitmap(4);
-
-	bitmap.loadFromFile(filename);
-
-	return bitmap;
-}
-
-class Bitmap
-{
-	this(in uint w, in uint h, in ubyte byteDepth)
-	{
-		this.width = w;
-		this.height = h;
-		this.byteDepth = byteDepth;
-		data = new ubyte[w*h*byteDepth];
-	}
-	this(in ubyte byteDepth)
-	{
-		this.byteDepth = byteDepth;
-	}
-
-	uint	height;
-	uint	width;
-	ubyte	byteDepth;
-	ubyte[]	data;
-
-	Signal!() dataChanged;
-
-	void loadFromFile(string filename)
-	{
-		//Automatocally detects the format(from over 20 formats!)
-		FREE_IMAGE_FORMAT formato = FreeImage_GetFileType(toStringz(filename),0);
-		FIBITMAP* fiimage = FreeImage_Load(formato, toStringz(filename), 0);
-
-		if (fiimage is null) throw new Exception("Image loading failed");
-
-		FIBITMAP* temp = fiimage;
-		fiimage = FreeImage_ConvertTo32Bits(temp);
-
-		FreeImage_Unload(temp);
-	
-		width = FreeImage_GetWidth(fiimage);
-		height = FreeImage_GetHeight(fiimage);
-
-		ubyte* bits = FreeImage_GetBits(fiimage);
-
-		data = new ubyte[](width*height*4);
-
-		foreach(i; 0 .. width * height)//Converts from BGRA to RGBA
-		{
-			data[i*4+0] = bits[i*4+2];
-			data[i*4+1] = bits[i*4+1];
-			data[i*4+2] = bits[i*4+0];
-			data[i*4+3] = bits[i*4+3];
-		}
-
-		FreeImage_Unload(fiimage);
-	}
-
-	void putSubRect(in uvec2 dest, in Rect source, in Bitmap sourceBitmap)
-	{
-		throw new Exception("putSubRect is not yet implemented");
-
-		dataChanged.emit();
-	}
-
-	void putCustomSubRect(uvec2 dest, in Rect source, ubyte[] sourceData, in ubyte sDataByteDepth, in uint sDataWidth, in uint sDataHeight)
-	in
-	{
-		assert(sourceData.length == sDataByteDepth * sDataWidth * sDataHeight);
-		assert(byteDepth == sDataByteDepth, "Byte depth is not equal");
-	}
-	body
-	{
-		for (uint x = 0; x < source.width; ++x)
-		{
-			for (uint y = 0; y < source.height; ++y)
-			{
-				data[(y+dest.y)*width + x + dest.x] = sourceData[(y+source.y)*sDataWidth + x + source.x];
-			}
-		}
-
-		dataChanged.emit();
-	}
-
-	void putCustomRect(uvec2 dest, in ubyte* sourceData, in ubyte sDataByteDepth, in uint sDataWidth, in uint sDataHeight)
-	in
-	{
-		assert(byteDepth == sDataByteDepth, "Byte depth is not equal");
-	}
-	body
-	{
-		for (uint x = 0; x < sDataWidth; ++x)
-		{
-			for (uint y = 0; y < sDataHeight; ++y)
-			{
-				data[(y+dest.y)*width + x + dest.x] = sourceData[(y)*sDataWidth + x];
-			}
-		}
-
-		dataChanged.emit();
-	}
-}
 
 enum TextureTarget : uint
 {
@@ -234,7 +126,6 @@ class Texture
 
 	private void reload()
 	{
-		writeln("reload");
 		bind;
 
 		if (bitmap.width != lastWidth || bitmap.height != lastHeight)
