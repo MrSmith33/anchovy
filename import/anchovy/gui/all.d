@@ -63,7 +63,7 @@ public
 	import anchovy.gui.textline;
 	import anchovy.gui.timermanager;
 
-	import anchovy.gui.widgettemplate;
-	import anchovy.gui.templateparser;
-	import anchovy.gui.templatemanager;
+	import anchovy.gui.templates.widgettemplate;
+	import anchovy.gui.templates.templateparser;
+	import anchovy.gui.templates.templatemanager;
 }

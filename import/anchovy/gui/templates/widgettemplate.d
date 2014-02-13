@@ -26,51 +26,61 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.gui.templatemanager;
-
-import std.file : read;
+module anchovy.gui.templates.widgettemplate;
 
 import anchovy.gui.all;
+import std.algorithm;
 
-import anchovy.gui.widgettemplate;
-import anchovy.gui.templateparser;
-
-class TemplateManager
+class SubwidgetTemplate
 {
-	WidgetTemplate[string] templates;
-	private TemplateParser parser;
+	Variant[string] properties;
+	SubwidgetTemplate[] subwidgets;
 
-	this(TemplateParser parser)
+	override string toString()
 	{
-		assert(parser);
-		this.parser = parser;
+		return toStringImpl("");
 	}
 
-	void parseFile(string filename)
+	string toStringImpl(string padding)
 	{
-		string file = cast(string)read(filename);
-		parseString(file, filename);
-	}
-
-	void parseString(string str, string filename = null)
-	{
-		auto parsedTemplates = parser.parse(str, filename);
-		
-		foreach(templ; parsedTemplates)
+		string result;
+		result ~= padding ~ to!string(properties["type"]);
+		foreach(key; properties.byKey)
 		{
-			templates[templ.tree.properties["type"].get!string] = templ;
+			result ~= " " ~key ~":" ~ to!string(properties[key]);
 		}
-	}
+		result ~= "\n";
 
-	/// Returns true if given type name exists.
-	bool typeExists(string type)
-	{
-		return !!(type in templates);
-	}
+		foreach(sub; subwidgets)
+		{
+			result ~= sub.toStringImpl(padding ~ "  ");
+		}
 
-	/// Returns null if not found.
-	WidgetTemplate getTemplate(string type)
+		return result;
+	}
+}
+
+struct ForwardedProperty
+{
+	string propertyName; // property that will be created in root.
+	string targetPropertyName; // property to bind to.
+	string targetName; // target child.
+}
+
+class WidgetTemplate
+{
+	ForwardedProperty[] forwardedProperties; //indexed by property name.
+	SubwidgetTemplate tree; // the widget itself.
+	SubwidgetTemplate[string] subwidgetsmap;
+	SubwidgetTemplate childrenContainer; // by default root itself.
+	string baseType;
+
+	SubwidgetTemplate findSubwidgetByName(string name)
 	{
-		return templates.get(type, null);
+		SubwidgetTemplate* subwidget;
+
+		subwidget = name in subwidgetsmap;
+
+		return *subwidget;
 	}
 }

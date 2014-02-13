@@ -26,11 +26,11 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.gui.templateparser;
+module anchovy.gui.templates.templateparser;
 
 import sdlang;
 
-import anchovy.gui.widgettemplate;
+import anchovy.gui.templates.widgettemplate;
 
 import anchovy.gui.all;
 

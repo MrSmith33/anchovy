@@ -56,8 +56,8 @@ import anchovy.utils.string : ZToString;
 import anchovy.gui.behaviors.defaultbehaviors;
 import anchovy.gui.layouts.linearlayout;
 
-import anchovy.gui.templateparser;
-import anchovy.gui.widgettemplate;
+import anchovy.gui.templates.templateparser;
+import anchovy.gui.templates.widgettemplate;
 
 version(linux)
 {
