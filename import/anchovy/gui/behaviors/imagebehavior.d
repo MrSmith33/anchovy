@@ -31,7 +31,7 @@ module anchovy.gui.behaviors.imagebehavior;
 import anchovy.graphics.texture;
 import anchovy.graphics.bitmap;
 
-import anchovy.gui.all;
+import anchovy.gui;
 import anchovy.gui.interfaces.iwidgetbehavior;
 
 class ImageBehavior : IWidgetBehavior

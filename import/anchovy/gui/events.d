@@ -28,7 +28,7 @@ DEALINGS IN THE SOFTWARE.
 
 module anchovy.gui.events;
 
-import anchovy.gui.all;
+import anchovy.gui;
 
 abstract class Event
 {

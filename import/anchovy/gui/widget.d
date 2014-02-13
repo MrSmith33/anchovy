@@ -29,7 +29,7 @@ DEALINGS IN THE SOFTWARE.
 module anchovy.gui.widget;
 
 import std.traits;
-import anchovy.gui.all;
+import anchovy.gui;
 public import anchovy.utils.flexibleobject;
 
 enum defaultAnchor = Sides.LEFT | Sides.TOP;

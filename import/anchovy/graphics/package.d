@@ -26,12 +26,17 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.gui.interfaces.iguiskinparser;
+module anchovy.graphics;
 
-import anchovy.gui;
-
-interface IGuiSkinParser
-{
-	GuiSkin parse(string skinData);
+public{
+	import anchovy.graphics.font;
+	import anchovy.graphics.camera;
+	//import anchovy.graphics.cameracontroller;
+	import anchovy.graphics.interfaces.irenderer;
+	import anchovy.graphics.mesh;
+	import anchovy.graphics.shaderprogram;
+	import anchovy.graphics.renderers.ogl3renderer;
+	import anchovy.graphics.glerrors;
+	import anchovy.graphics.texrectarray;
+	import derelict.opengl3.gl3;
 }
-

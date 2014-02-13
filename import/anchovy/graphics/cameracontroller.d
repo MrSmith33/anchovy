@@ -28,7 +28,7 @@ DEALINGS IN THE SOFTWARE.
 
 module anchovy.graphics.cameracontroller;
 
-import anchovy.graphics.all;
+import anchovy.graphics;
 import dlib.math.vector;
 
 abstract class CameraController

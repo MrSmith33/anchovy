@@ -28,7 +28,7 @@ DEALINGS IN THE SOFTWARE.
 
 module anchovy.gui.layouts.dockinglayout;
 
-import anchovy.gui.all;
+import anchovy.gui;
 
 public import anchovy.gui.interfaces.ilayout;
 

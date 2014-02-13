@@ -32,7 +32,7 @@ import anchovy.graphics.texture;
 
 public import anchovy.graphics.interfaces.irenderer;
 
-import anchovy.gui.all;
+import anchovy.gui;
 
 enum HoriAlignment
 {

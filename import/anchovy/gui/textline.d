@@ -28,7 +28,7 @@ DEALINGS IN THE SOFTWARE.
 
 module anchovy.gui.textline;
 
-import anchovy.gui.all;
+import anchovy.gui;
 public import anchovy.graphics.texrectarray;
 import anchovy.graphics.interfaces.irenderer;
 import anchovy.graphics.font.fontmanager;

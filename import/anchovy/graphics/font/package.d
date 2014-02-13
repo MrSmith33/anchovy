@@ -26,16 +26,11 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.graphics.all;
+module anchovy.graphics.font;
 
-public{
-	import anchovy.graphics.camera;
-	//import anchovy.graphics.cameracontroller;
-	import anchovy.graphics.interfaces.irenderer;
-	import anchovy.graphics.mesh;
-	import anchovy.graphics.shaderprogram;
-	import anchovy.graphics.renderers.ogl3renderer;
-	import anchovy.graphics.glerrors;
-	import anchovy.graphics.texrectarray;
-	import derelict.opengl3.gl3;
-}
+public:
+
+import anchovy.graphics.font.font;
+import anchovy.graphics.font.fontmanager;
+import anchovy.graphics.font.fterrors;
+import anchovy.graphics.font.textureatlas;

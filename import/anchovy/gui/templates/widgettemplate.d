@@ -28,7 +28,7 @@ DEALINGS IN THE SOFTWARE.
 
 module anchovy.gui.templates.widgettemplate;
 
-import anchovy.gui.all;
+import anchovy.gui;
 import std.algorithm;
 
 class SubwidgetTemplate

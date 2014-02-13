@@ -26,7 +26,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.gui.all;
+module anchovy.gui;
 
 public
 {
@@ -40,7 +40,7 @@ public
 	import anchovy.core.math;
 	import anchovy.core.types;
 
-	import anchovy.graphics.all;
+	import anchovy.graphics;
 
 	import anchovy.graphics.interfaces.irenderer;
 	import anchovy.gui.interfaces.iguiskinparser;

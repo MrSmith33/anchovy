@@ -35,7 +35,7 @@ import std.stdio;
 
 import anchovy.core.types;
 
-import anchovy.gui.all;
+import anchovy.gui;
 
 class SkinParserException : Exception
 {

@@ -33,7 +33,7 @@ import std.stdio;
 import std.string;
 import std.variant;
 
-public	import derelict.opengl3.gl3;
+public import derelict.opengl3.gl3;
 
 
 struct Uniform

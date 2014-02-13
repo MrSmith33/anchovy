@@ -29,7 +29,7 @@ DEALINGS IN THE SOFTWARE.
 module anchovy.gui.eventpropagators;
 
 import std.traits;
-import anchovy.gui.all;
+import anchovy.gui;
 
 /// 
 enum PropagatingStrategy

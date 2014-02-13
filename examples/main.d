@@ -48,7 +48,7 @@ import anchovy.graphics.renderers.ogl3renderer;
 import anchovy.graphics.font.fontmanager;
 import anchovy.graphics.font.textureatlas;
 
-import anchovy.gui.all;
+import anchovy.gui;
 import fpshelper;
 import anchovy.gui.timermanager;
 

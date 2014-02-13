@@ -31,7 +31,7 @@ module anchovy.gui.timer;
 import core.time;
 import std.math: isNaN, trunc;
 
-import anchovy.gui.all;
+import anchovy.gui;
 
 /// Handler must number > 0 if custom repeat needed.
 /// Timer will be added to queue again with nextTime set to number.

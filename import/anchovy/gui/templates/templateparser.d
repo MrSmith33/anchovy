@@ -32,7 +32,7 @@ import sdlang;
 
 import anchovy.gui.templates.widgettemplate;
 
-import anchovy.gui.all;
+import anchovy.gui;
 
 class TemplateParser
 {

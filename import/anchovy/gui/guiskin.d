@@ -28,7 +28,7 @@ DEALINGS IN THE SOFTWARE.
 
 module anchovy.gui.guiskin;
 
-import anchovy.gui.all;
+import anchovy.gui;
 import anchovy.graphics.interfaces.irenderer;
 import anchovy.graphics.texture;
 import anchovy.core.types;

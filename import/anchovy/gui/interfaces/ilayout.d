@@ -28,7 +28,7 @@ DEALINGS IN THE SOFTWARE.
 
 module anchovy.gui.interfaces.ilayout;
 
-import anchovy.gui.all;
+import anchovy.gui;
 
 /// 
 /// Relative positions will be only affected. Static positions must be updated by container.

@@ -31,11 +31,11 @@ module anchovy.gui.guirenderer;
 import std.array;
 import std.stdio;
 
-import anchovy.graphics.all;
+import anchovy.graphics;
 import anchovy.graphics.texture;
 import anchovy.graphics.font.fontmanager;
 import anchovy.graphics.shaderprogram;
-import anchovy.gui.all;
+import anchovy.gui;
 
 string textvshader=`
 #version 330 

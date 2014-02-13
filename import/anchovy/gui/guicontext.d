@@ -28,7 +28,7 @@ DEALINGS IN THE SOFTWARE.
 
 module anchovy.gui.guicontext;
 
-import anchovy.gui.all;
+import anchovy.gui;
 import anchovy.gui.interfaces.iwidgetbehavior : IWidgetBehavior;
 
 

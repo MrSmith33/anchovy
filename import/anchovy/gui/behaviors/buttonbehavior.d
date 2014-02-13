@@ -28,7 +28,7 @@ DEALINGS IN THE SOFTWARE.
 
 module anchovy.gui.behaviors.buttonbehavior;
 
-import anchovy.gui.all;
+import anchovy.gui;
 import anchovy.gui.interfaces.iwidgetbehavior;
 
 

@@ -30,7 +30,7 @@ module anchovy.gui.templates.templatemanager;
 
 import std.file : read;
 
-import anchovy.gui.all;
+import anchovy.gui;
 
 import anchovy.gui.templates.widgettemplate;
 import anchovy.gui.templates.templateparser;
