@@ -102,7 +102,10 @@ class LinearLayout(bool vertical) : ILayout
 		foreach(child; children)
 		{
 			topOffset += spacing;
-			child.setProperty!("position")(ivec2(padding, topOffset));
+			static if(vertical)
+				child.setProperty!("position")(ivec2(padding, topOffset));
+			else
+				child.setProperty!("position")(ivec2(topOffset, padding));
 
 			ivec2 childSize = child.getPropertyAs!("prefSize", ivec2);
 

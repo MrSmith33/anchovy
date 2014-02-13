@@ -69,7 +69,6 @@ class Texture
 	{
 		texTarget = target;
 		texFormat = format;
-		genTexture();
 		loadFromFile(filename);
 	}
 	
@@ -77,7 +76,6 @@ class Texture
 	{
 		texTarget = target;
 		texFormat = format;
-		genTexture();
 		loadFromData(textureData);
 	}
 	
@@ -111,32 +109,34 @@ class Texture
 
 	uvec2 size() @property
 	{
-		return bitmap.size;
+		return _bitmap.size;
 	}
 	
 	ref const(ubyte[]) data()
 	{
-		return bitmap.data;
+		return _bitmap.data;
 	}
 
 	private void reload()
 	{
+		if (!isHandleCreated) genTexture();
+		
 		bind;
-
-		if (bitmap.size != lastSize)
+		if (_bitmap.size != lastSize)
 		{
-			glTexImage2D(texTarget, 0, texFormat, bitmap.size.x, bitmap.size.y, 0, texFormat, GL_UNSIGNED_BYTE, null);
+			glTexImage2D(texTarget, 0, texFormat, _bitmap.size.x, _bitmap.size.y, 0, texFormat, GL_UNSIGNED_BYTE, null);
 				checkGlError;
-			glTexImage2D(texTarget, 0, texFormat, bitmap.size.x, bitmap.size.y, 0, texFormat, GL_UNSIGNED_BYTE, bitmap.data.ptr);
+			glTexImage2D(texTarget, 0, texFormat, _bitmap.size.x, _bitmap.size.y, 0, texFormat, GL_UNSIGNED_BYTE, _bitmap.data.ptr);
 				checkGlError;
 
-			lastSize = bitmap.size;
+			lastSize = _bitmap.size;
 		}
 		else
 		{
-			glTexSubImage2D(texTarget, 0, 0, 0, bitmap.size.x, bitmap.size.y,  texFormat, GL_UNSIGNED_BYTE, bitmap.data.ptr);
+			glTexSubImage2D(texTarget, 0, 0, 0, _bitmap.size.x, _bitmap.size.y,  texFormat, GL_UNSIGNED_BYTE, _bitmap.data.ptr);
 				checkGlError;
 		}
+
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			checkGlError;
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -155,6 +155,18 @@ class Texture
 	{
 		invalidate();
 	}
+
+	void bitmap(Bitmap newBitmap) @property
+	{
+		if (newBitmap == _bitmap) return;
+
+		loadFromData(newBitmap);
+	}
+
+	Bitmap bitmap() @property
+	{
+		return _bitmap;
+	}
 	
 	/////////////////
 	//Private methods
@@ -164,6 +176,8 @@ class Texture
 	{
 		glGenTextures(1, &glTextureHandle);
 			checkGlError;
+			writeln("genTexture ", glTextureHandle);
+		isHandleCreated = true;
 	}
 	
 	/// Loads image from file in RGBA8 format
@@ -171,27 +185,27 @@ class Texture
 	{
 		if (!exists(filename)) throw new Exception("File not found: " ~ filename);
 
-		if (bitmap)
+		if (_bitmap)
 		{
-			bitmap.dataChanged.disconnect(&onBitmapChanged);
+			_bitmap.dataChanged.disconnect(&onBitmapChanged);
 		}
 
-		bitmap = createBitmapFromFile(filename);
+		_bitmap = createBitmapFromFile(filename);
 
-		bitmap.dataChanged.connect(&onBitmapChanged);
+		_bitmap.dataChanged.connect(&onBitmapChanged);
 
 		invalidate();
 	}
 	
 	private void loadFromData(Bitmap textureData)
 	{
-		if (bitmap)
+		if (_bitmap)
 		{
-			bitmap.dataChanged.disconnect(&onBitmapChanged);
+			_bitmap.dataChanged.disconnect(&onBitmapChanged);
 		}
 
-		this.bitmap = textureData;
-		bitmap.dataChanged.connect(&onBitmapChanged);
+		this._bitmap = textureData;
+		_bitmap.dataChanged.connect(&onBitmapChanged);
 
 		invalidate();
 	}
@@ -207,7 +221,8 @@ private:
 	TextureTarget texTarget;
 	uvec2 lastSize;
 	bool isValid = false;
+	bool isHandleCreated = false;
 
 	uint texUnit = 0;
-	Bitmap bitmap;
+	Bitmap _bitmap;
 }

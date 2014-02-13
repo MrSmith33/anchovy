@@ -41,6 +41,7 @@ import derelict.opengl3.gl3;
 
 import anchovy.graphics.windows.glfwwindow;
 import anchovy.graphics.texture;
+import anchovy.graphics.bitmap;
 import anchovy.graphics.shaderprogram;
 import anchovy.graphics.renderers.ogl3renderer;
 
@@ -184,6 +185,14 @@ class GuiTestWindow : GlfwWindow
 		button = context.createWidget("mybutton", container);
 			button.setProperty!"prefSize"(ivec2(50, 50));
 			button.setProperty!"vexpand"(true);
+		button = context.createWidget("mybutton", container);
+			button.setProperty!"prefSize"(ivec2(50, 50));
+			button.setProperty!"vexpand"(true);
+
+		auto image = context.createWidget("image", container);
+			//image.setProperty!"prefSize"(ivec2(50, 50));
+			image.setProperty!"vexpand"(true);
+			image.setProperty!("texture")(guiRenderer.getFontTexture);
 
 		writeln(templateManager.templates);
 

@@ -236,7 +236,6 @@ class Ogl3Renderer : IRenderer
 	{
 		Texture tex = new Texture(filename, TextureTarget.target2d, TextureFormat.rgba);
 		return tex;
-
 	}
 
 	override void bindTexture(Texture texture, uint textureUnit = 0)
@@ -262,11 +261,6 @@ class Ogl3Renderer : IRenderer
 		program.bind;
 		_currentShaderProgram = program;
 	}
-	
-	/*void renderMesh(Mesh mesh)
-	{
-		
-	}*/
 	
 	void setProgram(in uint program)
 	{
@@ -343,6 +337,8 @@ class Ogl3Renderer : IRenderer
 	}
 	body
 	{
+		if (texture.size == uvec2(0, 0)) return;
+
 		bindShaderProgram(primTexShader);
 		primTexShader.setUniform2!float("gHalfTarget", window.width/2, window.height/2);
 		primTexShader.setUniform2!float("gPosition", target.x, target.y);
@@ -354,12 +350,12 @@ class Ogl3Renderer : IRenderer
 		int tx2 = source.x + source.width;
 		int y2 = target.y + target.height;
 		int x2 = target.x + target.width;
-		texRectVbo.data = cast(short[])[0, target.width, source.x, ty2,
+		texRectVbo.data = cast(short[])[0, target.height, source.x, ty2,
 		                             0, 0, source.x, source.y,
 		                             target.width, 0, tx2, source.y,
-		                             0, target.width, source.x, ty2,
-		                             target.height, 0, tx2, source.y,
-									 target.height, target.width, tx2, ty2];
+		                             0, target.height, source.x, ty2,
+		                             target.width, 0, tx2, source.y,
+									 target.width, target.height, tx2, ty2];
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		texRectVao.unbind;
 		texture.unbind;

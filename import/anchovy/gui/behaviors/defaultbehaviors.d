@@ -31,6 +31,7 @@ module anchovy.gui.behaviors.defaultbehaviors;
 import anchovy.gui.widget;
 import anchovy.gui.behaviors.buttonbehavior;
 import anchovy.gui.behaviors.labelbehavior;
+import anchovy.gui.behaviors.imagebehavior;
 
 import anchovy.gui.guicontext;
 
@@ -39,4 +40,5 @@ void attachDefaultBehaviors(GuiContext context)
 	context.widgetFactories["widget"] = { return new Widget; };
 	context.widgetBehaviors["button"] ~= new ButtonBehavior;
 	context.widgetBehaviors["label"] ~= new LabelBehavior;
+	context.widgetBehaviors["image"] ~= new ImageBehavior;
 }

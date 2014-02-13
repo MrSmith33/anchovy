@@ -41,18 +41,59 @@ class ImageBehavior : IWidgetBehavior
 		widget.removeEventHandlers!DrawEvent();
 
 		GuiContext context = widget.getPropertyAs!("context", GuiContext);
-		Texture texture = new Texture(new Bitmap(4), TextureTarget.target2d, TextureFormat.rgba);
+		auto bitmap = new Bitmap(4);
+		Texture texture = new Texture(bitmap, TextureTarget.target2d, TextureFormat.rgba);
 
 		widget.setProperty!"texture"(texture);
+		widget.setProperty!("bitmap", Bitmap)(bitmap);
 		widget.addEventHandler(&handleDraw);
+
+		auto bitmapSlot = {widget["prefSize"] = cast(ivec2)bitmap.size;};
+		bitmap.dataChanged.connect(bitmapSlot);
+
+		void onBitmapChanged(FlexibleObject obj, Variant old, Variant* newBitmap)
+		{
+			old.get!Bitmap.dataChanged.disconnect(bitmapSlot);
+			if ((*newBitmap).get!Bitmap is null) return;
+
+			auto bitmap = (*newBitmap).get!Bitmap;
+
+			Texture texture = widget.getPropertyAs!("texture", Texture);
+			if (texture.bitmap is bitmap) return;
+
+			texture.bitmap = bitmap;
+
+			bitmap.dataChanged.connect(bitmapSlot);
+
+			obj["prefSize"] = cast(ivec2)bitmap.size;
+		}
+
+		widget.property("bitmap").valueChanged.connect(&onBitmapChanged);
+
+		void onTextureChanged(FlexibleObject obj, Variant old, Variant* newTexture)
+		{
+			if ((*newTexture).get!Texture is null) return;
+
+			auto texture = (*newTexture).get!Texture;
+
+			widget.setProperty!("bitmap", Bitmap)(texture.bitmap);
+			texture.bitmap.dataChanged.connect(bitmapSlot);
+
+			obj["prefSize"] = cast(ivec2)texture.bitmap.size;
+		}
+
+		widget.property("texture").valueChanged.connect(&onTextureChanged);
 	}
 
 	bool handleDraw(Widget widget, DrawEvent event)
 	{
 		if(widget.getPropertyAs!("isVisible", bool))
 		{
-			//Texture texture = widget.getPropertyAs!("texture", Texture);
-			//event.guiRenderer.renderer.drawTexRect();
+			Texture texture = widget.getPropertyAs!("texture", Texture);
+			//writeln(texture.size);
+			if (texture is null) return true;
+
+			event.guiRenderer.renderer.drawTexRect(widget["staticRect"].get!Rect, Rect(ivec2(0,0), cast(ivec2)texture.size), texture);
 		}
 		return true;
 	}
