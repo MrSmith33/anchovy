@@ -37,6 +37,6 @@ import anchovy.gui.guicontext;
 void attachDefaultBehaviors(GuiContext context)
 {
 	context.widgetFactories["widget"] = delegate Widget(){return new Widget; };
-	context.widgetBehaviors["button"] = new ButtonBehavior;
-	context.widgetBehaviors["label"] = new LabelBehavior;
+	context.widgetBehaviors["button"] ~= new ButtonBehavior;
+	context.widgetBehaviors["label"] ~= new LabelBehavior;
 }

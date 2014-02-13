@@ -37,7 +37,7 @@ class GuiContext
 	alias WidgetCreator = Widget delegate();
 
 	WidgetCreator[string] widgetFactories;
-	IWidgetBehavior[string] widgetBehaviors;
+	IWidgetBehavior[][string] widgetBehaviors;
 
 	Widget[] roots;
 
@@ -221,9 +221,12 @@ public:
 
 		//----------------------- Attaching behaviors ---------------------------
 
-		if (auto behavior = type in widgetBehaviors)
+		if (auto behaviors = type in widgetBehaviors)
 		{
-			behavior.attachTo(widget);
+			foreach(behavior; *behaviors)
+			{
+				behavior.attachTo(widget);
+			}
 		}
 
 		return widget;
