@@ -37,7 +37,7 @@ class GuiSkin
 {
 	string skinFilename;
 	//May be replaced by atlas
-	uint texture;
+	Texture texture;
 	string textureFilename;
 	string name;
 

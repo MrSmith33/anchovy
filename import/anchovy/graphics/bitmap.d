@@ -55,13 +55,14 @@ class Bitmap
 		this.byteDepth = byteDepth;
 		data = new ubyte[w*h*byteDepth];
 	}
+
 	this(in ubyte byteDepth)
 	{
 		this.byteDepth = byteDepth;
 	}
 
 	uvec2 size;
-	ubyte	byteDepth;
+	ubyte byteDepth;
 	ubyte[]	data;
 
 	Signal!() dataChanged;
@@ -99,7 +100,7 @@ class Bitmap
 
 	void putSubRect(in uvec2 dest, in Rect source, in Bitmap sourceBitmap)
 	{
-		throw new Exception("putSubRect is not yet implemented");
+		assert(false, "putSubRect is not yet implemented");
 
 		dataChanged.emit();
 	}

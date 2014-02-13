@@ -32,6 +32,7 @@ import std.array;
 import std.stdio;
 
 import anchovy.graphics.all;
+import anchovy.graphics.texture;
 import anchovy.graphics.font.fontmanager;
 import anchovy.graphics.shaderprogram;
 import anchovy.gui.all;
@@ -73,7 +74,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 	{
 		_renderer = renderer;
 		_fontManager = new FontManager();
-		_fontTexture = renderer.registerTexture(_fontManager.getFontAtlasTex());
+		_fontTexture = _fontManager.getFontAtlasTex();
 		_textShader = new ShaderProgram(textvshader, textfshader);
 		_skin = skin;
 		if (!_textShader.compile)
@@ -83,7 +84,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 		checkGlError;
 	}
 
-	override uint getFontTexture()
+	override Texture getFontTexture()
 	{
 		return _fontTexture;
 	}
@@ -311,7 +312,7 @@ private:
 	IRenderer _renderer;
 	FontManager _fontManager;
 	ShaderProgram _textShader;
-	uint _fontTexture;
+	Texture _fontTexture;
 	GuiSkin _skin;
 }
 

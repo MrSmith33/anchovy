@@ -46,7 +46,7 @@ class FontManager
 	{
 		texAtlas = new TextureAtlas(standartAtlasSize, standartAtlasSize);
 		cache ~= asciiChars;
-		tex = new Texture(texAtlas.getBitmap, TextureTarget.target2d, TextureFormat.r);
+		texture = new Texture(texAtlas.getBitmap, TextureTarget.target2d, TextureFormat.r);
 		fonts = new IdArray!Font;
 	}
 
@@ -56,14 +56,14 @@ class FontManager
 
 		uint newId = fonts.add(newFont);
 
-		tex.invalidate();
+		texture.invalidate();
 
 		return newId;
 	}
 
 	Texture getFontAtlasTex()
 	{
-		return tex;
+		return texture;
 	}
 
 	Font getFont(in uint id)
@@ -83,5 +83,5 @@ private:
 	dchar[] cache;
 	IdArray!Font fonts;
 	TextureAtlas texAtlas;
-	Texture tex;
+	Texture texture;
 }

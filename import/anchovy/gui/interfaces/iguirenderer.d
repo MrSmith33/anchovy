@@ -28,6 +28,8 @@ DEALINGS IN THE SOFTWARE.
 
 module anchovy.gui.interfaces.iguirenderer;
 
+import anchovy.graphics.texture;
+
 public import anchovy.graphics.interfaces.irenderer;
 
 import anchovy.gui.all;
@@ -73,7 +75,7 @@ enum AlignmentType
 
 interface IGuiRenderer
 {
-	uint getFontTexture();
+	Texture getFontTexture();
 	ref FontManager fontManager() @property;
 	void drawControlBack(Widget widget, Rect staticRect);
 

@@ -178,7 +178,6 @@ class Ogl3Renderer : IRenderer
 		DerelictFT.load();
 
 		FreeImage_SetOutputMessage(&FreeImageErrorHandler);
-		textures = new IdArray!(Texture);
 		shaders = new IdArray!(ShaderProgram);
 
 		primShader = new ShaderProgram(primVertFill2d, primFragFill2d);
@@ -228,7 +227,7 @@ class Ogl3Renderer : IRenderer
 		return shaders.add(program);
 	}
 
-	override uint createTexture(string filename)
+	override Texture createTexture(string filename)
 	in
 	{
 		assert(textures !is null);
@@ -236,15 +235,17 @@ class Ogl3Renderer : IRenderer
 	body
 	{
 		Texture tex = new Texture(filename, TextureTarget.target2d, TextureFormat.rgba);
-		uint id = textures.add(tex);
-		return id;
+		return tex;
 
 	}
 
-	override void bindTexture(uint textureName, uint textureUnit = 0)
+	override void bindTexture(Texture texture, uint textureUnit = 0)
+	in
 	{
-		Texture texture = textures[textureName];
 		assert(texture !is null);
+	}
+	body
+	{
 		texture.validateBind(textureUnit);
 	}
 	
@@ -335,18 +336,19 @@ class Ogl3Renderer : IRenderer
 	 + target - position and size on the screen.
 	 + source - position and size of rectangle in texture
 	 +++++/
-	override void drawTexRect(Rect target, Rect source, uint texture)
+	override void drawTexRect(Rect target, Rect source, Texture texture)
+	in
 	{
-		Texture tex = textures[texture];
-		if (tex is null)
-			throw new Exception("Unknown texture provided '" ~ to!string(texture) ~ "'");
-
+		assert(texture !is null);
+	}
+	body
+	{
 		bindShaderProgram(primTexShader);
 		primTexShader.setUniform2!float("gHalfTarget", window.width/2, window.height/2);
 		primTexShader.setUniform2!float("gPosition", target.x, target.y);
 		primTexShader.setUniform4!float("gColor", curColor.r, curColor.g, curColor.b, curColor.a);
 
-		tex.validateBind();
+		texture.validateBind();
 		texRectVao.bind;
 		int ty2 = source.y + source.height;
 		int tx2 = source.x + source.width;
@@ -360,39 +362,43 @@ class Ogl3Renderer : IRenderer
 									 target.height, target.width, tx2, ty2];
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		texRectVao.unbind;
-		tex.unbind;
+		texture.unbind;
 	}
 
-	override void drawTexRectArray(TexRectArray array, ivec2 position, uint textureId, ShaderProgram customProgram = null)
+	override void drawTexRectArray(TexRectArray array, ivec2 position, Texture texture, ShaderProgram customProgram = null)
+	in
 	{
-		Texture tex = textures[textureId];
+		assert(texture !is null);
+	}
+	body
+	{
 		ShaderProgram program = customProgram;
 		if (customProgram is null) program = primTexShader;
-		drawTexRectArrayImpl(array, position, tex, program);
+		drawTexRectArrayImpl(array, position, texture, program);
 	}
 
-	private void drawTexRectArrayImpl(TexRectArray array, ivec2 position, Texture tex, ShaderProgram program)
+	private void drawTexRectArrayImpl(TexRectArray array, ivec2 position, Texture texture, ShaderProgram program)
+	in
+	{
+		assert(texture !is null);
+	}
+	body
 	{
 		bindShaderProgram(program);
 		program.setUniform2!float("gHalfTarget", cast(float)window.width / 2, cast(float)window.height / 2);
 		program.setUniform2!float("gPosition", position.x, position.y);
 		program.setUniform4!float("gColor", curColor.r, curColor.g, curColor.b, curColor.a);
 		
-		tex.validateBind();
+		texture.validateBind();
 		array.bind;
 		glDrawArrays(GL_TRIANGLES, 0, array.vertieces.length);
 		array.unbind;
-		tex.unbind;
+		texture.unbind;
 	}
 
 	override ivec2 windowSize()
 	{
 		return window.getSize();
-	}
-
-	override uint registerTexture(Texture texture)
-	{
-		return textures.add(texture);
 	}
 	
 	override void flush()
@@ -406,7 +412,6 @@ private:
 	ShaderProgram primShader;
 	ShaderProgram primTexShader;
 
-	IdArray!(Texture) textures;
 	IdArray!(ShaderProgram) shaders;
 
 	IWindow	window;

@@ -46,21 +46,20 @@ interface IRenderer
 	void bindShaderProgram(uint shaderName);
 	void bindShaderProgram(ref ShaderProgram program);
 	//void renderMesh(Mesh mesh);
-	uint createTexture(string filename);
-	void bindTexture(uint textureName, uint textureUnit = 0);
+	Texture createTexture(string filename);
+	void bindTexture(Texture texture, uint textureUnit = 0);
 	void enableAlphaBlending();
 	void disableAlphaBlending();
-	uint registerTexture(Texture texture);
 	uint createShaderProgram(string vertexSource, string fragmentSource);
 	uint registerShaderProgram(ShaderProgram program);
 	void drawRect(Rect rect);
 	void fillRect(Rect rect);
-	final void drawTexRect(Rect target, ivec2 sourcePos, uint texture)
+	final void drawTexRect(Rect target, ivec2 sourcePos, Texture texture)
 	{
 		drawTexRect(target, Rect(sourcePos, target.size), texture);
 	}
-	void drawTexRect(Rect target, Rect source, uint texture);
-	void drawTexRectArray(TexRectArray array, ivec2 position, uint textureId, ShaderProgram customProgram = null);
+	void drawTexRect(Rect target, Rect source, Texture texture);
+	void drawTexRectArray(TexRectArray array, ivec2 position, Texture texture, ShaderProgram customProgram = null);
 	void setColor(in Color newColor);
 	void setColor(in Color4f newColor);
 	void setClearColor(in Color color);
