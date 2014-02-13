@@ -70,31 +70,31 @@ class TextureAtlas
 		{
 			if (_autoGrow)
 			{
-				if (bitmap.width >= bitmap.height)
+				if (bitmap.size.x >= bitmap.size.y)
 				{
-					if (bitmap.height >= _maxAtlasSize)
+					if (bitmap.size.y >= _maxAtlasSize)
 					{
 						throw new InsertException("Texture atlas is full. Max atlas size reached");
 					}
 
-					bitmap.data ~= new ubyte[bitmap.height*bitmap.width];
+					bitmap.data ~= new ubyte[bitmap.size.y*bitmap.size.x];
 					delete binPacker;
-					binPacker = new RectBinPacker(bitmap.width, bitmap.height, 0, bitmap.height);
-					bitmap.height *= 2;
+					binPacker = new RectBinPacker(bitmap.size.x, bitmap.size.y, 0, bitmap.size.y);
+					bitmap.size.y *= 2;
 				}
 				else
 				{
-					ubyte[] newData = new ubyte[bitmap.height*bitmap.width*2];
-					for(uint y = 0; y < bitmap.height; ++y)
+					ubyte[] newData = new ubyte[bitmap.size.y*bitmap.size.x*2];
+					for(uint y = 0; y < bitmap.size.y; ++y)
 					{
-						newData[bitmap.width*y*2..bitmap.width*y*2+bitmap.width] = bitmap.data[bitmap.width*y..bitmap.width*(y+1)];
+						newData[bitmap.size.x*y*2..bitmap.size.x*y*2+bitmap.size.x] = bitmap.data[bitmap.size.x*y..bitmap.size.x*(y+1)];
 					}
 
 					delete bitmap.data;
 					bitmap.data = newData;
 					delete binPacker;
-					binPacker = new RectBinPacker(bitmap.width, bitmap.height, bitmap.width, 0);
-					bitmap.width *= 2;
+					binPacker = new RectBinPacker(bitmap.size.x, bitmap.size.y, bitmap.size.x, 0);
+					bitmap.size.x *= 2;
 				}
 
 				node = binPacker.insert(width, height);

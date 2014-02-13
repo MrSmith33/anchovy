@@ -108,15 +108,10 @@ class Texture
 	{
 		glBindTexture(texTarget, 0);
 	}
-	
-	uint width()
-	{
-		return bitmap.width;
-	}
 
-	uint height()
+	uvec2 size() @property
 	{
-		return bitmap.height;
+		return bitmap.size;
 	}
 	
 	ref const(ubyte[]) data()
@@ -128,19 +123,18 @@ class Texture
 	{
 		bind;
 
-		if (bitmap.width != lastWidth || bitmap.height != lastHeight)
+		if (bitmap.size != lastSize)
 		{
-			glTexImage2D(texTarget, 0, texFormat, bitmap.width, bitmap.height, 0, texFormat, GL_UNSIGNED_BYTE, null);
+			glTexImage2D(texTarget, 0, texFormat, bitmap.size.x, bitmap.size.y, 0, texFormat, GL_UNSIGNED_BYTE, null);
 				checkGlError;
-			glTexImage2D(texTarget, 0, texFormat, bitmap.width, bitmap.height, 0, texFormat, GL_UNSIGNED_BYTE, bitmap.data.ptr);
+			glTexImage2D(texTarget, 0, texFormat, bitmap.size.x, bitmap.size.y, 0, texFormat, GL_UNSIGNED_BYTE, bitmap.data.ptr);
 				checkGlError;
 
-			lastWidth = bitmap.width;
-			lastHeight = bitmap.height;
+			lastSize = bitmap.size;
 		}
 		else
 		{
-			glTexSubImage2D(texTarget, 0, 0, 0, bitmap.width, bitmap.height,  texFormat, GL_UNSIGNED_BYTE, bitmap.data.ptr);
+			glTexSubImage2D(texTarget, 0, 0, 0, bitmap.size.x, bitmap.size.y,  texFormat, GL_UNSIGNED_BYTE, bitmap.data.ptr);
 				checkGlError;
 		}
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -202,22 +196,6 @@ class Texture
 		invalidate();
 	}
 	
-	private void uploadToVideo()
-	{
-		debug writeln("uploadToVideo");
-		bind;
-		glTexImage2D(GL_TEXTURE_2D, 0, texFormat, bitmap.width, bitmap.height, 0, texFormat, GL_UNSIGNED_BYTE, bitmap.data.ptr);
-			checkGlError;
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			checkGlError;
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			checkGlError;
-		unbind;
-
-		lastWidth = bitmap.width;
-		lastHeight = bitmap.height;
-	}
-	
 	private void unload()
 	{
 		glDeleteTextures(1, &glTextureHandle);
@@ -227,10 +205,9 @@ private:
 	TextureFormat texFormat;
 	uint glTextureHandle;
 	TextureTarget texTarget;
-	uint lastWidth;
-	uint lastHeight;
+	uvec2 lastSize;
 	bool isValid = false;
 
 	uint texUnit = 0;
-	Bitmap	bitmap;
+	Bitmap bitmap;
 }

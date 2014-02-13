@@ -91,14 +91,7 @@ public:
 
 		auto onSizeChanged = (FlexibleObject obj, Variant old, Variant* newSize){
 			obj["staticRect"] = Rect(obj.getPropertyAs!("staticPosition", ivec2), (*newSize).get!ivec2);
-			if (auto layout = obj.peekPropertyAs!("layout", ILayout))
-			{
-				if (*layout !is null)
-				{
-					//writefln("onSizeChanged %s %s %s %s", *layout, cast(Widget)obj, old.get!ivec2, (*newSize).get!ivec2);
-					//(*layout).onContainerResized(null, ivec2(0,0), ivec2(0,0));
-				}
-			}
+
 			obj.setProperty!("geometry")((TexRectArray[string]).init);
 
 			(cast(Widget)obj).invalidateLayout;
@@ -107,10 +100,10 @@ public:
 		property("staticPosition").valueChanged.connect(onStaticPositionChanged);
 		property("size").valueChanged.connect(onSizeChanged);
 
-		addEventHandler(&handleExpand);
-		addEventHandler(&handleMinimize);
 		addEventHandler(&handleDraw);
 		addEventHandler(&handleUpdatePosition);
+		addEventHandler(&handleExpand);
+		addEventHandler(&handleMinimize);
 	}
 
 	bool handleExpand(Widget widget, ExpandLayoutEvent event)
@@ -121,6 +114,16 @@ public:
 		}
 		//writeln("expand ", widget["type"], " ", widget["name"]);
 
+		return true;
+	}
+
+	bool handleMinimize(Widget widget, MinimizeLayoutEvent event)
+	{
+		if (auto layout = widget.peekPropertyAs!("layout", ILayout))
+		{
+			layout.minimize(widget);
+		}
+		//writeln("minimize ", widget["type"]);
 		return true;
 	}
 
@@ -139,16 +142,6 @@ public:
 		}
 		
 		//writeln("expand ", widget["type"], " ", widget["name"]);
-		return true;
-	}
-
-	bool handleMinimize(Widget widget, MinimizeLayoutEvent event)
-	{
-		if (auto layout = widget.peekPropertyAs!("layout", ILayout))
-		{
-			layout.minimize(widget);
-		}
-		//writeln("minimize ", widget["type"]);
 		return true;
 	}
 
@@ -194,6 +187,11 @@ public:
 		static assert(is(widgetType : Widget), "handler must accept Widget as first parameter");
 		static assert(ParameterTypeTuple!T.length == 2, "handler must have only two parameters, Widget's and Event's descendant");
 		_eventHandlers[typeid(eventType)] ~= cast(bool delegate(Widget, Event))handler;
+	}
+
+	void removeEventHandlers(T)()
+	{
+		_eventHandlers[typeid(T)] = null;
 	}
 
 	/// Returns true if event was handled
