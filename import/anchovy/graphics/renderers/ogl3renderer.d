@@ -245,7 +245,7 @@ class Ogl3Renderer : IRenderer
 	{
 		Texture texture = textures[textureName];
 		assert(texture !is null);
-		texture.bind(textureUnit);
+		texture.validateBind(textureUnit);
 	}
 	
 	override void bindShaderProgram(uint programName)
@@ -353,7 +353,7 @@ class Ogl3Renderer : IRenderer
 		primTexShader.setUniform2!float("gPosition", x1, y1);
 		primTexShader.setUniform4!float("gColor", curColor.r, curColor.g, curColor.b, curColor.a);
 
-		tex.bind();
+		tex.validateBind();
 		texRectVao.bind;
 		int ty2 = ty1 + th;
 		int tx2 = tx1 + tw;
@@ -384,7 +384,8 @@ class Ogl3Renderer : IRenderer
 		program.setUniform2!float("gHalfTarget", cast(float)window.width / 2, cast(float)window.height / 2);
 		program.setUniform2!float("gPosition", x, y);
 		program.setUniform4!float("gColor", curColor.r, curColor.g, curColor.b, curColor.a);
-		tex.bind();
+		
+		tex.validateBind();
 		array.bind;
 		glDrawArrays(GL_TRIANGLES, 0, array.vertieces.length);
 		array.unbind;

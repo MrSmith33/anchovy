@@ -38,7 +38,18 @@ import std.string;
 import anchovy.core.types;
 import anchovy.graphics.glerrors;
 
+import anchovy.utils.signal;
+
 //version = debugTexture;
+
+Bitmap createBitmapFromFile(string filename)
+{
+	auto bitmap = new Bitmap(4);
+
+	bitmap.loadFromFile(filename);
+
+	return bitmap;
+}
 
 class Bitmap
 {
@@ -59,9 +70,44 @@ class Bitmap
 	ubyte	byteDepth;
 	ubyte[]	data;
 
+	Signal!() dataChanged;
+
+	void loadFromFile(string filename)
+	{
+		//Automatocally detects the format(from over 20 formats!)
+		FREE_IMAGE_FORMAT formato = FreeImage_GetFileType(toStringz(filename),0);
+		FIBITMAP* fiimage = FreeImage_Load(formato, toStringz(filename), 0);
+
+		if (fiimage is null) throw new Exception("Image loading failed");
+
+		FIBITMAP* temp = fiimage;
+		fiimage = FreeImage_ConvertTo32Bits(temp);
+
+		FreeImage_Unload(temp);
+	
+		width = FreeImage_GetWidth(fiimage);
+		height = FreeImage_GetHeight(fiimage);
+
+		ubyte* bits = FreeImage_GetBits(fiimage);
+
+		data = new ubyte[](width*height*4);
+
+		foreach(i; 0 .. width * height)//Converts from BGRA to RGBA
+		{
+			data[i*4+0] = bits[i*4+2];
+			data[i*4+1] = bits[i*4+1];
+			data[i*4+2] = bits[i*4+0];
+			data[i*4+3] = bits[i*4+3];
+		}
+
+		FreeImage_Unload(fiimage);
+	}
+
 	void putSubRect(in uvec2 dest, in Rect source, in Bitmap sourceBitmap)
 	{
 		throw new Exception("putSubRect is not yet implemented");
+
+		dataChanged.emit();
 	}
 
 	void putCustomSubRect(uvec2 dest, in Rect source, ubyte[] sourceData, in ubyte sDataByteDepth, in uint sDataWidth, in uint sDataHeight)
@@ -79,6 +125,8 @@ class Bitmap
 				data[(y+dest.y)*width + x + dest.x] = sourceData[(y+source.y)*sDataWidth + x + source.x];
 			}
 		}
+
+		dataChanged.emit();
 	}
 
 	void putCustomRect(uvec2 dest, in ubyte* sourceData, in ubyte sDataByteDepth, in uint sDataWidth, in uint sDataHeight)
@@ -95,6 +143,8 @@ class Bitmap
 				data[(y+dest.y)*width + x + dest.x] = sourceData[(y)*sDataWidth + x];
 			}
 		}
+
+		dataChanged.emit();
 	}
 }
 
@@ -144,9 +194,20 @@ class Texture
 		unload();
 	}
 	
+	void validateBind(uint textureUnit = 0)
+	{
+		if (!isValid) reload();
+
+		texUnit = GL_TEXTURE0 + textureUnit;
+
+		glBindTexture(texTarget, glTextureHandle);
+			checkGlError;
+	}
+
 	void bind(uint textureUnit = 0)
 	{
 		texUnit = GL_TEXTURE0 + textureUnit;
+
 		glBindTexture(texTarget, glTextureHandle);
 			checkGlError;
 	}
@@ -166,21 +227,23 @@ class Texture
 		return bitmap.height;
 	}
 	
-	ref ubyte[] data()
+	ref const(ubyte[]) data()
 	{
 		return bitmap.data;
 	}
 
-	void reload()
+	private void reload()
 	{
+		writeln("reload");
 		bind;
+
 		if (bitmap.width != lastWidth || bitmap.height != lastHeight)
 		{
 			glTexImage2D(texTarget, 0, texFormat, bitmap.width, bitmap.height, 0, texFormat, GL_UNSIGNED_BYTE, null);
 				checkGlError;
 			glTexImage2D(texTarget, 0, texFormat, bitmap.width, bitmap.height, 0, texFormat, GL_UNSIGNED_BYTE, bitmap.data.ptr);
 				checkGlError;
-			glBindTexture(texTarget, 0);
+
 			lastWidth = bitmap.width;
 			lastHeight = bitmap.height;
 		}
@@ -188,9 +251,24 @@ class Texture
 		{
 			glTexSubImage2D(texTarget, 0, 0, 0, bitmap.width, bitmap.height,  texFormat, GL_UNSIGNED_BYTE, bitmap.data.ptr);
 				checkGlError;
-			glBindTexture(texTarget, 0);
 		}
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			checkGlError;
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			checkGlError;
 		unbind;
+
+		isValid = true;
+	}
+
+	void invalidate()
+	{
+		isValid = false;
+	}
+
+	void onBitmapChanged()
+	{
+		invalidate();
 	}
 	
 	/////////////////
@@ -203,58 +281,48 @@ class Texture
 			checkGlError;
 	}
 	
+	/// Loads image from file in RGBA8 format
 	private void loadFromFile(string filename)
 	{
 		if (!exists(filename)) throw new Exception("File not found: " ~ filename);
-		bitmap = new Bitmap(4);
-		assert(bitmap);
 
-		//Automatocally detects the format(from over 20 formats!)
-		FREE_IMAGE_FORMAT formato = FreeImage_GetFileType(toStringz(filename),0);
-		FIBITMAP* fiimage = FreeImage_Load(formato, toStringz(filename), 0);
-		if (fiimage is null) throw new Exception("Image loading failed");
-
-		FIBITMAP* temp = fiimage;
-		fiimage = FreeImage_ConvertTo32Bits(temp);
-		FreeImage_Unload(temp);
-
-		with(bitmap){
-			width = FreeImage_GetWidth(fiimage);
-			height = FreeImage_GetHeight(fiimage);
-			ubyte* bits = FreeImage_GetBits(fiimage);
-
-			data = new ubyte[](width*height*4);
-			for(uint i=0; i<width*height; ++i)//Converts from BGRA to RGBA
-			{
-				data[i*4+0]= bits[i*4+2];
-				data[i*4+1]= bits[i*4+1];
-				data[i*4+2]= bits[i*4+0];
-				data[i*4+3]= bits[i*4+3];
-			}
-			FreeImage_Unload(fiimage);
+		if (bitmap)
+		{
+			bitmap.dataChanged.disconnect(&onBitmapChanged);
 		}
-		uploadToVideo();
+
+		bitmap = createBitmapFromFile(filename);
+
+		bitmap.dataChanged.connect(&onBitmapChanged);
+
+		invalidate();
 	}
 	
 	private void loadFromData(Bitmap textureData)
 	{
+		if (bitmap)
+		{
+			bitmap.dataChanged.disconnect(&onBitmapChanged);
+		}
+
 		this.bitmap = textureData;
-		uploadToVideo();
+		bitmap.dataChanged.connect(&onBitmapChanged);
+
+		invalidate();
 	}
 	
 	private void uploadToVideo()
 	{
 		debug writeln("uploadToVideo");
 		bind;
-			checkGlError;
 		glTexImage2D(GL_TEXTURE_2D, 0, texFormat, bitmap.width, bitmap.height, 0, texFormat, GL_UNSIGNED_BYTE, bitmap.data.ptr);
 			checkGlError;
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			checkGlError;
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			checkGlError;
-		glBindTexture(GL_TEXTURE_2D, 0);
-			checkGlError;
+		unbind;
+
 		lastWidth = bitmap.width;
 		lastHeight = bitmap.height;
 	}
@@ -265,11 +333,12 @@ class Texture
 	}
 	
 private:
-	TextureFormat 	texFormat;
-	uint	glTextureHandle;
-	TextureTarget	texTarget;
-	uint	lastWidth;
-	uint	lastHeight;
+	TextureFormat texFormat;
+	uint glTextureHandle;
+	TextureTarget texTarget;
+	uint lastWidth;
+	uint lastHeight;
+	bool isValid = false;
 
 	uint texUnit = 0;
 	Bitmap	bitmap;

@@ -190,7 +190,6 @@ class GuiTestWindow : GlfwWindow
 		//--------------- Rendering settings---------------------------
 		renderer.enableAlphaBlending();
 		glEnable(GL_SCISSOR_TEST);
-		guiRenderer.fontManager.getFontAtlasTex; //Needs proper invalidation mechanis.
 	}
 
 	void draw()
@@ -201,7 +200,7 @@ class GuiTestWindow : GlfwWindow
 		renderer.setColor(Color4f(1 ,0.5,0,0.5));
 		renderer.fillRect(0, 0, 50, 50);
 		renderer.setColor(Color(255, 255, 255));
-		renderer.drawTexRect(width - 255, height - 255, 256, 256, 0, 0, 256, 256, guiRenderer.getFontTexture);
+		renderer.drawTexRect(width - 255, 0, 256, 256, 0, 0, 256, 256, guiRenderer.getFontTexture);
 
 		context.draw();
 

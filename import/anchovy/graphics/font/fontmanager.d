@@ -52,21 +52,17 @@ class FontManager
 
 	uint createFont(in string filename, in uint size)
 	{
-		debug writeln(filename, " ", size);
 		Font newFont = new Font(filename, texAtlas, cache.idup, size);
-		assert(newFont);
+
 		uint newId = fonts.add(newFont);
-		isTextureDirty = true;
+
+		tex.invalidate();
+
 		return newId;
 	}
 
 	Texture getFontAtlasTex()
 	{
-		if (isTextureDirty)
-		{
-			tex.reload();
-			isTextureDirty = false;
-		}
 		return tex;
 	}
 
@@ -88,5 +84,4 @@ private:
 	IdArray!Font fonts;
 	TextureAtlas texAtlas;
 	Texture tex;
-	bool isTextureDirty = true;
 }
