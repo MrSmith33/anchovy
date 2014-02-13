@@ -39,24 +39,29 @@ public
 	import anchovy.core.input;
 	import anchovy.core.math;
 	import anchovy.core.types;
+
 	import anchovy.graphics.all;
+
 	import anchovy.graphics.interfaces.irenderer;
+	import anchovy.gui.interfaces.iguiskinparser;
+	import anchovy.gui.interfaces.iguirenderer;
+
+	import anchovy.gui.layouts.absolutelayout;
+	import anchovy.gui.layouts.linearlayout;
 
 	import anchovy.gui.guicontext;
 
-	import anchovy.gui.events,
-		anchovy.gui.eventpropagators,
-		anchovy.gui.guiskin,
-		anchovy.gui.widget,
-		anchovy.gui.guirenderer;
+	import anchovy.gui.events;
+	import anchovy.gui.eventpropagators;
 
-	import anchovy.gui.interfaces.iguiskinparser,
-		anchovy.gui.interfaces.iguirenderer;
+	import anchovy.gui.guiskin;
+	import anchovy.gui.widget;
+	import anchovy.gui.guirenderer;
+
 	import anchovy.gui.jsonguiskinparser;
-	import anchovy.gui.layouts.absolutelayout;
+
 	import anchovy.gui.textline;
 	import anchovy.gui.timermanager;
-	import anchovy.gui.controls.all;
 
 	import anchovy.gui.widgettemplate;
 	import anchovy.gui.templateparser;
