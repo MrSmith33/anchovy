@@ -64,8 +64,12 @@ class GuiContext
 		{
 			doLayout();
 			isLayoutValid = true;
-		}
 
+			if (pressedWidget !is null)
+			{
+				updateHovered( new PointerMoveEvent(lastPointerPosition, ivec2(0, 0)));
+			}
+		}
 	}
 
 protected:
@@ -100,6 +104,8 @@ protected:
 	/// 
 	/// Will receive all key events if input is not grabbed by other widget.
 	Widget		_focusedWidget;
+
+	ivec2 lastPointerPosition = ivec2(int.max, int.max);
 
 	/// This will be called when widget sets clipboard string.
 	void delegate(dstring newClipboardString) _setClipboardStringCallback;
@@ -446,6 +452,8 @@ public:
 	/// Must be called by user application.
 	bool pointerPressed(ivec2 pointerPosition, PointerButton button)
 	{	
+		lastPointerPosition = pointerPosition;
+
 		auto event = new PointerPressEvent(pointerPosition, button);
 		event.context = this;
 		
@@ -476,6 +484,8 @@ public:
 	/// Must be called by user application.
 	bool pointerReleased(ivec2 pointerPosition, PointerButton button)
 	{
+		lastPointerPosition = pointerPosition;
+
 		scope event = new PointerReleaseEvent(pointerPosition, button);
 		event.context = this;
 
@@ -485,7 +495,7 @@ public:
 
 			pressedWidget = null;
 
-			if ( updateHovered( new PointerMoveEvent(pointerPosition, ivec2(0, 0)) ) )
+			if ( updateHovered(new PointerMoveEvent(pointerPosition, ivec2(0, 0))) )
 			{
 				return true;
 			}
@@ -525,6 +535,8 @@ public:
 	/// Must be called by user application.
 	bool pointerMoved(ivec2 newPointerPosition, ivec2 delta)
 	{	
+		lastPointerPosition = newPointerPosition;
+
 		scope event = new PointerMoveEvent(newPointerPosition, delta);
 		event.context = this;
 		
@@ -550,7 +562,7 @@ public:
 		return false;
 	}
 
-	bool  updateHovered(PointerMoveEvent event)
+	bool updateHovered(PointerMoveEvent event)
 	{
 		foreach_reverse(rootWidget; roots)
 		{
@@ -565,6 +577,8 @@ public:
 				return true;
 			}
 		}
+
+		hoveredWidget = null;
 
 		return false;
 	}
