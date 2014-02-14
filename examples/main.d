@@ -146,26 +146,7 @@ class GuiTestWindow : GlfwWindow
 		context.attachDefaultLayouts();
 
 		//-------------- Creating widgets --------------------
-		templateManager.parseFile("appLayout.sdl");
-		templateManager.parseString(`
-		template:mainLayer {
-			tree layout="vertical" isVisible=false {
-				button id="button1" prefSize="50 50" caption="Click me!"
-				widget prefSize="50 50" vexpand=true style="button"
-				widget prefSize="50 50" hexpand=true
-				widget prefSize="50 50" hexpand=true vexpand=true layout="horizontal" {
-					mybutton prefSize="50 50" vexpand=true
-					mybutton prefSize="50 50"
-					image id="fontTexture"
-					label id="fpsLabel"
-				}
-			}
-		}
-
-		template:mybutton extends="button" {
-			tree "vexpand" style="button"
-		}
-		`);
+		templateManager.parseFile("test.sdl");
 
 		auto mainLayer = context.createWidget("mainLayer");
 		context.addRoot(mainLayer);
