@@ -407,6 +407,7 @@ public:
 			event.context = this;
 			_focusedWidget.handleEvent(event);
 		}
+
 		return false;
 	}
 
@@ -421,6 +422,7 @@ public:
 			event.context = this;
 			_focusedWidget.handleEvent(event);
 		}
+
 		return false;
 	}
 
@@ -435,6 +437,7 @@ public:
 			event.context = this;
 			_focusedWidget.handleEvent(event);
 		}
+
 		return false;
 	}
 
@@ -475,29 +478,43 @@ public:
 	{
 		scope event = new PointerReleaseEvent(pointerPosition, button);
 		event.context = this;
-		
-		foreach_reverse(rootWidget; roots)
+
+		if (pressedWidget !is null)
 		{
-			Widget[] widgetChain = buildPathToLeaf!(containsPointer)(rootWidget, pointerPosition);
+			pressedWidget.handleEvent(event);
 
-			Widget[] eventConsumerChain = propagateEventSinkBubble(widgetChain, event);
+			pressedWidget = null;
 
-			if (eventConsumerChain.length > 0)
+			if ( updateHovered( new PointerMoveEvent(pointerPosition, ivec2(0, 0)) ) )
 			{
-				if (pressedWidget is eventConsumerChain[$-1])
-				{
-					scope clickEvent = new PointerClickEvent(pointerPosition, button);
-					clickEvent.context = this;
-
-					pressedWidget.handleEvent(clickEvent);
-
-					lastClickedWidget = pressedWidget;
-				}
-				break;
+				return true;
 			}
 		}
+		else
+		{
+			foreach_reverse(rootWidget; roots)
+			{
+				Widget[] widgetChain = buildPathToLeaf!(containsPointer)(rootWidget, pointerPosition);
 
-		pressedWidget = null;
+				Widget[] eventConsumerChain = propagateEventSinkBubble(widgetChain, event);
+
+				if (eventConsumerChain.length > 0)
+				{
+					if (pressedWidget is eventConsumerChain[$-1])
+					{
+						scope clickEvent = new PointerClickEvent(pointerPosition, button);
+						clickEvent.context = this;
+
+						pressedWidget.handleEvent(clickEvent);
+
+						lastClickedWidget = pressedWidget;
+					}
+					break;
+				}
+			}
+
+			pressedWidget = null;
+		}
 
 		return false;
 	}
@@ -508,7 +525,7 @@ public:
 	/// Must be called by user application.
 	bool pointerMoved(ivec2 newPointerPosition, ivec2 delta)
 	{	
-		auto event = new PointerMoveEvent(newPointerPosition, delta);
+		scope event = new PointerMoveEvent(newPointerPosition, delta);
 		event.context = this;
 		
 		if (pressedWidget !is null)
@@ -519,28 +536,36 @@ public:
 			{
 				hoveredWidget = pressedWidget;
 
-				return false;
+				return true;
 			}
 		}
 		else
 		{	
-			foreach_reverse(rootWidget; roots)
-			{
-				Widget[] widgetChain = buildPathToLeaf!(containsPointer)(rootWidget, newPointerPosition);
-
-				Widget[] eventConsumerChain = propagateEventSinkBubble(widgetChain, event);
-
-				if (eventConsumerChain.length > 0)
-				{
-					hoveredWidget = eventConsumerChain[$-1];
-
-					return false;
-				}
-			}
+			if (updateHovered(event))
+				return true;
 		}
 
 		hoveredWidget = null;
 		
+		return false;
+	}
+
+	bool  updateHovered(PointerMoveEvent event)
+	{
+		foreach_reverse(rootWidget; roots)
+		{
+			Widget[] widgetChain = buildPathToLeaf!(containsPointer)(rootWidget, event.pointerPosition);
+
+			Widget[] eventConsumerChain = propagateEventSinkBubble(widgetChain, event);
+
+			if (eventConsumerChain.length > 0)
+			{
+				hoveredWidget = eventConsumerChain[$-1];
+
+				return true;
+			}
+		}
+
 		return false;
 	}
 }

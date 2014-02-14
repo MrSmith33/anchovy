@@ -195,7 +195,6 @@ class GuiTestWindow : GlfwWindow
 			image.setProperty!("texture")(guiRenderer.getFontTexture);
 
 		auto fpsLabel = context.createWidget("label", container);
-			fpsLabel.setProperty!("text")("TJey text");
 
 		auto fpsSlot = (FpsHelper* helper){fpsLabel["text"] = to!string(helper.fps);};
 		fpsHelper.fpsUpdated.connect(fpsSlot);

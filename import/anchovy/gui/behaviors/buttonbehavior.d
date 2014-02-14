@@ -31,6 +31,7 @@ module anchovy.gui.behaviors.buttonbehavior;
 import anchovy.gui;
 import anchovy.gui.interfaces.iwidgetbehavior;
 
+// version = Button_debug;
 
 class ButtonBehavior : IWidgetBehavior
 {
@@ -53,7 +54,8 @@ public:
 		if (event.button == PointerButton.PB_LEFT)
 		{
 			widget.setProperty!"state"("pressed");
-			writeln("pressed");
+			
+			version(Button_debug) writeln("pressed");
 		}
 		return true;
 	}
@@ -63,7 +65,8 @@ public:
 		if (event.button == PointerButton.PB_LEFT)
 		{
 			widget.setProperty!"state"("hover");
-			writeln("hovered");
+			
+			version(Button_debug) writeln("hovered");
 		}
 		return true;
 	}
@@ -78,12 +81,14 @@ public:
 		if (event.context.pressedWidget is this)
 		{
 			widget.setProperty!"state"("pressed");
-			writeln("pressed");
+			
+			version(Button_debug) writeln("pressed");
 		}
 		else
 		{
 			widget.setProperty!"state"("hover");
-			writeln("hovered");
+			
+			version(Button_debug) writeln("hovered");
 		}
 		return true;
 	}
@@ -91,7 +96,9 @@ public:
 	bool pointerLeaved(Widget widget, PointerLeaveEvent event)
 	{
 		widget.setProperty!"state"("normal");
-		writeln("normal");
+		
+		version(Button_debug) writeln("normal");
+		
 		return true;
 	}
 }
