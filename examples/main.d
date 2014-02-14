@@ -109,9 +109,11 @@ class GuiTestWindow : GlfwWindow
 
 	void load(in string[] args)
 	{
+		writeln("---------------------- System info ----------------------");
 		foreach(item; getHardwareInfo())
 			writeln(item);
-		writeln("========");
+		writeln("---------------------------------------------------------\n");
+
 		dstring cyrillicChars = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяє"d;
 
 		//-------------- Setting renderer --------------
@@ -199,7 +201,7 @@ class GuiTestWindow : GlfwWindow
 		auto fpsSlot = (FpsHelper* helper){fpsLabel["text"] = to!string(helper.fps);};
 		fpsHelper.fpsUpdated.connect(fpsSlot);
 
-		writeln(templateManager.templates);
+		//writeln(templateManager.templates);
 
 		//--------------- Rendering settings---------------------------
 		renderer.enableAlphaBlending();

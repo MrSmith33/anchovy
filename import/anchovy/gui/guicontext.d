@@ -148,11 +148,16 @@ public:
 	}
 
 	//---------------------------- Helpers ---------------------------------
+	private ref Variant parseProperty(string name, ref Variant value)
+	{
+		return value;
+	}
+
 	Widget createSubwidget(SubwidgetTemplate sub, Widget subwidget)
 	{
 		foreach(propertyKey; sub.properties.byKey)
 		{
-			subwidget[propertyKey] = sub.properties[propertyKey];
+			subwidget[propertyKey] = parseProperty(propertyKey, sub.properties[propertyKey]);
 		}
 
 		foreach(subtemplate; sub.subwidgets)
@@ -169,7 +174,7 @@ public:
 
 		//----------------------- Instatiating templates ---------------------------
 
-		writeln("template for ", type, " is ", _templateManager.getTemplate(type));
+		//writeln("template for ", type, " is ", _templateManager.getTemplate(type));
 		if (WidgetTemplate templ = _templateManager.getTemplate(type))
 		{
 			//----------------------- Base type construction -----------------------
@@ -199,7 +204,7 @@ public:
 			}
 
 			widget["template"] = templ;
-			writeln("style: ",widget["style"]);
+			//writeln("style: ",widget["style"]);
 		}
 		else
 		{
@@ -489,43 +494,44 @@ public:
 		scope event = new PointerReleaseEvent(pointerPosition, button);
 		event.context = this;
 
-		if (pressedWidget !is null)
+		root_loop:
+		foreach_reverse(rootWidget; roots)
 		{
-			pressedWidget.handleEvent(event);
+			Widget[] widgetChain = buildPathToLeaf!(containsPointer)(rootWidget, pointerPosition);
 
-			pressedWidget = null;
-
-			if ( updateHovered(new PointerMoveEvent(pointerPosition, ivec2(0, 0))) )
+			foreach_reverse(item; widgetChain) // test if pointer over pressed widget.
 			{
-				return true;
-			}
-		}
-		else
-		{
-			foreach_reverse(rootWidget; roots)
-			{
-				Widget[] widgetChain = buildPathToLeaf!(containsPointer)(rootWidget, pointerPosition);
-
-				Widget[] eventConsumerChain = propagateEventSinkBubble(widgetChain, event);
-
-				if (eventConsumerChain.length > 0)
+				if (item is pressedWidget)
 				{
-					if (pressedWidget is eventConsumerChain[$-1])
+					Widget[] eventConsumerChain = propagateEventSinkBubble(widgetChain, event);
+
+					if (eventConsumerChain.length > 0)
 					{
-						scope clickEvent = new PointerClickEvent(pointerPosition, button);
-						clickEvent.context = this;
+						if (pressedWidget is eventConsumerChain[$-1])
+						{
+							scope clickEvent = new PointerClickEvent(pointerPosition, button);
+							clickEvent.context = this;
 
-						pressedWidget.handleEvent(clickEvent);
+							pressedWidget.handleEvent(clickEvent);
 
-						lastClickedWidget = pressedWidget;
+							lastClickedWidget = pressedWidget;
+						}
 					}
-					break;
+
+					return true;
 				}
 			}
-
-			pressedWidget = null;
 		}
 
+		if (pressedWidget !is null) // no one handled event. Let's pressed widget know that pointer released.
+		{
+			pressedWidget.handleEvent(event); // pressed widget will know if pointer unpressed somwhere else.
+
+			updateHovered(new PointerMoveEvent(pointerPosition, ivec2(0, 0))); // So widget knows if pointer released not over it.
+		}
+
+		pressedWidget = null;
+	
 		return false;
 	}
 

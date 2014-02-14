@@ -176,7 +176,7 @@ class Texture
 	{
 		glGenTextures(1, &glTextureHandle);
 			checkGlError;
-			writeln("genTexture ", glTextureHandle);
+
 		isHandleCreated = true;
 	}
 	
