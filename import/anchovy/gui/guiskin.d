@@ -57,6 +57,7 @@ class GuiSkin
 		{
 			uint font = guiRenderer.fontManager.createFont(info.filename, info.size);
 			fonts[info.name] = guiRenderer.fontManager.getFont(font);
+			fonts[info.name].verticalOffset = info.verticalOffset;
 		}
 	}
 
@@ -69,11 +70,12 @@ class GuiSkin
 	{
 		string result;
 		result ~= "GuiSkin(Name:'" ~ name~"', textureFilename: '"~textureFilename~"'\n";
-		//result ~= "fonts: " ~ to!string(fonts);
+
 		foreach(string styleName, ref style; styles)
 		{
 			result ~= styleName~"("~ style.toString ~ "\n";
 		}
+
 		result ~=")\n";
 		return result;
 	}
@@ -84,6 +86,7 @@ struct FontInfo
 	string name;
 	string filename;
 	uint size;
+	int verticalOffset;
 }
 
 class GuiStyle
@@ -100,9 +103,9 @@ class GuiStyle
 
 	override string toString() const
 	{
-		return "fixedBord:"~to!string(states["normal"].fixedBorders.toString)~
-			" contPadd:"~to!string(states["normal"].contentPadding.toString)~
-				" rect:"~to!string(states["normal"].atlasRect)~
+		return "fixedBord:"~to!string(states["normal"].fixedBorders.toString) ~
+			" contPadd:"~to!string(states["normal"].contentPadding.toString) ~
+				" rect:"~to!string(states["normal"].atlasRect) ~
 				"minSize: "~to!string(states["normal"].minSize);
 	}
 }
@@ -123,6 +126,8 @@ struct GuiStyleState
 	RectOffset contentPadding;
 
 	/// Defines outline of skin rect. Useful for drawing highlighting.
+	/// If skin has drawn outline, with this parameter set
+	/// guiRenderer will draw that sides outside of rect.
 	RectOffset outline;
 	
 	/// Defines non-stretchable borders of texture.
