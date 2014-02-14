@@ -105,6 +105,21 @@ void propagateEventParentFirst(Widget root, Event event)
 	propagateEvent(root);
 }
 
+void propagateEventSinkBubbleTree(Widget root, Event e)
+{
+	e.sinking = true;
+	root.handleEvent(e);
+
+	foreach (widget; root.getPropertyAs!("children", Widget[]))
+	{
+		e.sinking = true;
+		widget.propagateEventSinkBubbleTree(e);
+	}
+	
+	e.bubbling = true;
+	root.handleEvent(e);
+}
+
 void propagateEventChildrenFirst(Widget root, Event event)
 {
 	event.bubbling = true;

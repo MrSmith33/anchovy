@@ -92,7 +92,7 @@ public:
 		auto onSizeChanged = (FlexibleObject obj, Variant old, Variant* newSize){
 			obj["staticRect"] = Rect(obj.getPropertyAs!("staticPosition", ivec2), (*newSize).get!ivec2);
 
-			obj.setProperty!("geometry")((TexRectArray[string]).init);
+			obj.setProperty!("geometry", TexRectArray[string])(null);
 
 			(cast(Widget)obj).invalidateLayout;
 		};
@@ -207,22 +207,6 @@ public:
 		}
 		return result;
 	}
-
-	bool recursiveHandleEvent(Event e)
-	{
-		e.sinking = true;
-		handleEvent(e);
-
-		bool handled = false;
-		foreach (widget; this.getPropertyAs!("children", Widget[])) {
-			e.sinking = true;
-			handled |= widget.recursiveHandleEvent(e);
-		}
-		
-		e.bubbling = true;
-		return handleEvent(e) || handled;
-	}
-
 	
 	/// Event handlers.
 	bool delegate(Widget, Event)[][TypeInfo] _eventHandlers;

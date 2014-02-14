@@ -385,14 +385,6 @@ public:
 		return widget.getPropertyAs!("staticRect", Rect).contains(pointerPosition);
 	}
 
-	void handleEvent(Event event)
-	{
-		foreach(widget; roots)
-		{
-			widget.recursiveHandleEvent(event);
-		}
-	}
-
 	void draw()
 	{
 		auto event = new DrawEvent(_guiRenderer);

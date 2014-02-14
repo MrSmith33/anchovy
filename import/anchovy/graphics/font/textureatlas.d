@@ -45,7 +45,7 @@ class InsertException : Exception
 	}
 }
 
-///Can be used to tightly store small images in big atlas, such as font glyps, or lightmaps etc.
+/// Can be used to tightly store small images in big atlas, such as font glyps, or lightmaps etc.
 class TextureAtlas
 {
 	this(in uint size)
@@ -53,6 +53,7 @@ class TextureAtlas
 		binPacker = new RectBinPacker(size, size);
 		bitmap = new Bitmap(size, size, 1);
 	}
+
 	this(in uint width, in uint height)
 	{
 		binPacker = new RectBinPacker(width, height);
@@ -66,11 +67,11 @@ class TextureAtlas
 	{
 		Node* node = binPacker.insert(width, height);
 
-		if (node is null)
+		if (node is null) // There is no place to put new item.
 		{
-			if (_autoGrow)
+			if (_autoGrow) // Atlas can grow.
 			{
-				if (bitmap.size.x >= bitmap.size.y)
+				if (bitmap.size.x >= bitmap.size.y) // Growing vertically.
 				{
 					if (bitmap.size.y >= _maxAtlasSize)
 					{
@@ -82,7 +83,7 @@ class TextureAtlas
 					binPacker = new RectBinPacker(bitmap.size.x, bitmap.size.y, 0, bitmap.size.y);
 					bitmap.size.y *= 2;
 				}
-				else
+				else // Growing horizontally.
 				{
 					ubyte[] newData = new ubyte[bitmap.size.y*bitmap.size.x*2];
 					for(uint y = 0; y < bitmap.size.y; ++y)
@@ -108,16 +109,19 @@ class TextureAtlas
 		return uvec2(node.rect.x, node.rect.y);
 	}
 
+	/// Returns internal bitmap.
 	ref Bitmap getBitmap()
 	{
 		return bitmap;
 	}
 
+	/// Sets grow policy.
 	bool autoGrow(in bool allowAutoGrow) @property
 	{
 		return _autoGrow = allowAutoGrow;
 	}
 
+	/// Returns grow policy.
 	bool autoGrow() @property
 	{
 		return _autoGrow;
@@ -125,8 +129,8 @@ class TextureAtlas
 
 private:
 
-	bool _autoGrow = true;
-	uint _maxAtlasSize = 8192;  //2^13
+	bool _autoGrow = true; 
+	uint _maxAtlasSize = 8192; // 2^13
 
 	Bitmap bitmap;
 	RectBinPacker binPacker;

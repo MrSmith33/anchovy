@@ -41,13 +41,45 @@ Bitmap createBitmapFromFile(string filename)
 {
 	auto bitmap = new Bitmap(4);
 
-	bitmap.loadFromFile(filename);
+	// Automatically detects the format
+	FREE_IMAGE_FORMAT formato = FreeImage_GetFileType(toStringz(filename),0);
+	FIBITMAP* fiimage = FreeImage_Load(formato, toStringz(filename), 0);
+
+	if (fiimage is null) throw new Exception("Image loading failed");
+
+	FIBITMAP* temp = fiimage;
+	fiimage = FreeImage_ConvertTo32Bits(temp);
+
+	FreeImage_Unload(temp);
+
+	bitmap.size.x = FreeImage_GetWidth(fiimage);
+	bitmap.size.y = FreeImage_GetHeight(fiimage);
+
+	ubyte* bits = FreeImage_GetBits(fiimage);
+
+	bitmap.data = new ubyte[](bitmap.size.x*bitmap.size.y*4);
+
+	foreach(i; 0 .. bitmap.size.x * bitmap.size.y)//Converts from BGRA to RGBA
+	{
+		bitmap.data[i*4+0] = bits[i*4+2];
+		bitmap.data[i*4+1] = bits[i*4+1];
+		bitmap.data[i*4+2] = bits[i*4+0];
+		bitmap.data[i*4+3] = bits[i*4+3];
+	}
+
+	FreeImage_Unload(fiimage);
 
 	return bitmap;
 }
 
 class Bitmap
 {
+	uvec2 size;
+	ubyte byteDepth;
+	ubyte[]	data;
+
+	Signal!() dataChanged;
+
 	this(in uint w, in uint h, in ubyte byteDepth)
 	{
 		this.size.x = w;
@@ -61,42 +93,6 @@ class Bitmap
 		this.byteDepth = byteDepth;
 	}
 
-	uvec2 size;
-	ubyte byteDepth;
-	ubyte[]	data;
-
-	Signal!() dataChanged;
-
-	void loadFromFile(string filename)
-	{
-		//Automatocally detects the format(from over 20 formats!)
-		FREE_IMAGE_FORMAT formato = FreeImage_GetFileType(toStringz(filename),0);
-		FIBITMAP* fiimage = FreeImage_Load(formato, toStringz(filename), 0);
-
-		if (fiimage is null) throw new Exception("Image loading failed");
-
-		FIBITMAP* temp = fiimage;
-		fiimage = FreeImage_ConvertTo32Bits(temp);
-
-		FreeImage_Unload(temp);
-	
-		size.x = FreeImage_GetWidth(fiimage);
-		size.y = FreeImage_GetHeight(fiimage);
-
-		ubyte* bits = FreeImage_GetBits(fiimage);
-
-		data = new ubyte[](size.x*size.y*4);
-
-		foreach(i; 0 .. size.x * size.y)//Converts from BGRA to RGBA
-		{
-			data[i*4+0] = bits[i*4+2];
-			data[i*4+1] = bits[i*4+1];
-			data[i*4+2] = bits[i*4+0];
-			data[i*4+3] = bits[i*4+3];
-		}
-
-		FreeImage_Unload(fiimage);
-	}
 
 	void putSubRect(in uvec2 dest, in Rect source, in Bitmap sourceBitmap)
 	{

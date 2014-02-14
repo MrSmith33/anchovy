@@ -122,7 +122,7 @@ public:
 		return _verticalOffset;
 	}
 
-	void verticalOffset(int value) @property const
+	void verticalOffset(int value) @property
 	{
 		_verticalOffset = value;
 	}

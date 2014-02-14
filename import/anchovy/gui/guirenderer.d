@@ -68,6 +68,7 @@ void main()
 } 	
 `;
 
+/// Gives means for rendering widgets and text lines.
 class SkinnedGuiRenderer : IGuiRenderer
 {
 	this(IRenderer renderer, GuiSkin skin)
@@ -77,18 +78,21 @@ class SkinnedGuiRenderer : IGuiRenderer
 		_fontTexture = _fontManager.getFontAtlasTex();
 		_textShader = new ShaderProgram(textvshader, textfshader);
 		_skin = skin;
+
 		if (!_textShader.compile)
-			writeln(_textShader.errorLog);
+			writeln("Text shader failed compilation: ", _textShader.errorLog);
+
 		_renderer.bindShaderProgram(_textShader);
-		//_textShader.setUniform!float("gSampler", 0);
 		checkGlError;
 	}
 
+	/// Returns texture that stores cached glyps of all loaded fonts.
 	override Texture getFontTexture()
 	{
 		return _fontTexture;
 	}
 
+	/// Returns font manager used by this renderer.
 	override ref FontManager fontManager() @property
 	{
 		return _fontManager;
@@ -100,18 +104,22 @@ class SkinnedGuiRenderer : IGuiRenderer
 	{
 		auto line = new TextLine();
 		_lines ~= line;
+
 		line.fontName = fontName;
+
 		Font* font = fontName in _skin.fonts;
-		
+
 		if (font is null)
 		{
 			font = "normal" in _skin.fonts;
 		}
+
 		line.font = *font;
 
 		return line;
 	}
 
+	/// Draws background of widget.
 	override void drawControlBack(Widget widget, Rect staticRect)
 	{
 		string styleName = widget.getPropertyAs!("style", string);
@@ -119,6 +127,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 
 		GuiStyle* styleptr = styleName in _skin.styles;
 
+		// No style in skin.
 		if (styleptr is null)
 		{
 			_renderer.setColor(Color(255, 255, 255, 255));
@@ -126,21 +135,22 @@ class SkinnedGuiRenderer : IGuiRenderer
 			_renderer.setColor(Color(255, 0, 0, 255));
 			_renderer.drawRect(staticRect);
 		}
-		else
+		else // Widget has style.
 		{
 			GuiStyle style = *styleptr;
 
-			if (!(stateName in style.states))
+			if (!(stateName in style.states)) // Fallback to deafult.
 			{
 				stateName = "normal";
 			}
+
 			GuiStyleState state = style[stateName];
 
 			TexRectArray[string] geometryList = widget.getPropertyAs!("geometry", TexRectArray[string]);
 
 			TexRectArray* geometry = stateName in geometryList;
 
-			if (geometry is null)
+			if (geometry is null) // Geometry for current state is no cached yet.
 			{
 				ivec2 size = widget.getPropertyAs!("size", ivec2);
 				TexRectArray newGeometry = buildWidgetGeometry(size, state);
@@ -158,6 +168,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 		}
 	}
 
+	/// Draws line of text aligning it to the position.
 	override void drawTextLine(TextLine line, ivec2 position, in AlignmentType alignment)
 	{
 		if (!line.isInited)
@@ -185,6 +196,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 		_renderer.drawTexRectArray(line.geometry, ivec2(renderX , renderY), _fontTexture, _textShader);
 	}
 
+	/// Draws line of text aligning it inside rectangle.
 	override void drawTextLine(TextLine line, in Rect area, in AlignmentType alignment)
 	{
 		if (!line.isInited)
@@ -216,42 +228,54 @@ class SkinnedGuiRenderer : IGuiRenderer
 		_renderer.drawTexRectArray(line.geometry, ivec2(renderX , renderY), _fontTexture, _textShader);
 	}
 
+	/// Pushes new clip rect onto stack.
+	/// Useful for containers which clips their children.
+	/// Must be called when parent begins drawing its children.
 	override void pushClientArea(Rect area)
 	{
 		_clientAreaStack ~= area;
 		setClientArea(_clientAreaStack.back);
 	}
 	
+	/// Pops clip rect from stack.
+	/// Useful for containers which clips their children.
+	/// Must be called when parent ends drawing its children.
 	override void popClientArea()
 	{
 		_clientAreaStack.popBack;
+
 		if (_clientAreaStack.empty)
 		{
 			glScissor(0, 0, _renderer.windowSize.x, _renderer.windowSize.y);
 			return;
 		}
+
 		setClientArea(_clientAreaStack.back);
 	}
 
+	/// Sets clip rect to given area.
+	/// Make sure to call this to reset rendering area for the window.
 	override void setClientArea(Rect area)
 	{
 		glScissor(area.x, _renderer.windowSize.y - area.y - area.height,  area.width, area.height);
 	}
 
+	/// Returns internal render.
 	IRenderer renderer() @property
 	{
 		return _renderer;
 	}
 
+	/// Creates geometry for given gui style state and size.
 	TexRectArray buildWidgetGeometry(ivec2 size, in GuiStyleState state)
 	{
 		TexRectArray geometry = new TexRectArray;
-		RectOffset fb = state.fixedBorders;
+		RectOffset fb = state.fixedBorders; // defines splitting of texture in 9 pieces.
+
 		int widgetHeight = size.y + state.outline.top + state.outline.bottom;
 		int widgetWidth = size.x + state.outline.left + state.outline.right;
-		//writeln("w: ", widgetWidth, ", h: ", widgetHeight);
-		assert(geometry !is null);
-		if (fb.left > 0)
+
+		if (fb.left > 0) // left 3 parts
 		{
 
 			if (fb.top > 0) // left-top
@@ -276,6 +300,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 				geometry.appendQuad(Rect(0, fb.top, fb.left, widgetHeight - fb.vertical), texRect);
 			}
 		}
+
 		if (fb.top > 0 && fb.horizontal < widgetWidth) // top
 		{
 			Rect texRect;
@@ -283,6 +308,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 				texRect = Rect(x + fb.left, y, width - fb.horizontal, fb.top);
 			geometry.appendQuad(Rect(fb.left, 0, widgetWidth - fb.horizontal, fb.top), texRect);
 		}
+
 		if (fb.horizontal < widgetWidth && fb.vertical < widgetHeight) // center
 		{
 			Rect texRect;
@@ -290,6 +316,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 				texRect = Rect(x + fb.left, y + fb.top, width - fb.horizontal, height - fb.vertical);
 			geometry.appendQuad(Rect(fb.left, fb.top, widgetWidth - fb.horizontal, widgetHeight - fb.vertical), texRect);
 		}
+
 		if (fb.bottom > 0 && fb.horizontal < widgetWidth) // bottom
 		{
 			Rect texRect;
@@ -297,7 +324,8 @@ class SkinnedGuiRenderer : IGuiRenderer
 				texRect = Rect(x + fb.left, y + height - fb.bottom, width - fb.horizontal, fb.bottom);
 			geometry.appendQuad(Rect(fb.left, widgetHeight - fb.bottom, widgetWidth - fb.horizontal, fb.bottom), texRect);
 		}
-		if (fb.right > 0)
+
+		if (fb.right > 0) // right 3 parts
 		{
 			if (fb.top > 0) // right-top
 			{
@@ -321,11 +349,14 @@ class SkinnedGuiRenderer : IGuiRenderer
 				geometry.appendQuad(Rect(widgetWidth - fb.right, fb.top, fb.right, widgetHeight - fb.vertical), texRect);
 			}
 		}
+
 		geometry.load;
+
 		return geometry;
 	}
 
 private:
+
 	Rect[] _clientAreaStack;
 	IRenderer _renderer;
 	FontManager _fontManager;
