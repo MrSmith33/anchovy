@@ -26,21 +26,51 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.gui.behaviors.defaultbehaviors;
+module anchovy.gui.behaviors.labelbehavior;
 
-import anchovy.gui.widget;
-import anchovy.gui.behaviors.buttonbehavior;
-import anchovy.gui.behaviors.labelbehavior;
-import anchovy.gui.behaviors.imagebehavior;
-import anchovy.gui.behaviors.labelbehavior;
+import anchovy.gui;
+import anchovy.gui.interfaces.iwidgetbehavior;
 
-import anchovy.gui.guicontext;
 
-void attachDefaultBehaviors(GuiContext context)
+class LabelBehavior : IWidgetBehavior
 {
-	context.widgetFactories["widget"] = { return new Widget; };
-	context.widgetBehaviors["button"] ~= new ButtonBehavior;
-	context.widgetBehaviors["label"] ~= new LabelBehavior;
-	context.widgetBehaviors["image"] ~= new ImageBehavior;
-	context.widgetBehaviors["label"] ~= new LabelBehavior;
+public:
+
+	override void attachTo(Widget widget)
+	{
+		widget.removeEventHandlers!DrawEvent();
+		widget.addEventHandler(&handleDraw);
+
+		if (widget.peekPropertyAs!("text", string) is null)
+			widget.setProperty!"text"("");
+		if (widget.peekPropertyAs!("fontName", string) is null)
+			widget.setProperty!"fontName"("normal");
+
+		GuiContext context = widget.getPropertyAs!("context", GuiContext);
+		auto guiRenderer = context.guiRenderer;
+		TextLine line = guiRenderer.createTextLine(widget.getPropertyAs!("fontName", string));
+		widget.setProperty!"line"(line);
+		widget.setProperty!"prefSize"(line.size);
+
+		void onTextChanged(FlexibleObject obj, Variant old, Variant* newText)
+		{
+			auto str = (*newText).get!string;
+
+			TextLine line = widget.getPropertyAs!("line", TextLine);
+
+			line.text = str;
+
+			obj["prefSize"] = line.size;
+		}
+
+		widget.property("text").valueChanged.connect(&onTextChanged);
+	}
+
+	bool handleDraw(Widget widget, DrawEvent event)
+	{
+		event.guiRenderer.renderer.setColor(Color(0, 0, 0, 255));
+		event.guiRenderer.drawTextLine(widget.getPropertyAs!("line", TextLine), widget.getPropertyAs!("staticPosition", ivec2), AlignmentType.LEFT_TOP);
+		return true;
+	}
 }
+

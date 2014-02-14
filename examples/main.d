@@ -187,12 +187,18 @@ class GuiTestWindow : GlfwWindow
 			button.setProperty!"vexpand"(true);
 		button = context.createWidget("mybutton", container);
 			button.setProperty!"prefSize"(ivec2(50, 50));
-			button.setProperty!"vexpand"(true);
+			//button.setProperty!"vexpand"(true);
 
 		auto image = context.createWidget("image", container);
 			//image.setProperty!"prefSize"(ivec2(50, 50));
-			image.setProperty!"vexpand"(true);
+			//image.setProperty!"vexpand"(true);
 			image.setProperty!("texture")(guiRenderer.getFontTexture);
+
+		auto fpsLabel = context.createWidget("label", container);
+			fpsLabel.setProperty!("text")("TJey text");
+
+		auto fpsSlot = (FpsHelper* helper){fpsLabel["text"] = to!string(helper.fps);};
+		fpsHelper.fpsUpdated.connect(fpsSlot);
 
 		writeln(templateManager.templates);
 
@@ -326,7 +332,7 @@ class GuiTestWindow : GlfwWindow
 
 	TimerManager timerManager;
 
-	Widget fpsLabel;
+	//Widget fpsLabel;
 
 	uint testTexture;
 

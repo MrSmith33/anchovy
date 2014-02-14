@@ -238,6 +238,11 @@ public:
 
 @property
 {
+	IGuiRenderer guiRenderer()
+	{
+		return _guiRenderer;
+	}
+
 /// Sets new size for all root widgets.
 	void size(ivec2 newSize)
 	{

@@ -117,6 +117,16 @@ public:
 		return _descender;
 	}
 
+	int verticalOffset() @property const
+	{
+		return _verticalOffset;
+	}
+
+	void verticalOffset(int value) @property const
+	{
+		_verticalOffset = value;
+	}
+
 	uint getKerning(in dchar leftGlyph, in dchar rightGlyph)
 	{
 		uint[dchar] rightGlyps = *(leftGlyph in kerningTable);
@@ -196,6 +206,7 @@ private:
 	uint _lineGap;
 	uint _ascender;
 	uint _descender;
+	int  _verticalOffset; // Can be used to manually adjust vertical position of text.
 
 	Glyph[dchar] glyphs;
 	//Glyph[dchar] boldGlyphs;

@@ -77,13 +77,15 @@ interface IGuiRenderer
 {
 	Texture getFontTexture();
 	ref FontManager fontManager() @property;
+	TextLine createTextLine(string fontName = "normal");
+
 	void drawControlBack(Widget widget, Rect staticRect);
 
 	/// draws text line with alignment specified relative to point
-	void drawTextLine(ref TextLine line, ivec2 position, in AlignmentType alignment);
+	void drawTextLine(TextLine line, ivec2 position, in AlignmentType alignment);
 
 	/// draws text line with alignment specified relative to rectangle
-	void drawTextLine(ref TextLine line, in Rect area, in AlignmentType alignment);
+	void drawTextLine(TextLine line, in Rect area, in AlignmentType alignment);
 	void pushClientArea(Rect area);
 	void popClientArea();
 	void setClientArea(Rect area);

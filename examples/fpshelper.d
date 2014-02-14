@@ -29,6 +29,7 @@ DEALINGS IN THE SOFTWARE.
 module fpshelper;
 
 import core.thread;
+import anchovy.utils.signal;
 
 /++
  + Helper for measuring frames per second and setting static FPS.
@@ -36,7 +37,7 @@ import core.thread;
  +/
 struct FpsHelper
 {
-	void delegate(ref FpsHelper helper) onFpsUpdate;
+	Signal!(FpsHelper*) fpsUpdated;
 
 	/// fps will be updated each updateInterval seconds
 	float updateInterval = 0.5;
@@ -77,7 +78,7 @@ struct FpsHelper
 			fps = fpsTicks/secondsAccumulator;
 			secondsAccumulator -= updateInterval;
 			fpsTicks = 0;
-			if (onFpsUpdate !is null) onFpsUpdate(this);
+			fpsUpdated.emit(&this);
 		}
 	}
 

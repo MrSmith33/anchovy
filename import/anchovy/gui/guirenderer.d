@@ -94,6 +94,24 @@ class SkinnedGuiRenderer : IGuiRenderer
 		return _fontManager;
 	}
 
+	/// Creates textline with font from current skin.
+	/// If font not found then normal font will be used.
+	override TextLine createTextLine(string fontName = "normal")
+	{
+		auto line = new TextLine();
+		_lines ~= line;
+		line.fontName = fontName;
+		Font* font = fontName in _skin.fonts;
+		
+		if (font is null)
+		{
+			font = "normal" in _skin.fonts;
+		}
+		line.font = *font;
+
+		return line;
+	}
+
 	override void drawControlBack(Widget widget, Rect staticRect)
 	{
 		string styleName = widget.getPropertyAs!("style", string);
@@ -140,7 +158,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 		}
 	}
 
-	override void drawTextLine(ref TextLine line, ivec2 position, in AlignmentType alignment)
+	override void drawTextLine(TextLine line, ivec2 position, in AlignmentType alignment)
 	{
 		if (!line.isInited)
 		{
@@ -158,16 +176,16 @@ class SkinnedGuiRenderer : IGuiRenderer
 			renderX = position.x - line.width;
 
 		if (alignment & VertAlignment.TOP)
-			renderY = position.y;
+			renderY = position.y + line.height;
 		else if (alignment & VertAlignment.CENTER)
-			renderY = position.y - (line.height / 2);
+			renderY = position.y + (line.height / 2);
 		else 
-			renderY = position.y - line.height;
+			renderY = position.y;
 
 		_renderer.drawTexRectArray(line.geometry, ivec2(renderX , renderY), _fontTexture, _textShader);
 	}
 
-	override void drawTextLine(ref TextLine line, in Rect area, in AlignmentType alignment)
+	override void drawTextLine(TextLine line, in Rect area, in AlignmentType alignment)
 	{
 		if (!line.isInited)
 		{
@@ -184,7 +202,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 		else if (alignment & HoriAlignment.RIGHT)
 			renderX = area.x + area.width - line.width;
 		else
-			renderX = area.x + line.x;
+			renderX = area.x;
 		
 		if (alignment & VertAlignment.TOP)
 			renderY = area.y;
@@ -193,7 +211,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 		else if (alignment & VertAlignment.BOTTOM)
 			renderY = area.y + area.height - line.height;
 		else
-			renderY = area.y + line.y;
+			renderY = area.y;
 		
 		_renderer.drawTexRectArray(line.geometry, ivec2(renderX , renderY), _fontTexture, _textShader);
 	}
@@ -314,5 +332,6 @@ private:
 	ShaderProgram _textShader;
 	Texture _fontTexture;
 	GuiSkin _skin;
+	TextLine[] _lines;
 }
 

@@ -38,26 +38,17 @@ class TextLine
 
 public:
 
-	this(in dstring text, Font font)
+	this()
 	{
-		_text = text;
-		_font = font;
-		if (_font !is null) init();
-	}
-
-	void position(in int newX, in int newY) @property
-	{
-		_x = newX;
-		_y = newY;
+		_text = "";
 	}
 
 	void font(Font newFont) @property
 	{
 		if (newFont is null) return;
 		_font = newFont;
-		if (!_isInited)
+		if (!_isInited || newFont != _font)
 			init();
-			
 	}
 
 	Font font() @property
@@ -80,26 +71,6 @@ public:
 		}
 	}
 
-	int x() @property
-	{
-		return _x;
-	}
-
-	int y() @property
-	{
-		return _y;
-	}
-
-	int x(in int newX) @property
-	{
-		return _x = newX;
-	}
-	
-	int y(in int newY) @property
-	{
-		return _y = newY;
-	}
-
 	uint width() @property
 	{
 		return _width;
@@ -110,34 +81,50 @@ public:
 		return _height;
 	}
 
+	ivec2 size() @property
+	{
+		return ivec2(_width, _height);
+	}
+
 	TexRectArray geometry() @property
 	{
 		return _geometry;
 	}
 
-	dstring text() @property
+	string text() @property
 	{
 		return _text;
 	}
 
-	void text(in dstring newText) @property
+	void text(in string newText) @property
 	{
 		if (_text == newText)
 		{
 			return;
 		}
+
 		_text = newText;
 		if (!_isInited) return;
+
 		_geometry.vertieces = null;
 		_cursorX = 0;
-		_cursorY = _font.ascender;
 		
 		appendGlyphs(_text, _font);
 		_isDirty = true;
 	}
 
+	string fontName() @property
+	{
+		return _fontName;
+	}
+
+	void fontName(string newFontName) @property
+	{
+		_fontName = newFontName;
+	}
+
 	///Supports chaining
-	TextLine append(in dstring text)
+	TextLine append(in string text)
 	{
 		appendGlyphs(_text, _font);
 		_isDirty = true;
@@ -149,13 +136,12 @@ protected:
 	void init()
 	{
 		_geometry = new TexRectArray;
-		_cursorY = _font.ascender;
-		_height = _font.height;
+		_height = _font.size;
 		appendGlyphs(_text, _font);
 		_isInited = true;
 	}
 
-	void appendGlyphs(in dstring text, Font font)
+	void appendGlyphs(in string text, Font font)
 	{
 		foreach(dchar chr; text)
 		{
@@ -168,7 +154,7 @@ protected:
 			if (glyph is null) glyph = font.getGlyph('?');
 			
 			int x  =  glyph.metrics.offsetX + _cursorX;
-			int y  =  font.ascender - glyph.metrics.offsetY;
+			int y  =  font.verticalOffset - glyph.metrics.offsetY;
 			int w  =  glyph.metrics.width;
 			int h  =  glyph.metrics.height;
 			int tx =  glyph.atlasPosition.x;
@@ -189,18 +175,17 @@ protected:
 	}
 
 protected:
-	int _x;
-	int _y;
 	uint _width;
 	uint _height;
-	dstring _text;
+	string _text;
 	bool _isInited = false;
 	
 	TexRectArray _geometry;
-	uint _cursorX, _cursorY;
+	uint _cursorX;
 	bool _isDirty = true;
 	
 	Font _font;
+	string _fontName;
 	
 	ubyte _tabSize = 4;
 }
