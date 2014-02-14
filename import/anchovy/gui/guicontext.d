@@ -35,8 +35,10 @@ import anchovy.gui.interfaces.iwidgetbehavior : IWidgetBehavior;
 class GuiContext
 {
 	alias WidgetCreator = Widget delegate();
+	alias LayoutCreator = ILayout delegate();
 
 	WidgetCreator[string] widgetFactories;
+	LayoutCreator[string] layoutFactories;
 	IWidgetBehavior[][string] widgetBehaviors;
 
 	Widget[] roots;
@@ -105,6 +107,9 @@ protected:
 	/// Will receive all key events if input is not grabbed by other widget.
 	Widget		_focusedWidget;
 
+	/// Stores widgets with id property.
+	Widget[string] ids;
+
 	ivec2 lastPointerPosition = ivec2(int.max, int.max);
 
 	/// This will be called when widget sets clipboard string.
@@ -148,8 +153,50 @@ public:
 	}
 
 	//---------------------------- Helpers ---------------------------------
-	private ref Variant parseProperty(string name, ref Variant value)
+	import std.conv : parse;
+	import std.string : munch;
+
+	private Variant parseProperty(string name, ref Variant value, Widget widget)
 	{
+		switch(name)
+		{
+			case "layout":
+			writeln("found layout property: ", value.get!string);
+				if (auto factory = value.get!string in layoutFactories)
+				{
+					return Variant((*factory)());
+				}
+				writeln("Error: unknown layout '", value.get!string, "' found");
+				break;
+			case "prefSize":
+				try
+				{
+					string nums = value.get!string;
+					int w = parse!int(nums);
+					munch(nums, " \t\n\r");
+					int h = parse!int(nums);
+					return Variant(ivec2(w, h));
+				}
+				catch (Exception e)
+				{
+					writeln("Error parsing prefSize ", e);
+				}
+				return Variant(ivec2(16, 16));
+				break;
+			case "id":
+				string id = value.get!string;
+				if (id in ids)
+				{
+					writeln("Duplicate id found: ", id, ", overriding...");
+				}
+				ids[id] = widget;
+
+				return value;
+				break;
+			default:
+				return value;
+		}
+
 		return value;
 	}
 
@@ -157,7 +204,7 @@ public:
 	{
 		foreach(propertyKey; sub.properties.byKey)
 		{
-			subwidget[propertyKey] = parseProperty(propertyKey, sub.properties[propertyKey]);
+			subwidget[propertyKey] = parseProperty(propertyKey, sub.properties[propertyKey], subwidget);
 		}
 
 		foreach(subtemplate; sub.subwidgets)
@@ -241,6 +288,17 @@ public:
 		}
 
 		return widget;
+	}
+
+	/// Returns widget found by given id.
+	Widget getWidgetById(string id)
+	{
+		if (auto widget = id in ids)
+		{
+			return *widget;
+		}
+		else
+			return null;
 	}
 
 //+-------------------------------------------------------------------------------+

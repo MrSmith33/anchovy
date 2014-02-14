@@ -54,7 +54,7 @@ import anchovy.gui.timermanager;
 
 import anchovy.utils.string : ZToString;
 import anchovy.gui.behaviors.defaultbehaviors;
-import anchovy.gui.layouts.linearlayout;
+import anchovy.gui.layouts.defaultlayouts;
 
 import anchovy.gui.templates.templateparser;
 import anchovy.gui.templates.widgettemplate;
@@ -137,71 +137,57 @@ class GuiTestWindow : GlfwWindow
 
 		auto templateParser = new TemplateParser;
 		auto templateManager = new TemplateManager(templateParser);
-		templateManager.parseFile("appLayout.sdl");
 
 		//-------------- Setting context --------------
 		context = new GuiContext(guiRenderer, timerManager, templateManager, graySkin);
 		context.setClipboardStringCallback = (dstring newStr) => setClipboard(to!string(newStr));
 		context.getClipboardStringCallback = delegate dstring(){return to!dstring(getClipboard());};
 		context.attachDefaultBehaviors();
+		context.attachDefaultLayouts();
 
 		//-------------- Creating widgets --------------------
-		auto mainLayer = context.createWidget("widget");
-			mainLayer["name"] = "mainLayer";
-			mainLayer["isVisible"] = false;
-			mainLayer.setProperty!("layout")(cast(ILayout)new VerticalLayout);
+		templateManager.parseFile("appLayout.sdl");
+		templateManager.parseString(`
+		template:mainLayer {
+			tree layout="vertical" isVisible=false {
+				button id="button1" prefSize="50 50" caption="Click me!"
+				widget prefSize="50 50" vexpand=true style="button"
+				widget prefSize="50 50" hexpand=true
+				widget prefSize="50 50" hexpand=true vexpand=true layout="horizontal" {
+					mybutton prefSize="50 50" vexpand=true
+					mybutton prefSize="50 50"
+					image id="fontTexture"
+					label id="fpsLabel"
+				}
+			}
+		}
+
+		template:mybutton extends="button" {
+			tree "vexpand" style="button"
+		}
+		`);
+
+		auto mainLayer = context.createWidget("mainLayer");
 		context.addRoot(mainLayer);
 
-		auto button1 = context.createWidget("button", mainLayer);
-			button1["name"] = "button1";
-			button1.setProperty!"prefSize"(ivec2(50, 50));
-			button1.setProperty!"position"(ivec2(20, 20));
-			button1.setProperty!"caption"("Click me!");
-			button1.addEventHandler(delegate bool(Widget widget, PointerClickEvent event){
-				widget["caption"] = to!dstring(event.pointerPosition);
-				writeln("Clicked at ", event.pointerPosition);
-				return true;
-			});
-			button1.addEventHandler(delegate bool(Widget widget, PointerLeaveEvent event)
-											{widget["caption"] = "Click me!";return true;});
+		auto button1 = context.getWidgetById("button1");
+		writeln(button1);
 
-		auto button = context.createWidget("widget", mainLayer);
-			button.setProperty!"prefSize"(ivec2(50, 50));
-			button.setProperty!"vexpand"(true);
-			button.setProperty!"style"("button");
-		
-		button = context.createWidget("widget", mainLayer);
-			button.setProperty!"prefSize"(ivec2(50, 50));
-			button.setProperty!"hexpand"(true);
-		
-		auto container = context.createWidget("widget", mainLayer);
-			container.setProperty!("layout")(cast(ILayout)new HorizontalLayout);
-			container.setProperty!"prefSize"(ivec2(50, 50));
-			container.setProperty!"hexpand"(true);
-			container.setProperty!"vexpand"(true);
+		button1.addEventHandler(delegate bool(Widget widget, PointerClickEvent event){
+			widget["caption"] = to!dstring(event.pointerPosition);
+			writeln("Clicked at ", event.pointerPosition);
+			return true;
+		});
+		button1.addEventHandler(delegate bool(Widget widget, PointerLeaveEvent event)
+										{widget["caption"] = "Click me!";return true;});
 
-		templateManager.parseString(`
-					template:mybutton extends="button" {
-						tree "vexpand" style="button"
-					}`);
-		button = context.createWidget("mybutton", container);
-			button.setProperty!"prefSize"(ivec2(50, 50));
-			button.setProperty!"vexpand"(true);
-		button = context.createWidget("mybutton", container);
-			button.setProperty!"prefSize"(ivec2(50, 50));
-			//button.setProperty!"vexpand"(true);
+	
+		auto image = context.getWidgetById("fontTexture");
+		image.setProperty!("texture")(guiRenderer.getFontTexture);
 
-		auto image = context.createWidget("image", container);
-			//image.setProperty!"prefSize"(ivec2(50, 50));
-			//image.setProperty!"vexpand"(true);
-			image.setProperty!("texture")(guiRenderer.getFontTexture);
-
-		auto fpsLabel = context.createWidget("label", container);
-
+		auto fpsLabel = context.getWidgetById("fpsLabel");
 		auto fpsSlot = (FpsHelper* helper){fpsLabel["text"] = to!string(helper.fps);};
 		fpsHelper.fpsUpdated.connect(fpsSlot);
-
-		//writeln(templateManager.templates);
 
 		//--------------- Rendering settings---------------------------
 		renderer.enableAlphaBlending();
