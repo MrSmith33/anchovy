@@ -39,7 +39,7 @@ private{
 
 	import anchovy.utils.string;
 }
-
+/*
 class SDLWindow : IWindow
 {
 	override
@@ -172,3 +172,4 @@ class SDLWindow : IWindow
 	
 	bool _mouseGrabbed = false;
 }
+*/

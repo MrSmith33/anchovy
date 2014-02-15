@@ -136,7 +136,7 @@ public:
 
 	void addRoot(Widget root)
 	{
-		root.setProperty!"size"(_guiRenderer.renderer.windowSize);
+		root.setProperty!"size"(cast(ivec2)_guiRenderer.renderer.windowSize);
 		roots ~= root;
 	}
 

@@ -63,6 +63,6 @@ interface IRenderer
 	void setColor(in Color newColor);
 	void setColor(in Color4f newColor);
 	void setClearColor(in Color color);
-	ivec2 windowSize();
+	uvec2 windowSize();
 	void flush();
 }

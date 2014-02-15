@@ -30,7 +30,7 @@ module anchovy.gui;
 
 public
 {
-	import std.conv: to;
+	import std.conv : to;
 	import std.stdio;
 
 	import dlib.math.vector;
@@ -41,29 +41,20 @@ public
 	import anchovy.core.types;
 
 	import anchovy.graphics;
+	
+	import anchovy.gui.behaviors;
+	import anchovy.gui.interfaces;
+	import anchovy.gui.layouts;
+	import anchovy.gui.templates;
 
-	import anchovy.graphics.interfaces.irenderer;
-	import anchovy.gui.interfaces.iguiskinparser;
-	import anchovy.gui.interfaces.iguirenderer;
-
-	import anchovy.gui.layouts.absolutelayout;
-	import anchovy.gui.layouts.linearlayout;
-
-	import anchovy.gui.guicontext;
-
-	import anchovy.gui.events;
 	import anchovy.gui.eventpropagators;
-
-	import anchovy.gui.guiskin;
-	import anchovy.gui.widget;
+	import anchovy.gui.events;
+	import anchovy.gui.guicontext;
 	import anchovy.gui.guirenderer;
-
+	import anchovy.gui.guiskin;
 	import anchovy.gui.jsonguiskinparser;
-
 	import anchovy.gui.textline;
+	import anchovy.gui.timer;
 	import anchovy.gui.timermanager;
-
-	import anchovy.gui.templates.widgettemplate;
-	import anchovy.gui.templates.templateparser;
-	import anchovy.gui.templates.templatemanager;
+	import anchovy.gui.widget;
 }

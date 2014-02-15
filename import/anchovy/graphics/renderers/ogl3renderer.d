@@ -303,7 +303,7 @@ class Ogl3Renderer : IRenderer
 	override void drawRect(Rect rect)
 	{
 		bindShaderProgram(primShader);
-		primShader.setUniform2!float("gHalfTarget", window.width/2, window.height/2);
+		primShader.setUniform2!float("gHalfTarget", window.size.x/2, window.size.y/2);
 		primShader.setUniform4!float("gColor", curColor.r, curColor.g, curColor.b, curColor.a);
 		rectVao.bind;
 		rectVbo.data = cast(short[])[rect.x, rect.y + rect.height, rect.x, rect.y,
@@ -315,7 +315,7 @@ class Ogl3Renderer : IRenderer
 	override void fillRect(Rect rect)
 	{
 		bindShaderProgram(primShader);
-		primShader.setUniform2!float("gHalfTarget", window.width/2, window.height/2);
+		primShader.setUniform2!float("gHalfTarget", window.size.x/2, window.size.y/2);
 		primShader.setUniform4!float("gColor", curColor.r, curColor.g, curColor.b, curColor.a);
 		rectVao.bind;
 		rectVbo.data = cast(short[])[rect.x, rect.y + rect.height, rect.x, rect.y,
@@ -340,7 +340,7 @@ class Ogl3Renderer : IRenderer
 		if (texture.size == uvec2(0, 0)) return;
 
 		bindShaderProgram(primTexShader);
-		primTexShader.setUniform2!float("gHalfTarget", window.width/2, window.height/2);
+		primTexShader.setUniform2!float("gHalfTarget", window.size.x/2, window.size.y/2);
 		primTexShader.setUniform2!float("gPosition", target.x, target.y);
 		primTexShader.setUniform4!float("gColor", curColor.r, curColor.g, curColor.b, curColor.a);
 
@@ -381,7 +381,7 @@ class Ogl3Renderer : IRenderer
 	body
 	{
 		bindShaderProgram(program);
-		program.setUniform2!float("gHalfTarget", cast(float)window.width / 2, cast(float)window.height / 2);
+		program.setUniform2!float("gHalfTarget", cast(float)window.size.x / 2, cast(float)window.size.y / 2);
 		program.setUniform2!float("gPosition", position.x, position.y);
 		program.setUniform4!float("gColor", curColor.r, curColor.g, curColor.b, curColor.a);
 		
@@ -392,14 +392,14 @@ class Ogl3Renderer : IRenderer
 		texture.unbind;
 	}
 
-	override ivec2 windowSize()
+	override uvec2 windowSize()
 	{
-		return window.getSize();
+		return window.size();
 	}
 	
 	override void flush()
 	{
-		window.swapBuffer;
+		window.swapBuffers;
 	}
 	
 private:

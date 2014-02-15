@@ -29,53 +29,41 @@ DEALINGS IN THE SOFTWARE.
 module anchovy.core.interfaces.iwindow;
 
 public import anchovy.core.types;
+import anchovy.utils.signal;
 
 abstract class IWindow
 {
-	void init(in uint width, in uint height, in string caption);
-	void reshape(in uint width, in uint height);
-	void processEvents();
-	double getTime(); //in seconds
-	void swapBuffer();
+	void init(uvec2 size, in string caption);
+	void reshape(uvec2 viewportSize);
+	void processEvents(); // will emit signals
+	double elapsedTime() @property; // in seconds
+	void swapBuffers();
 	void releaseWindow();
 
-	void setMousePosition(in int x, in int y);
-	ivec2 getMousePosition();
+	void mousePosition(ivec2 newPosition) @property;
+	ivec2 mousePosition() @property;
 
 	void grabMouse();
 	void releaseMouse();
 
-	ivec2 getSize();
+	uvec2 size() @property;
+	void size(uvec2 newSize) @property;
 
 	bool isKeyPressed(uint key);
-	@property nothrow
-	{
-		uint width();
-		uint width(in uint newWidth);
 
-		uint height();
-		uint height(in uint newHeight);
-	}
+	string clipboardString() @property;
+	void clipboardString(string newClipboardString) @property;
 
-	string getClipboard();
-	void setClipboard(string newClipboardString);
-	nothrow
-	{
-		void focusChanged(in bool focusObtained){}
-		void keyPressed(in uint keyCode){}
-		void keyReleased(in uint keyCode){}
-		void charPressed(in dchar unicode){}
-		void charReleased(in dchar unicode){}
-		void mousePressed(in uint mouseButton){}
-		void mouseReleased(in uint mouseButton){}
-		void mouseMoved(in int newX, in int newY){}
-		void windowResized(in uint newWidth, in uint newHeight){}
-		void windowMoved(in int newX, in int newY){}
-		void windowIconified(in bool iconified){}
-		void wheelScrolled(in double scrollX, in double scrollY){}
-	}
-	bool quit() nothrow
-	{
-		return true;
-	}
+	Signal!uint keyPressed;
+	Signal!uint keyReleased;
+	Signal!dchar charEntered;
+	Signal!uint mousePressed;
+	Signal!uint mouseReleased;
+	Signal!ivec2 mouseMoved;
+	Signal!bool focusChanged;
+	Signal!uvec2 windowResized;
+	Signal!ivec2 windowMoved;
+	Signal!bool windowIconified;
+	Signal!dvec2 wheelScrolled;
+	Signal!(bool*) closePressed;
 }
