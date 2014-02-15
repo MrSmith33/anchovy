@@ -28,6 +28,7 @@ class EventAggregator(WindowType)
 		window.mousePressed.connect(&mousePressed);
 		window.mouseReleased.connect(&mouseReleased);
 		window.mouseMoved.connect(&mouseMoved);
+		window.closePressed.connect(&closePressed);
 	}
 
 	void keyPressed(uint keyCode)
@@ -78,5 +79,10 @@ class EventAggregator(WindowType)
 		if (window.isKeyPressed(KeyCode.KEY_LEFT_ALT) || window.isKeyPressed(KeyCode.KEY_RIGHT_ALT))
 			modifiers |= KeyModifiers.ALT;
 		return modifiers;
+	}
+
+	void closePressed()
+	{
+		application.closePressed();
 	}
 }

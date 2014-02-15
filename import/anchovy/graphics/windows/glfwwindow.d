@@ -233,8 +233,7 @@ extern(C)
 	{
 		try
 		{
-			bool quit;
-			getWinFromUP(w).closePressed.emit(&quit);//------------------
+			getWinFromUP(w).closePressed.emit();//------------------
 		}
 		catch(Exception e)
 		{

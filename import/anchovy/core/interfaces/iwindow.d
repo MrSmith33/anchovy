@@ -65,5 +65,5 @@ abstract class IWindow
 	Signal!ivec2 windowMoved;
 	Signal!bool windowIconified;
 	Signal!dvec2 wheelScrolled;
-	Signal!(bool*) closePressed;
+	Signal!() closePressed;
 }

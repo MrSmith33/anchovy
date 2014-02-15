@@ -141,4 +141,8 @@ class Application(WindowType)
 
 		window.swapBuffers();
 	}
+
+	void closePressed()
+	{
+	}
 }

@@ -35,7 +35,7 @@ class TestApplication : Application!GlfwWindow
 			return true;
 		});
 		button1.addEventHandler(delegate bool(Widget widget, PointerLeaveEvent event)
-										{widget["caption"] = "Click me!";return true;});
+			{widget["caption"] = "Click me!";return true;});
 	
 		auto image = context.getWidgetById("fontTexture");
 		image.setProperty!("texture")(guiRenderer.getFontTexture);
@@ -43,5 +43,10 @@ class TestApplication : Application!GlfwWindow
 		auto fpsLabel = context.getWidgetById("fpsLabel");
 		auto fpsSlot = (FpsHelper* helper){fpsLabel["text"] = to!string(helper.fps);};
 		fpsHelper.fpsUpdated.connect(fpsSlot);
+	}
+
+	override void closePressed()
+	{
+		isRunning = false;
 	}
 }
