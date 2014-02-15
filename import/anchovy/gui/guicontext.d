@@ -168,6 +168,7 @@ public:
 				}
 				writeln("Error: unknown layout '", value.get!string, "' found");
 				break;
+			case "minSize": goto case;
 			case "prefSize":
 				try
 				{
@@ -179,7 +180,7 @@ public:
 				}
 				catch (Exception e)
 				{
-					writeln("Error parsing prefSize ", e);
+					writeln("Error parsing "~name~" ", e);
 				}
 				return Variant(ivec2(16, 16));
 				break;

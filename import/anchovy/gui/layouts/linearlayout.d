@@ -35,6 +35,8 @@ public import anchovy.gui.interfaces.ilayout;
 alias VerticalLayout = LinearLayout!true;
 alias HorizontalLayout = LinearLayout!false;
 
+version = debug_linear;
+
 class LinearLayout(bool vertical) : ILayout
 {
 	uint spacing = 2; // Between children
@@ -53,8 +55,10 @@ class LinearLayout(bool vertical) : ILayout
 		foreach(child; children)
 		{
 			ivec2 childSize = child.getPropertyAs!("prefSize", ivec2);
-			childrenLength += *sizeLength(childSize);
-			minRootWidth = max(*sizeWidth(childSize), minRootWidth);
+			ivec2 childMinSize = child.getPropertyAs!("minSize", ivec2);
+
+			childrenLength += max(*sizeLength(childSize), *sizeLength(childMinSize));
+			minRootWidth = max(max(*sizeWidth(childSize), minRootWidth), *sizeWidth(childMinSize));
 
 			if (isExpandableLength(child)) ++numExpandableChildren;
 		}
@@ -63,18 +67,20 @@ class LinearLayout(bool vertical) : ILayout
 		minRootLength += childrenLength;
 		minRootWidth += padding * 2;
 
-		//writeln("minRootLength ", minRootLength);
-		//writeln("minRootWidth ", minRootWidth);
-		//writeln("rootSize ", rootSize);
+		version(debug_linear)
+		{
+			writeln("minRootLength ", minRootLength);
+			writeln("minRootWidth ", minRootWidth);
+			writeln("rootSize ", rootSize);
+		}
 
 		*sizeWidth(rootSize) = minRootWidth;
 		*sizeLength(rootSize) = minRootLength;
-		//writeln("rootSize ", rootSize);
+
+		version(debug_linear) writeln("rootSize ", rootSize);
 
 		root.setProperty!("prefSize")(rootSize);
 		root.setProperty!("numExpandable")(numExpandableChildren);
-
-		//writeln("minimize linear");
 	}
 
 	override void expand(Widget root)
@@ -86,19 +92,31 @@ class LinearLayout(bool vertical) : ILayout
 		ivec2 rootSize = root.getPropertyAs!("size", ivec2);
 		ivec2 rootPrefSize = root.getPropertyAs!("prefSize", ivec2);
 
+		version(debug_linear)
+		{
+			writeln("Root: ", root["name"]);
+			writeln("rootSize ", rootSize);
+			writeln("rootPrefSize ", rootPrefSize);
+		}
+
 		int maxChildWidth = *sizeWidth(rootSize) - padding * 2;
 
 		int extraLength = *sizeLength(rootSize) - *sizeLength(rootPrefSize);
 		int extraPerWidget = extraLength / cast(int)(numExpandableChildren > 0 ? numExpandableChildren : 1);
 		extraPerWidget = extraPerWidget > 0 ? extraPerWidget : 0;
 
-		//writeln("numExpandableChildren ", numExpandableChildren);
-		//writeln("extraPerWidget ", extraPerWidget);
-		//writeln("extraLength ", extraLength);
-		//writeln("rootPrefSize ", rootPrefSize);
+		version(debug_linear)
+		{
+			writeln("numChildren ", children.length);
+			writeln("numExpandableChildren ", numExpandableChildren);
+			writeln("extraPerWidget ", extraPerWidget);
+			writeln("extraLength ", extraLength);
+			writeln("rootPrefSize ", rootPrefSize);
+		}
 
 		int topOffset = padding - spacing;
 
+		
 		foreach(child; children)
 		{
 			topOffset += spacing;
@@ -108,28 +126,30 @@ class LinearLayout(bool vertical) : ILayout
 				child.setProperty!("position")(ivec2(topOffset, padding));
 
 			ivec2 childSize = child.getPropertyAs!("prefSize", ivec2);
+			ivec2 childMinSize = child.getPropertyAs!("minSize", ivec2);
+			childSize = ivec2(max(childSize.x, childMinSize.x), max(childSize.y, childMinSize.y));
 
 			if (isExpandableLength(child))
 			{
-				//writeln("expandable ", child["type"]);
+				version(debug_linear) writeln("	expandable ", child["type"]);
 				*sizeLength(childSize) += extraPerWidget;
 			}
+
 			if (isExpandableWidth(child))
 			{
-				//writeln("expandable width ", child["type"]);
+				//version(debug_linear) writeln("expandable width ", child["type"]);
 				*sizeWidth(childSize) = maxChildWidth;
 			}
+
 			topOffset += *sizeLength(childSize); // Offset for next child
 
 			child.setProperty!("size")(childSize);
 		}
-
-		//writeln("minimize linear");
 	}
 
 	override void onContainerResized(Widget root, ivec2 oldSize, ivec2 newSize)
 	{
-		writeln("onContainerResized");
+		version(debug_linear) writeln("onContainerResized");
 	}
 
 private:
