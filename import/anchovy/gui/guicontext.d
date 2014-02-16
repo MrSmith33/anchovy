@@ -576,6 +576,8 @@ public:
 						}
 					}
 
+					pressedWidget = null;
+					
 					return true;
 				}
 			}
