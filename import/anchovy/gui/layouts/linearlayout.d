@@ -81,6 +81,8 @@ class LinearLayout(bool vertical) : ILayout
 
 		root.setProperty!("prefSize")(rootSize);
 		root.setProperty!("numExpandable")(numExpandableChildren);
+
+		version(debug_linear) writeln("linear minimize end\n");
 	}
 
 	override void expand(Widget root)
@@ -145,6 +147,8 @@ class LinearLayout(bool vertical) : ILayout
 
 			child.setProperty!("size")(childSize);
 		}
+
+		version(debug_linear) writeln("linear expand end\n");
 	}
 
 	override void onContainerResized(Widget root, ivec2 oldSize, ivec2 newSize)

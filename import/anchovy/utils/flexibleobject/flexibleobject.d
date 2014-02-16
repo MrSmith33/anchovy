@@ -46,7 +46,11 @@ class FlexibleObject
 
 	Variant opIndexAssign(V)(V value, string propName)
 	{
-		static if (is(V:Variant))
+		static if (is(V:IProperty) && !is(V == typeof(null)))
+		{
+			return properties[propName] = value;
+		}
+		else static if (is(V:Variant))
 		{
 			if (auto property = propName in properties)
 			{
@@ -111,6 +115,11 @@ class FlexibleObject
 
 	IProperty property(string propName)
 	{
-		return properties.get(propName, new ValueProperty(Variant(null)));
+		if (propName !in properties)
+		{
+			properties[propName] = new ValueProperty(Variant(null));
+		}
+
+		return properties[propName];
 	}
 }

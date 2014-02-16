@@ -35,6 +35,7 @@ class SubwidgetTemplate
 {
 	Variant[string] properties;
 	SubwidgetTemplate[] subwidgets;
+	ForwardedProperty[] forwardedProperties;
 
 	override string toString()
 	{
@@ -45,15 +46,20 @@ class SubwidgetTemplate
 	{
 		string result;
 		result ~= padding ~ to!string(properties["type"]);
+
 		foreach(key; properties.byKey)
 		{
-			result ~= " " ~key ~":" ~ to!string(properties[key]);
+			result ~= " " ~ key ~ ":" ~ to!string(properties[key]);
+		}
+		foreach(fprop; forwardedProperties)
+		{
+			result ~= " alias " ~ fprop.propertyName ~" = " ~ fprop.targetPropertyName;
 		}
 		result ~= "\n";
 
 		foreach(sub; subwidgets)
 		{
-			result ~= sub.toStringImpl(padding ~ "  ");
+			result ~= sub.toStringImpl(padding ~ "   ");
 		}
 
 		return result;
@@ -64,16 +70,15 @@ struct ForwardedProperty
 {
 	string propertyName; // property that will be created in root.
 	string targetPropertyName; // property to bind to.
-	string targetName; // target child.
 }
 
 class WidgetTemplate
 {
-	ForwardedProperty[] forwardedProperties; //indexed by property name.
 	SubwidgetTemplate tree; // the widget itself.
 	SubwidgetTemplate[string] subwidgetsmap;
 	SubwidgetTemplate childrenContainer; // by default root itself.
 	string baseType;
+	string name;
 
 	SubwidgetTemplate findSubwidgetByName(string name)
 	{
@@ -82,5 +87,11 @@ class WidgetTemplate
 		subwidget = name in subwidgetsmap;
 
 		return *subwidget;
+	}
+
+	override string toString()
+	{
+		return tree.toString() ~ 
+				"base: " ~ baseType ~ "\n";
 	}
 }

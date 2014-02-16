@@ -43,6 +43,8 @@ class TestApplication : Application!GlfwWindow
 		auto fpsLabel = context.getWidgetById("fpsLabel");
 		auto fpsSlot = (FpsHelper* helper){fpsLabel["text"] = to!string(helper.fps);};
 		fpsHelper.fpsUpdated.connect(fpsSlot);
+
+		writeln("\n----------------------------- Load end -----------------------------\n");
 	}
 
 	override void closePressed()

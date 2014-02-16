@@ -34,7 +34,7 @@ import anchovy.gui.templates.widgettemplate;
 
 import anchovy.gui;
 
-class TemplateParser
+final class TemplateParser
 {
 	WidgetTemplate[] parse(string source, string filename = "")
 	{
@@ -63,60 +63,22 @@ class TemplateParser
 	WidgetTemplate parseTemplate(Tag templateTag)
 	{
 		WidgetTemplate templ = new WidgetTemplate;
-		Tag propertiesTag;
+		Tag forwardedPropertiesTag;
 		Tag treeTag;
-
-		void parsePropertiesSection(Tag section)
-		{
-			writeln("properties");
-			writeln(section.toDebugString);
-		}
-
-		SubwidgetTemplate parseTreeSection(Tag section)
-		{
-			auto subwidget = new SubwidgetTemplate;
-
-			// Adding subwidgets.
-			foreach(sub; section.tags)
-			{
-				auto subsub = parseTreeSection(sub);
-				subwidget.subwidgets ~= subsub;
-
-				if (auto nameProperty = "name" in subsub.properties)
-				{
-					templ.subwidgetsmap[nameProperty.coerce!string] = subsub;
-				}
-			}
-
-			// Adding widget properties.
-			foreach(prop; section.attributes)
-			{
-				subwidget.properties[prop.name] = cast(Variant)prop.value;
-			}
-
-			// Adding widget flags.
-			foreach(value; section.values)
-			{
-				subwidget.properties[value.coerce!string] = Variant(true);
-			}
-
-			subwidget.properties["type"] = section.name;
-
-			return subwidget;
-		}
+		templ.name = templateTag.name;
 
 		foreach(section; templateTag.tags)
 		{
 			switch(section.name)
 			{
 				case "properties":
-					propertiesTag = section;
+					forwardedPropertiesTag = section;
 					break;
 				case "tree":
 					treeTag = section;
 					break;
 				default:
-					writeln("unknown template section found: ", section.name);
+					writeln("Error: In template '",templ.name , "' unknown section found: ", section.name);
 			}
 		}
 
@@ -130,13 +92,110 @@ class TemplateParser
 					templ.baseType = prop.value.coerce!string;
 					break;
 				default:
-					writeln("unknown template property found: ", prop.name);
+					writeln("Error: In template '",templ.name , "' unknown property found: ", prop.name);
 			}
 		}
 
-		templ.tree = parseTreeSection(treeTag);
+		templ.tree = parseTreeSection(treeTag, templ);
 		templ.tree.properties["type"] = templateTag.name;
 
+		if (forwardedPropertiesTag)
+		{
+			parseForwardedProperties(forwardedPropertiesTag, templ);
+		}
+
+		writeln(templ);
+
 		return templ;
+	}
+
+	SubwidgetTemplate parseTreeSection(Tag section, WidgetTemplate templ)
+	{
+		auto subwidget = new SubwidgetTemplate;
+
+		// Adding subwidgets.
+		foreach(sub; section.tags)
+		{
+			auto subsub = parseTreeSection(sub, templ);
+
+			subwidget.subwidgets ~= subsub;
+
+			if (auto nameProperty = "name" in subsub.properties)
+			{
+				templ.subwidgetsmap[nameProperty.coerce!string] = subsub;
+			}
+		}
+
+		// Adding widget properties.
+		foreach(prop; section.attributes)
+		{
+			subwidget.properties[prop.name] = cast(Variant)prop.value;
+		}
+
+		// Adding widget flags.
+		foreach(value; section.values)
+		{
+			subwidget.properties[value.coerce!string] = Variant(true);
+		}
+
+		subwidget.properties["type"] = section.name;
+
+		return subwidget;
+	}
+
+	void parseForwardedProperties(Tag section, WidgetTemplate templ)
+	{
+		// key target subtemplate. Key target property name, root property name.
+		ForwardedProperty[][string] properties;
+		
+		// fetch all forwarded properties for template templ
+		foreach(prop; section.tags)
+		{
+			ForwardedProperty property = ForwardedProperty(prop.name, prop.name);
+			string subwidgetName;
+
+			foreach(attrib; prop.attributes)
+			{
+				switch(attrib.name)
+				{
+					case "subwidget":
+						subwidgetName = attrib.value.get!string;
+						break;
+					case "property":
+						property.targetPropertyName = attrib.value.get!string;
+						break;
+					default:
+						writeln("Error: In template '",templ.name , "' unknown attribute '",attrib.name , "' for forwarded property '", prop.name, "' found");
+				}
+			}
+
+			if (subwidgetName == "")
+			{
+				writeln("Error: In template '",templ.name , "'. No target widget for forwarded property: '",
+					property.propertyName, "' specified, skipping property");
+				continue; // Skip property.
+			}
+			else if (subwidgetName !in templ.subwidgetsmap)
+			{
+				writeln("Error: In template '", templ.name, "' target widget '",subwidgetName,
+					"' for forwarded property '", property.propertyName, "' not found, skipping property");
+				continue; // Skip property.
+			}
+
+			if (auto fproparray = subwidgetName in properties)
+			{
+				import std.algorithm;
+				if (canFind(*fproparray, property))
+					writeln("Error: In template '", templ.name, "' duplicate for forwarded property '",
+						property.targetPropertyName, ":", property.propertyName, "' found, skipping duplicate");
+				continue; // Skip property.
+			}
+
+			properties[subwidgetName] ~= property;
+
+			SubwidgetTemplate target = templ.subwidgetsmap[subwidgetName];
+			// Add info about forwarded property to target subtemplate, so at instantiation time we can lookup it
+			target.forwardedProperties ~= property;
+		}
 	}
 }

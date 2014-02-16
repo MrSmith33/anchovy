@@ -42,7 +42,7 @@ abstract class IProperty
 	Variant value() @property;
 	Variant value(Variant) @property;
 
-	PropertyChangedSignal valueChanged;
+	ref PropertyChangedSignal valueChanged() @property;
 	
 	alias value this;
 }
@@ -70,5 +70,40 @@ class ValueProperty : IProperty
 		return _value = newValue;
 	}
 
+	override ref PropertyChangedSignal valueChanged() @property
+	{
+		return _valueChanged;
+	}
+
 	Variant _value;
+	PropertyChangedSignal _valueChanged;
+}
+
+class ProxyProperty : IProperty
+{
+	import std.stdio;
+
+	this(FlexibleObject object, string propertyName)
+	{
+		this.bindingObject = object;
+		this.propertyName = propertyName;
+	}
+
+	override Variant value() @property
+	{
+		return bindingObject[propertyName];
+	}
+
+	override Variant value(Variant newValue) @property
+	{
+		return bindingObject[propertyName] = newValue;
+	}
+
+	override ref PropertyChangedSignal valueChanged() @property
+	{
+		return bindingObject.property(propertyName).valueChanged;
+	}
+
+	string propertyName;
+	FlexibleObject bindingObject;
 }

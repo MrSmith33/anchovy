@@ -168,8 +168,7 @@ public:
 				}
 				writeln("Error: unknown layout '", value.get!string, "' found");
 				break;
-			case "minSize": goto case;
-			case "prefSize":
+			case "minSize", "prefSize":
 				try
 				{
 					string nums = value.get!string;
@@ -201,16 +200,24 @@ public:
 		return value;
 	}
 
-	Widget createSubwidget(SubwidgetTemplate sub, Widget subwidget)
+	Widget createSubwidget(SubwidgetTemplate sub, Widget subwidget, Widget root)
 	{
+		//----------------------- Forwarding properties ------------------------
+		foreach(forwardedProperty; sub.forwardedProperties)
+		{
+			root[forwardedProperty.propertyName] = new ProxyProperty(subwidget, forwardedProperty.targetPropertyName);
+		}
+
+		//------------------------ Assigning properties ------------------------
 		foreach(propertyKey; sub.properties.byKey)
 		{
 			subwidget[propertyKey] = parseProperty(propertyKey, sub.properties[propertyKey], subwidget);
 		}
 
+		//------------------------ Creating subwidgets -------------------------
 		foreach(subtemplate; sub.subwidgets)
 		{
-			createSubwidget(subtemplate, createWidget(subtemplate.properties["type"].get!string, subwidget));
+			createSubwidget(subtemplate, createWidget(subtemplate.properties["type"].get!string, subwidget), root);
 		}
 
 		return subwidget;
@@ -243,16 +250,9 @@ public:
 
 			//----------------------- Template construction ------------------------
 
-			widget = createSubwidget(templ.tree, baseWidget);
-
-			foreach(forwardedProperty; templ.forwardedProperties)
-			{
-				SubwidgetTemplate target = templ.findSubwidgetByName(forwardedProperty.targetName);
-				// add binding to property
-			}
+			widget = createSubwidget(templ.tree, baseWidget, baseWidget);
 
 			widget["template"] = templ;
-			//writeln("style: ",widget["style"]);
 		}
 		else
 		{
@@ -279,7 +279,6 @@ public:
 		}
 
 		//----------------------- Attaching behaviors ---------------------------
-
 		if (auto behaviors = type in widgetBehaviors)
 		{
 			foreach(behavior; *behaviors)
