@@ -214,6 +214,11 @@ public:
 			subwidget[propertyKey] = parseProperty(propertyKey, sub.properties[propertyKey], subwidget);
 		}
 
+		if (sub.isContainer)
+		{
+			root["container"] = subwidget;
+		}
+
 		//------------------------ Creating subwidgets -------------------------
 		foreach(subtemplate; sub.subwidgets)
 		{
@@ -577,7 +582,7 @@ public:
 					}
 
 					pressedWidget = null;
-					
+
 					return true;
 				}
 			}

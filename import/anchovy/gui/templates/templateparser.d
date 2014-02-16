@@ -78,11 +78,17 @@ final class TemplateParser
 					treeTag = section;
 					break;
 				default:
-					writeln("Error: In template '",templ.name , "' unknown section found: ", section.name);
+					writeln("template:", templ.name, " Error: unknown section found: ", section.name);
 			}
 		}
 
 		templ.baseType = "widget"; // default super is widget or widget factory with the same type.
+
+		templ.tree = parseTreeSection(treeTag, templ);
+		templ.tree.properties["type"] = templateTag.name;
+
+		//----------------------- Parse template properties ------------------------
+		SubwidgetTemplate childrenContainer;
 
 		foreach(prop; templateTag.attributes)
 		{
@@ -91,13 +97,27 @@ final class TemplateParser
 				case "extends":
 					templ.baseType = prop.value.coerce!string;
 					break;
+				case "container":
+					if (auto container = prop.value.coerce!string in templ.subwidgetsmap)
+					{
+						if (childrenContainer !is null)
+							writeln("template:", templ.name, " Error: Multiple children containers not allowed. Overriding with last");
+						childrenContainer = *container;
+					}
+					else
+					{
+						writeln("template:", templ.name, " Error: In template children container widget '", prop.name, "' not found");
+					}
+					break;
 				default:
-					writeln("Error: In template '",templ.name , "' unknown property found: ", prop.name);
+					writeln("template:", templ.name, " Error: In template unknown property found: ", prop.name);
 			}
 		}
 
-		templ.tree = parseTreeSection(treeTag, templ);
-		templ.tree.properties["type"] = templateTag.name;
+		if (childrenContainer)
+		{
+			childrenContainer.isContainer = true;
+		}
 
 		if (forwardedPropertiesTag)
 		{
@@ -165,19 +185,20 @@ final class TemplateParser
 						property.targetPropertyName = attrib.value.get!string;
 						break;
 					default:
-						writeln("Error: In template '",templ.name , "' unknown attribute '",attrib.name , "' for forwarded property '", prop.name, "' found");
+						writeln("template:", templ.name, " Error: unknown attribute '",
+							attrib.name , "' for forwarded property '", prop.name, "' found");
 				}
 			}
 
 			if (subwidgetName == "")
 			{
-				writeln("Error: In template '",templ.name , "'. No target widget for forwarded property: '",
+				writeln("template:", templ.name, " Error: no target widget for forwarded property: '",
 					property.propertyName, "' specified, skipping property");
 				continue; // Skip property.
 			}
 			else if (subwidgetName !in templ.subwidgetsmap)
 			{
-				writeln("Error: In template '", templ.name, "' target widget '",subwidgetName,
+				writeln("template:", templ.name, " Error: target widget '",subwidgetName,
 					"' for forwarded property '", property.propertyName, "' not found, skipping property");
 				continue; // Skip property.
 			}
@@ -186,7 +207,7 @@ final class TemplateParser
 			{
 				import std.algorithm;
 				if (canFind(*fproparray, property))
-					writeln("Error: In template '", templ.name, "' duplicate for forwarded property '",
+					writeln("template:", templ.name, " Error: duplicate for forwarded property '",
 						property.targetPropertyName, ":", property.propertyName, "' found, skipping duplicate");
 				continue; // Skip property.
 			}

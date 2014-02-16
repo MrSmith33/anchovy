@@ -133,7 +133,7 @@ public:
 		{
 			if (*parent !is null)
 			{
-				ivec2 parentPos = (*parent).getPropertyAs!("staticPosition", ivec2);
+				ivec2 parentPos = getPropertyAs!("staticPosition", ivec2)(*parent);
 				ivec2 childPos = widget.getPropertyAs!("position", ivec2);
 				ivec2 newStaticPosition = parentPos + childPos; // Workaround bug with direct summ.
 				widget["staticPosition"] = newStaticPosition;
@@ -203,7 +203,9 @@ public:
 		if (auto handlers = typeid(e) in _eventHandlers)
 		{
 			foreach(h; *handlers)
+			{
 				result |= h(this, e);
+			}
 		}
 		return result;
 	}
@@ -212,10 +214,28 @@ public:
 	bool delegate(Widget, Event)[][TypeInfo] _eventHandlers;
 }
 
-void addChild(Widget widget, Widget child)
+void addChild(Widget root, Widget child)
+in
 {
-	widget.setProperty!"children"(widget["children"] ~ child);
-	child.setProperty!"parent"(widget);
+	assert(root);
+	assert(child);
+}
+body
+{
+	//root.setProperty!"children"(root["children"] ~ child);
+	//child.setProperty!"parent"(root);
+	Widget* container;
+	container = root.peekPropertyAs!("container", Widget);
+
+	if (container is null) container = &root;
+	assert(*container);
+
+	Widget parent = *container;
+	writeln("before add ", parent["children"]);
+	parent.setProperty!"children"(parent["children"] ~ child);
+	child.setProperty!"parent"(parent);
+
+	writeln("after add ", parent["children"]);
 }
 
 /// Says to global layout manager that this widget needs layout update.

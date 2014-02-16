@@ -36,6 +36,7 @@ class SubwidgetTemplate
 	Variant[string] properties;
 	SubwidgetTemplate[] subwidgets;
 	ForwardedProperty[] forwardedProperties;
+	bool isContainer = false;
 
 	override string toString()
 	{
@@ -76,7 +77,6 @@ class WidgetTemplate
 {
 	SubwidgetTemplate tree; // the widget itself.
 	SubwidgetTemplate[string] subwidgetsmap;
-	SubwidgetTemplate childrenContainer; // by default root itself.
 	string baseType;
 	string name;
 
