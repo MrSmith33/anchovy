@@ -133,7 +133,7 @@ public:
 		{
 			if (*parent !is null)
 			{
-				ivec2 parentPos = getPropertyAs!("staticPosition", ivec2)(*parent);
+				ivec2 parentPos = (*parent).getPropertyAs!("staticPosition", ivec2);
 				ivec2 childPos = widget.getPropertyAs!("position", ivec2);
 				ivec2 newStaticPosition = parentPos + childPos; // Workaround bug with direct summ.
 				widget["staticPosition"] = newStaticPosition;

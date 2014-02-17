@@ -33,6 +33,7 @@ import anchovy.gui.behaviors.buttonbehavior;
 import anchovy.gui.behaviors.labelbehavior;
 import anchovy.gui.behaviors.imagebehavior;
 import anchovy.gui.behaviors.labelbehavior;
+import anchovy.gui.behaviors.checkbehavior;
 
 import anchovy.gui.guicontext;
 
@@ -43,4 +44,5 @@ void attachDefaultBehaviors(GuiContext context)
 	context.widgetBehaviors["label"] ~= new LabelBehavior;
 	context.widgetBehaviors["image"] ~= new ImageBehavior;
 	context.widgetBehaviors["label"] ~= new LabelBehavior;
+	context.widgetBehaviors["check"] ~= new CheckBehavior;
 }

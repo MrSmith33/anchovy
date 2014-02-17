@@ -30,12 +30,12 @@ class TestApplication : Application!GlfwWindow
 
 		auto button1 = context.getWidgetById("button1");
 		button1.addEventHandler(delegate bool(Widget widget, PointerClickEvent event){
-			widget["caption"] = to!dstring(event.pointerPosition);
+			widget["text"] = to!string(event.pointerPosition);
 			writeln("Clicked at ", event.pointerPosition);
 			return true;
 		});
 		button1.addEventHandler(delegate bool(Widget widget, PointerLeaveEvent event)
-			{widget["caption"] = "Click me!";return true;});
+			{widget["text"] = "Click me!"; return true;});
 	
 		auto image = context.getWidgetById("fontTexture");
 		image.setProperty!("texture")(guiRenderer.getFontTexture);
