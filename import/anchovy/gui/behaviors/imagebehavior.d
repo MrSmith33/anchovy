@@ -45,36 +45,32 @@ class ImageBehavior : IWidgetBehavior
 		Texture texture = new Texture(bitmap, TextureTarget.target2d, TextureFormat.rgba);
 
 		widget.setProperty!"texture"(texture);
-		widget.setProperty!("bitmap", Bitmap)(bitmap);
+		widget.setProperty!"bitmap"(bitmap);
 		widget.addEventHandler(&handleDraw);
 
 		auto bitmapSlot = {widget["prefSize"] = cast(ivec2)bitmap.size;};
 		bitmap.dataChanged.connect(bitmapSlot);
 
-		void onBitmapChanged(FlexibleObject obj, Variant old, Variant* newBitmap)
+		void onBitmapChanging(FlexibleObject obj, Variant* newBitmap)
 		{
-			old.get!Bitmap.dataChanged.disconnect(bitmapSlot);
+			widget.getPropertyAs!("bitmap", Bitmap).dataChanged.disconnect(bitmapSlot);
 			if ((*newBitmap).get!Bitmap is null) return;
 
 			auto bitmap = (*newBitmap).get!Bitmap;
 
 			Texture texture = widget.getPropertyAs!("texture", Texture);
-			if (texture.bitmap is bitmap) return;
-
 			texture.bitmap = bitmap;
-
 			bitmap.dataChanged.connect(bitmapSlot);
 
 			obj["prefSize"] = cast(ivec2)bitmap.size;
 		}
 
-		widget.property("bitmap").valueChanged.connect(&onBitmapChanged);
+		widget.property("bitmap").valueChanging.connect(&onBitmapChanging);
 
-		void onTextureChanged(FlexibleObject obj, Variant old, Variant* newTexture)
+		void onTextureChanged(FlexibleObject obj, Variant newTexture)
 		{
-			if ((*newTexture).get!Texture is null) return;
-
-			auto texture = (*newTexture).get!Texture;
+			auto texture = newTexture.get!Texture;
+			if (texture is null) return;
 
 			widget.setProperty!("bitmap", Bitmap)(texture.bitmap);
 			texture.bitmap.dataChanged.connect(bitmapSlot);

@@ -51,46 +51,46 @@ public:
 
 	this()
 	{
-		properties["type"] = new ValueProperty("widget");
-		properties["anchor"] = anchor = new ValueProperty(defaultAnchor);
-		properties["children"] = children = new ValueProperty(cast(Widget[])[]);
-		properties["parent"] = parent = new ValueProperty(null);
+		properties["type"] = new ValueProperty(this, "widget");
+		properties["anchor"] = anchor = new ValueProperty(this, defaultAnchor);
+		properties["children"] = children = new ValueProperty(this, cast(Widget[])[]);
+		properties["parent"] = parent = new ValueProperty(this, null);
 
-		properties["position"] = position = new ValueProperty(ivec2(0,0));
-		properties["staticPosition"] = staticPosition = new ValueProperty(ivec2(0,0));
+		properties["position"] = position = new ValueProperty(this, ivec2(0,0));
+		properties["staticPosition"] = staticPosition = new ValueProperty(this, ivec2(0,0));
 
-		properties["minSize"] = minSize = new ValueProperty(ivec2(0,0));
-		properties["size"] = size = new ValueProperty(ivec2(0,0));
-		properties["prefSize"] = prefferedSize = new ValueProperty(ivec2(0,0));
-		properties["staticRect"] = staticRect = new ValueProperty(Rect(0,0,0,0));
+		properties["minSize"] = minSize = new ValueProperty(this, ivec2(0,0));
+		properties["size"] = size = new ValueProperty(this, ivec2(0,0));
+		properties["prefSize"] = prefferedSize = new ValueProperty(this, ivec2(0,0));
+		properties["staticRect"] = staticRect = new ValueProperty(this, Rect(0,0,0,0));
 
-		properties["state"] = state = new ValueProperty("normal");
-		properties["style"] = style = new ValueProperty("");
-		properties["geometry"] = geometry = new ValueProperty((TexRectArray[string]).init);
+		properties["state"] = state = new ValueProperty(this, "normal");
+		properties["style"] = style = new ValueProperty(this, "");
+		properties["geometry"] = geometry = new ValueProperty(this, (TexRectArray[string]).init);
 
-		properties["isVisible"] = isVisible = new ValueProperty(true);
-		properties["isFocusable"] = isFocusable = new ValueProperty(false);
-		properties["isEnabled"] = isEnabled = new ValueProperty(true);
-		properties["isHovered"] = isHovered = new ValueProperty(false);
-		properties["context"] = context = new ValueProperty(null);
+		properties["isVisible"] = isVisible = new ValueProperty(this, true);
+		properties["isFocusable"] = isFocusable = new ValueProperty(this, false);
+		properties["isEnabled"] = isEnabled = new ValueProperty(this, true);
+		properties["isHovered"] = isHovered = new ValueProperty(this, false);
+		properties["context"] = context = new ValueProperty(this, null);
 
-		auto onParentChanged = (FlexibleObject obj, Variant old, Variant* newParent){
+		auto onParentChanged = (FlexibleObject obj, Variant newParent){
 			(cast(Widget)obj).invalidateLayout;
 		};
 
-		auto onPositionChanged = (FlexibleObject obj, Variant old, Variant* newPosition){
+		auto onPositionChanged = (FlexibleObject obj, Variant newPosition){
 			(cast(Widget)obj).invalidateLayout;
 		};
 
 		property("parent").valueChanged.connect(onParentChanged);
 		property("position").valueChanged.connect(onPositionChanged);
 
-		auto onStaticPositionChanged = (FlexibleObject obj, Variant old, Variant* newStaticPosition){
-			obj["staticRect"] = Rect((*newStaticPosition).get!ivec2, obj.getPropertyAs!("size", ivec2));
+		auto onStaticPositionChanged = (FlexibleObject obj, Variant newStaticPosition){
+			obj["staticRect"] = Rect(newStaticPosition.get!ivec2, obj.getPropertyAs!("size", ivec2));
 		};
 
-		auto onSizeChanged = (FlexibleObject obj, Variant old, Variant* newSize){
-			obj["staticRect"] = Rect(obj.getPropertyAs!("staticPosition", ivec2), (*newSize).get!ivec2);
+		auto onSizeChanged = (FlexibleObject obj, Variant newSize){
+			obj["staticRect"] = Rect(obj.getPropertyAs!("staticPosition", ivec2), newSize.get!ivec2);
 
 			obj.setProperty!("geometry", TexRectArray[string])(null);
 
@@ -141,13 +141,13 @@ public:
 			}
 		}
 		
-		//writeln("expand ", widget["type"], " ", widget["name"]);
+		writeln("expand ", widget["type"], " ", widget["name"]);
 		return true;
 	}
 
 	bool handleDraw(Widget widget, DrawEvent event)
 	{
-		
+		//writeln("handleDraw");
 		if(widget.getPropertyAs!("isVisible", bool))
 			event.guiRenderer.drawControlBack(widget, widget["staticRect"].get!Rect);
 		return true;
@@ -222,8 +222,6 @@ in
 }
 body
 {
-	//root.setProperty!"children"(root["children"] ~ child);
-	//child.setProperty!"parent"(root);
 	Widget* container;
 	container = root.peekPropertyAs!("container", Widget);
 
@@ -231,11 +229,11 @@ body
 	assert(*container);
 
 	Widget parent = *container;
-	writeln("before add ", parent["children"]);
+	//writeln("before add ", parent["children"]);
 	parent.setProperty!"children"(parent["children"] ~ child);
 	child.setProperty!"parent"(parent);
 
-	writeln("after add ", parent["children"]);
+	//writeln("after add ", parent["children"]);
 }
 
 /// Says to global layout manager that this widget needs layout update.

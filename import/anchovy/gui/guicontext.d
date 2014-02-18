@@ -36,10 +36,11 @@ class GuiContext
 {
 	alias WidgetCreator = Widget delegate();
 	alias LayoutCreator = ILayout delegate();
+	alias BehaviorCreator = IWidgetBehavior delegate();
 
 	WidgetCreator[string] widgetFactories;
 	LayoutCreator[string] layoutFactories;
-	IWidgetBehavior[][string] widgetBehaviors;
+	BehaviorCreator[][string] behaviorFactories;
 
 	Widget[] roots;
 
@@ -205,13 +206,17 @@ public:
 		//----------------------- Forwarding properties ------------------------
 		foreach(forwardedProperty; sub.forwardedProperties)
 		{
-			root[forwardedProperty.propertyName] = new ProxyProperty(subwidget, forwardedProperty.targetPropertyName);
+			writeln("forwarding ", forwardedProperty.propertyName ," to ", forwardedProperty.targetPropertyName);
+			root[forwardedProperty.propertyName] = subwidget.property(forwardedProperty.targetPropertyName);
 		}
 
 		//------------------------ Assigning properties ------------------------
 		foreach(propertyKey; sub.properties.byKey)
 		{
-			subwidget[propertyKey] = parseProperty(propertyKey, sub.properties[propertyKey], subwidget);
+			auto value = parseProperty(propertyKey, sub.properties[propertyKey], subwidget);
+			//writeln("Assigning properties ", propertyKey," ",value, " ", subwidget["name"], " ", subwidget["type"], " ", root["name"], " ", root["type"]);
+
+			subwidget[propertyKey] = value;
 		}
 
 		if (sub.isContainer)
@@ -247,14 +252,14 @@ public:
 			}
 			else
 			{
-				baseWidget = createBaseWidget(type);
+				baseWidget = createBaseWidget(type); // Create using factory.
 			}
 
 			baseWidget["type"] = type;
 			baseWidget["context"] = this; // widget may access context before construction ends.
 
 			//----------------------- Template construction ------------------------
-
+			// Recursively creates widgets as stated in template. widget is root of that tree.
 			widget = createSubwidget(templ.tree, baseWidget, baseWidget);
 
 			widget["template"] = templ;
@@ -284,11 +289,11 @@ public:
 		}
 
 		//----------------------- Attaching behaviors ---------------------------
-		if (auto behaviors = type in widgetBehaviors)
+		if (auto factories = type in behaviorFactories)
 		{
-			foreach(behavior; *behaviors)
+			foreach(factory; *factories)
 			{
-				behavior.attachTo(widget);
+				factory().attachTo(widget);
 			}
 		}
 

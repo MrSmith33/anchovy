@@ -39,10 +39,19 @@ import anchovy.gui.guicontext;
 
 void attachDefaultBehaviors(GuiContext context)
 {
-	context.widgetFactories["widget"] = { return new Widget; };
-	context.widgetBehaviors["button"] ~= new ButtonBehavior;
-	context.widgetBehaviors["label"] ~= new LabelBehavior;
-	context.widgetBehaviors["image"] ~= new ImageBehavior;
-	context.widgetBehaviors["label"] ~= new LabelBehavior;
-	context.widgetBehaviors["check"] ~= new CheckBehavior;
+	context.widgetFactories["widget"] = { return new Widget;};
+	context.widgetFactories["check"] = {
+		Widget widget = new Widget;
+
+		widget["isChecked"]=false;
+		widget["style"]="check";
+
+		return widget;
+	};
+
+	context.behaviorFactories["button"] ~= delegate IWidgetBehavior (){return new ButtonBehavior;};
+	context.behaviorFactories["label"] ~= delegate IWidgetBehavior (){return new LabelBehavior;};
+	context.behaviorFactories["image"] ~= delegate IWidgetBehavior (){return new ImageBehavior;};
+	context.behaviorFactories["label"] ~= delegate IWidgetBehavior (){return new LabelBehavior;};
+	context.behaviorFactories["check"] ~= delegate IWidgetBehavior (){return new CheckBehavior;};
 }

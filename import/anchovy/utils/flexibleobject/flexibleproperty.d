@@ -37,12 +37,14 @@ abstract class IProperty
 {
 	// called when value changes. 
 	// Params: 
-	alias PropertyChangedSignal = Signal!(FlexibleObject, Variant, Variant*);
+	alias PropertyChangedSignal = Signal!(FlexibleObject, Variant);
+	alias PropertyChangingSignal = Signal!(FlexibleObject, Variant*);
 
 	Variant value() @property;
 	Variant value(Variant) @property;
 
 	ref PropertyChangedSignal valueChanged() @property;
+	ref PropertyChangingSignal valueChanging() @property;
 	
 	alias value this;
 }
@@ -50,13 +52,15 @@ abstract class IProperty
 // Simple storage property
 class ValueProperty : IProperty
 {
-	this(Variant value = Variant(null))
+	this(FlexibleObject owner, Variant value = Variant(null))
 	{
 		_value = value;
+		_owner = owner;
 	}
 
-	this(T)(T value)
+	this(T)(FlexibleObject owner, T value)
 	{
+		_owner = owner;
 		_value = Variant(value);
 	}
 
@@ -67,7 +71,15 @@ class ValueProperty : IProperty
 
 	override Variant value(Variant newValue) @property
 	{
-		return _value = newValue;
+		if (newValue != _value)
+		{
+			_valueChanging.emit(_owner, &newValue);
+			_value = newValue;
+			_valueChanged.emit(_owner, _value);
+			import std.stdio;
+			//writeln("value changed ", _owner["name"]);
+		}
+		return _value;
 	}
 
 	override ref PropertyChangedSignal valueChanged() @property
@@ -75,35 +87,13 @@ class ValueProperty : IProperty
 		return _valueChanged;
 	}
 
+	override ref PropertyChangingSignal valueChanging() @property
+	{
+		return _valueChanging;
+	}
+
 	Variant _value;
 	PropertyChangedSignal _valueChanged;
-}
-
-class ProxyProperty : IProperty
-{
-	import std.stdio;
-
-	this(FlexibleObject object, string propertyName)
-	{
-		this.bindingObject = object;
-		this.propertyName = propertyName;
-	}
-
-	override Variant value() @property
-	{
-		return bindingObject[propertyName];
-	}
-
-	override Variant value(Variant newValue) @property
-	{
-		return bindingObject[propertyName] = newValue;
-	}
-
-	override ref PropertyChangedSignal valueChanged() @property
-	{
-		return bindingObject.property(propertyName).valueChanged;
-	}
-
-	string propertyName;
-	FlexibleObject bindingObject;
+	PropertyChangingSignal _valueChanging;
+	FlexibleObject _owner;
 }

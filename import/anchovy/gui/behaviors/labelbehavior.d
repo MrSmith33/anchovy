@@ -47,14 +47,15 @@ public:
 			widget.setProperty!"fontName"("normal");
 
 		GuiContext context = widget.getPropertyAs!("context", GuiContext);
-		auto guiRenderer = context.guiRenderer;
-		TextLine line = guiRenderer.createTextLine(widget.getPropertyAs!("fontName", string));
+
+		TextLine line = context.guiRenderer.createTextLine(widget.getPropertyAs!("fontName", string));
+
 		widget.setProperty!"line"(line);
 		widget.setProperty!"prefSize"(line.size);
 
-		void onTextChanged(FlexibleObject obj, Variant old, Variant* newText)
+		void onTextChanged(FlexibleObject obj, Variant newText)
 		{
-			auto str = (*newText).get!string;
+			auto str = newText.get!string;
 
 			TextLine line = widget.getPropertyAs!("line", TextLine);
 

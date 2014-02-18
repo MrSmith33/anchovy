@@ -41,7 +41,7 @@ class FlexibleObject
 
 	Variant opIndex(string propName)
 	{
-		return properties.get(propName, new ValueProperty(Variant(null))).value;
+		return properties.get(propName, new ValueProperty(this, Variant(null))).value;
 	}
 
 	Variant opIndexAssign(V)(V value, string propName)
@@ -54,60 +54,39 @@ class FlexibleObject
 		{
 			if (auto property = propName in properties)
 			{
-				if (property.value != value)
-				{
-					auto oldValue = property.value;
-					Variant var = Variant(value);
-					property.valueChanged.emit(this, oldValue, &var);
-					property.value = var;
-				}
-
-				return property.value;
+				return property.value = value;
 			}
 			else
 			{
-				return properties[propName] = new ValueProperty(value);
+				return properties[propName] = new ValueProperty(this, value);
 			}
 		}
 		else
 		{
 			if (auto property = propName in properties)
 			{
-				if (property.value != value)
-				{
-					auto oldValue = property.value;
-					Variant var = Variant(value);
-					property.valueChanged.emit(this, oldValue, &var);
-					property.value = var;
-				}
-
-				return property.value;
+				return property.value = Variant(value);
 			}
 			else
 			{
-				return properties[propName] = new ValueProperty(Variant(value));
+				return properties[propName] = new ValueProperty(this, Variant(value));
 			}
 		}
 	}
 
 	Variant opIndexOpAssign(string op, V)(V value, string propName)
 	{
-		IProperty property = properties.get(propName, new ValueProperty(Variant(null)));
-		Variant oldValue = property.value;
-		Variant var =  mixin("property.value " ~ op ~ " value;");
+		IProperty property = properties.get(propName, new ValueProperty(this, Variant(null)));
 
-		if (oldValue != var)
-		{
-			property.valueChanged.emit(this, oldValue, &var);
-			property.value = var;
-		}
+		property.value =  mixin("property.value " ~ op ~ " value;");
 
 		return property.value;
 	}
 
 	Variant remove(string propName)
 	{
-		Variant result = properties.get(propName, new ValueProperty(Variant(null))).value;
+		Variant result = properties.get(propName, new ValueProperty(this, Variant(null))).value;
+
 		properties.remove(propName);
 
 		return result;
@@ -117,7 +96,7 @@ class FlexibleObject
 	{
 		if (propName !in properties)
 		{
-			properties[propName] = new ValueProperty(Variant(null));
+			properties[propName] = new ValueProperty(this, Variant(null));
 		}
 
 		return properties[propName];

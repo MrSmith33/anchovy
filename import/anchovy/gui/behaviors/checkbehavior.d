@@ -9,14 +9,22 @@ module anchovy.gui.behaviors.checkbehavior;
 import anchovy.gui;
 import anchovy.gui.interfaces.iwidgetbehavior;
 
-//version = Check_debug;
+version = Check_debug;
+
 
 class CheckBehavior : IWidgetBehavior
 {
+	bool isHovered;
+	bool isPressed;
+	Widget _widget;
+
 public:
 
 	override void attachTo(Widget widget)
 	{
+		writeln("attachTo ", widget["name"], " ", widget["type"], widget["isChecked"]);
+		_widget = widget;
+
 		widget.addEventHandler(&onClick);
 		widget.addEventHandler(&pointerPressed);
 		widget.addEventHandler(&pointerReleased);
@@ -24,20 +32,20 @@ public:
 		widget.addEventHandler(&pointerEntered);
 		widget.addEventHandler(&pointerLeaved);
 
-		widget.setProperty!"isFocusable"(true);
-		widget.setProperty!"isChecked"(false);
-		widget.setProperty!"isHovered"(false);
-		widget.setProperty!"isPressed"(false);
-		widget.setProperty!"style"("check");
+		isHovered = false;
+		isPressed = false;
+
+		widget.property("isChecked").valueChanged.connect( (FlexibleObject a, Variant b){updateState();} );
+
+		updateState();
 	}
 
 	bool onClick(Widget widget, PointerClickEvent event)
 	{
 		widget.setProperty!"isChecked"(!widget.getPropertyAs!("isChecked", bool));
 
-		updateState(widget);
-
 		version(Check_debug) writeln("onClick");
+		updateState();
 
 		return true;
 	}
@@ -46,10 +54,10 @@ public:
 	{
 		if (event.button == PointerButton.PB_LEFT)
 		{
-			widget.setProperty!"isPressed"(true);
+			isPressed = true;
 		}
 
-		updateState(widget);
+		updateState();
 
 		version(Check_debug) writeln("pointerPressed");
 
@@ -60,12 +68,11 @@ public:
 	{
 		if (event.button == PointerButton.PB_LEFT)
 		{
-			widget.setProperty!"isHovered"(true);
-			widget.setProperty!"isPressed"(false);
+			isHovered = true;
+			isPressed = false;
 		}
 
-		updateState(widget);
-
+		updateState();
 		version(Check_debug) writeln("pointerReleased");
 
 		return true;
@@ -80,26 +87,24 @@ public:
 	{
 		if (event.context.pressedWidget is this)
 		{
-			widget.setProperty!"isPressed"(true);
+			isPressed = true;
+			version(Check_debug) writeln("pressed");
 		}
 		else
 		{
-			widget.setProperty!"isHovered"(true);
+			isHovered = true;
+			version(Check_debug) writeln("pointerEntered hovered");
 		}
 
-		updateState(widget);
-
-		version(Check_debug) writeln("pointerEntered");
-
+		updateState();
 		return true;
 	}
 	
 	bool pointerLeaved(Widget widget, PointerLeaveEvent event)
 	{
-		widget.setProperty!"isHovered"(false);
-		
-		updateState(widget);
+		isHovered = false;
 
+		updateState();
 		version(Check_debug) writeln("pointerLeaved");
 
 		return true;
@@ -108,15 +113,16 @@ public:
 	// normal_unchecked == normal
 	static const string[6] stateStrings = ["normal", "normal_checked", "hovered_unchecked", "hovered_checked", "pressed_unchecked", "pressed_checked"];
 	
-	static void updateState(Widget widget)
+	void updateState()
 	{
-		uint checked = widget.getPropertyAs!("isChecked", bool) ? 1 : 0;
-		uint hovered = widget.getPropertyAs!("isHovered", bool) ? 2 : 0;
-		bool pressed = widget.getPropertyAs!("isPressed", bool);
-		if (pressed) hovered = 4;
+		//if (_widget["type"] == "textcheck") throw new Exception("textcheck");
+		writeln(_widget["name"], " ", _widget["type"]);
+		uint checked = _widget.getPropertyAs!("isChecked", bool) ? 1 : 0;
+		uint hovered = isHovered ? 2 : 0;
+		if (isPressed) hovered = 4;
 
-		version(Check_debug) writefln("checked %s hovered %s pressed %s %s",checked , hovered, pressed, stateStrings[checked | hovered]);
+		version(Check_debug) writefln("checked %s hovered %s pressed %s %s", _widget.getPropertyAs!("isChecked", bool) , hovered, isPressed, stateStrings[checked | hovered]);
 
-		widget.setProperty!"state"(stateStrings[checked | hovered]);
+		_widget.setProperty!"state"(stateStrings[checked | hovered]);
 	}
 }

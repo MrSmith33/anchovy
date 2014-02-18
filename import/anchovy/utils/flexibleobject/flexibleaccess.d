@@ -179,17 +179,15 @@ static void setProperty(string propname, ValueType, FlexibleObjectType : Flexibl
 		{
 			auto oldValue = property.value;
 
+			Variant var;
+
 			static if (is(ValueType:Variant))
 			{
-				Variant var = value;
-				property.valueChanged.emit(w, oldValue, &var);
-				property.value = var;
+				property.value = value;
 			}
 			else
 			{
-				Variant var = Variant(value);
-				property.valueChanged.emit(w, oldValue, &var);
-				property.value = var;
+				property.value = Variant(value);
 			}
 		}
 	}

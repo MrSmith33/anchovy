@@ -35,7 +35,7 @@ public import anchovy.gui.interfaces.ilayout;
 alias VerticalLayout = LinearLayout!true;
 alias HorizontalLayout = LinearLayout!false;
 
-version = debug_linear;
+//version = debug_linear;
 
 class LinearLayout(bool vertical) : ILayout
 {
