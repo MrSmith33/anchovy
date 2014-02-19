@@ -11,7 +11,7 @@ import std.stdio : writeln;
 import anchovy.graphics.windows.glfwwindow;
 import anchovy.gui;
 
-import application;
+import anchovy.gui.application.application;
 
 class TestApplication : Application!GlfwWindow
 {

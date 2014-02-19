@@ -4,14 +4,14 @@ License: a$(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
 Authors: Andrey Penechko.
 */
 
-module application;
+module anchovy.gui.application.application;
 
 import std.stdio : writeln;
 import anchovy.core.interfaces.iwindow;
 import anchovy.gui;
 
-public import eventaggregator;
-public import fpshelper;
+public import anchovy.gui.application.eventaggregator;
+public import anchovy.gui.application.fpshelper;
 
 class Application(WindowType)
 {

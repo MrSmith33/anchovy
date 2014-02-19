@@ -4,12 +4,12 @@ License: a$(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
 Authors: Andrey Penechko.
 */
 
-module eventaggregator;
+module anchovy.gui.application.eventaggregator;
 
 import anchovy.core.interfaces.iwindow;
 import anchovy.gui;
 
-import application;
+import anchovy.gui.application.application;
 
 class EventAggregator(WindowType)
 {
