@@ -363,12 +363,14 @@ public:
 				event.context = this;
 				_hoveredWidget.handleEvent(event);
 			}
+
 			if (widget !is null)
 			{
 				auto event = new PointerEnterEvent;
 				event.context = this;
 				widget.handleEvent(event);
 			}
+
 			_hoveredWidget = widget;
 		}
 	}
@@ -408,36 +410,43 @@ public:
 	{
 		if (_focusedWidget !is widget)
 		{
+			
+
 			if (_focusedWidget !is null)
 			{
 				auto event = new FocusLoseEvent;
 				event.context = this;
 				_focusedWidget.handleEvent(event);
 			}
+
 			if (widget !is null)
 			{
 				auto event = new FocusGainEvent;
 				event.context = this;
 				widget.handleEvent(event);
+				//write("focused ", widget, " ");
+				//write(widget["name"], " ", widget["type"]);
 			}
+			//writeln;
+
 			_focusedWidget = widget;
 		}
 	}
 
 	/// Used to get current clipboard string
-	dstring clipboardString()
+	string clipboardString()
 	{
 		if (_getClipboardStringCallback !is null) 
-			return _getClipboardStringCallback();
+			return to!string(_getClipboardStringCallback());
 		else
 			return "";
 	}
 
 	/// Used to set current clipboard string
-	void clipboardString(dstring newString)
+	void clipboardString(string newString)
 	{
 		if (_setClipboardStringCallback !is null) 
-			_setClipboardStringCallback(newString);
+			_setClipboardStringCallback(to!dstring(newString));
 	}
 
 	/// Will be used by window to provide clipboard functionality.
@@ -541,12 +550,12 @@ public:
 
 			if (eventConsumerChain.length > 0)
 			{
-				if (eventConsumerChain[$-1].isFocusable)
+				if (eventConsumerChain[$-1].getPropertyAs!("isFocusable", bool))
 					focusedWidget = eventConsumerChain[$-1];
 				
 				pressedWidget = eventConsumerChain[$-1];
 				
-				break;
+				return false;
 			}
 		}
 

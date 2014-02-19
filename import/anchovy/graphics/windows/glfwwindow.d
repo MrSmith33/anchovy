@@ -215,7 +215,7 @@ extern(C)
 		}
 		catch(Exception e)
 		{
-			throw new Error(e.msg);
+			throw new Error(to!string(e));
 		}
 	}
 	static void windowsizefun(GLFWwindow* w, int newWidth, int newHeight) nothrow
@@ -226,7 +226,7 @@ extern(C)
 		}
 		catch(Exception e)
 		{
-			throw new Error(e.msg);
+			throw new Error(to!string(e));
 		}
 	}
 	static void windowclosefun(GLFWwindow* w) nothrow
@@ -237,7 +237,7 @@ extern(C)
 		}
 		catch(Exception e)
 		{
-			throw new Error(e.msg);
+			throw new Error(to!string(e));
 		}
 	}
 	static void windowrefreshfun(GLFWwindow* w) nothrow
@@ -252,7 +252,7 @@ extern(C)
 		}
 		catch(Exception e)
 		{
-			throw new Error(e.msg);
+			throw new Error(to!string(e));
 		}
 	}
 	static void windowiconifyfun(GLFWwindow* w, int iconified) nothrow
@@ -263,7 +263,7 @@ extern(C)
 		}
 		catch(Exception e)
 		{
-			throw new Error(e.msg);
+			throw new Error(to!string(e));
 		}
 	}
 	static void mousebuttonfun(GLFWwindow* w, int mouseButton, int action, int) nothrow
@@ -281,7 +281,7 @@ extern(C)
 		}
 		catch(Exception e)
 		{
-			throw new Error(e.msg);
+			throw new Error(to!string(e));
 		}
 	}
 	static void cursorposfun(GLFWwindow* w, double nx, double ny) nothrow
@@ -292,7 +292,7 @@ extern(C)
 		}
 		catch(Exception e)
 		{
-			throw new Error(e.msg);
+			throw new Error(to!string(e));
 		}
 	}
 	static void scrollfun(GLFWwindow* w, double x, double y) nothrow
@@ -303,7 +303,7 @@ extern(C)
 		}
 		catch(Exception e)
 		{
-			throw new Error(e.msg);
+			throw new Error(to!string(e));
 		}
 	}
 	static void cursorenterfun(GLFWwindow* w, int) nothrow
@@ -325,7 +325,7 @@ extern(C)
 		}
 		catch(Exception e)
 		{
-			throw new Error(e.msg);
+			throw new Error(to!string(e));
 		}
 	}
 	static void charfun(GLFWwindow* w, uint unicode) nothrow
@@ -336,7 +336,7 @@ extern(C)
 		}
 		catch(Exception e)
 		{
-			throw new Error(e.msg);
+			throw new Error(to!string(e));
 		}
 	}
 }

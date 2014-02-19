@@ -91,26 +91,33 @@ public:
 		return _geometry;
 	}
 
-	string text() @property
+	dstring text() @property
 	{
 		return _text;
 	}
 
-	void text(in string newText) @property
+	dstring text(in string newText) @property
+	{
+		return text = to!dstring(newText);
+	}
+
+	dstring text(in dstring newText) @property
 	{
 		if (_text == newText)
 		{
-			return;
+			return _text;
 		}
 
 		_text = newText;
-		if (!_isInited) return;
+		if (!_isInited) return _text;
 
 		_geometry.vertieces = null;
 		_cursorX = 0;
 		
 		appendGlyphs(_text, _font);
 		_isDirty = true;
+
+		return _text;
 	}
 
 	string fontName() @property
@@ -125,6 +132,11 @@ public:
 
 	///Supports chaining
 	TextLine append(in string text)
+	{
+		return append(to!dstring(text));
+	}
+
+	TextLine append(in dstring text)
 	{
 		appendGlyphs(_text, _font);
 		_isDirty = true;
@@ -141,7 +153,7 @@ protected:
 		_isInited = true;
 	}
 
-	void appendGlyphs(in string text, Font font)
+	void appendGlyphs(in dstring text, Font font)
 	{
 		foreach(dchar chr; text)
 		{
@@ -177,7 +189,7 @@ protected:
 protected:
 	uint _width;
 	uint _height;
-	string _text;
+	dstring _text;
 	bool _isInited = false;
 	
 	TexRectArray _geometry;

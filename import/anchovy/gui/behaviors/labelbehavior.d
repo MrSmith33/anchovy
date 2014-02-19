@@ -53,18 +53,18 @@ public:
 		widget.setProperty!"line"(line);
 		widget.setProperty!"prefSize"(line.size);
 
-		void onTextChanged(FlexibleObject obj, Variant newText)
-		{
-			auto str = newText.get!string;
-
-			TextLine line = widget.getPropertyAs!("line", TextLine);
-
-			line.text = str;
-
-			obj["prefSize"] = line.size;
-		}
-
 		widget.property("text").valueChanged.connect(&onTextChanged);
+	}
+
+	void onTextChanged(FlexibleObject obj, Variant newText)
+	{
+		auto str = newText.coerce!dstring;
+
+		TextLine line = obj.getPropertyAs!("line", TextLine);
+
+		line.text = str;
+
+		obj["prefSize"] = line.size;
 	}
 
 	bool handleDraw(Widget widget, DrawEvent event)
