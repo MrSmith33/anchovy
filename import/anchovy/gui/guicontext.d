@@ -31,6 +31,7 @@ module anchovy.gui.guicontext;
 import anchovy.gui;
 import anchovy.gui.interfaces.iwidgetbehavior : IWidgetBehavior;
 
+//version = Debug_guicontext;
 
 class GuiContext
 {
@@ -206,7 +207,8 @@ public:
 		//----------------------- Forwarding properties ------------------------
 		foreach(forwardedProperty; sub.forwardedProperties)
 		{
-			writeln("forwarding ", forwardedProperty.propertyName ," to ", forwardedProperty.targetPropertyName);
+			version(Debug_guicontext) writeln("forwarding ", forwardedProperty.propertyName ," to ",
+				forwardedProperty.targetPropertyName);
 			root[forwardedProperty.propertyName] = subwidget.property(forwardedProperty.targetPropertyName);
 		}
 
@@ -214,9 +216,10 @@ public:
 		foreach(propertyKey; sub.properties.byKey)
 		{
 			auto value = parseProperty(propertyKey, sub.properties[propertyKey], subwidget);
-			//writeln("Assigning properties ", propertyKey," ",value, " ", subwidget["name"], " ", subwidget["type"], " ", root["name"], " ", root["type"]);
-
+			version(Debug_guicontext) writeln("Assigning properties ", propertyKey," ",value,
+			 " ", subwidget["name"], " ", subwidget["type"], " ", root["name"], " ", root["type"]);
 			subwidget[propertyKey] = value;
+			version(Debug_guicontext) writeln(subwidget[propertyKey]);
 		}
 
 		if (sub.isContainer)

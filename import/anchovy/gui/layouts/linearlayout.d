@@ -139,7 +139,7 @@ class LinearLayout(bool vertical) : ILayout
 
 			if (isExpandableWidth(child))
 			{
-				//version(debug_linear) writeln("expandable width ", child["type"]);
+				version(debug_linear) writeln("expandable width ", child["type"]);
 				*sizeWidth(childSize) = maxChildWidth;
 			}
 

@@ -43,7 +43,6 @@ import anchovy.gui;
 
 void main(string[] args)
 {
-	writeln(typeid(Variant));
 	auto app = new TestApplication(uvec2(512, 512), "Test application");
 	app.run(args);
 }

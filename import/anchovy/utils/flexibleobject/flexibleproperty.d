@@ -36,7 +36,6 @@ import anchovy.utils.signal : Signal;
 abstract class IProperty
 {
 	// called when value changes. 
-	// Params: 
 	alias PropertyChangedSignal = Signal!(FlexibleObject, Variant);
 	alias PropertyChangingSignal = Signal!(FlexibleObject, Variant*);
 
@@ -76,8 +75,6 @@ class ValueProperty : IProperty
 			_valueChanging.emit(_owner, &newValue);
 			_value = newValue;
 			_valueChanged.emit(_owner, _value);
-			import std.stdio;
-			//writeln("value changed ", _owner["name"]);
 		}
 		return _value;
 	}

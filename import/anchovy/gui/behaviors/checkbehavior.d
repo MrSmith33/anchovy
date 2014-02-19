@@ -9,7 +9,7 @@ module anchovy.gui.behaviors.checkbehavior;
 import anchovy.gui;
 import anchovy.gui.interfaces.iwidgetbehavior;
 
-version = Check_debug;
+//version = Check_debug;
 
 
 class CheckBehavior : IWidgetBehavior
@@ -22,7 +22,7 @@ public:
 
 	override void attachTo(Widget widget)
 	{
-		writeln("attachTo ", widget["name"], " ", widget["type"], widget["isChecked"]);
+		version(Check_debug) writeln("attachTo ", widget["name"], " ", widget["type"], " ", widget["isChecked"]);
 		_widget = widget;
 
 		widget.addEventHandler(&onClick);
@@ -45,7 +45,6 @@ public:
 		widget.setProperty!"isChecked"(!widget.getPropertyAs!("isChecked", bool));
 
 		version(Check_debug) writeln("onClick");
-		updateState();
 
 		return true;
 	}
@@ -111,17 +110,19 @@ public:
 	}
 
 	// normal_unchecked == normal
-	static const string[6] stateStrings = ["normal", "normal_checked", "hovered_unchecked", "hovered_checked", "pressed_unchecked", "pressed_checked"];
+	static const string[6] stateStrings = ["normal", "normal_checked", "hovered_unchecked",
+	 "hovered_checked", "pressed_unchecked", "pressed_checked"];
 	
 	void updateState()
 	{
-		//if (_widget["type"] == "textcheck") throw new Exception("textcheck");
-		writeln(_widget["name"], " ", _widget["type"]);
+		version(Check_debug)  writeln(_widget["name"], " ", _widget["type"]);
+
 		uint checked = _widget.getPropertyAs!("isChecked", bool) ? 1 : 0;
 		uint hovered = isHovered ? 2 : 0;
 		if (isPressed) hovered = 4;
 
-		version(Check_debug) writefln("checked %s hovered %s pressed %s %s", _widget.getPropertyAs!("isChecked", bool) , hovered, isPressed, stateStrings[checked | hovered]);
+		version(Check_debug) writefln("checked %s hovered %s pressed %s %s", _widget.getPropertyAs!("isChecked", bool)
+		 , hovered, isPressed, stateStrings[checked | hovered]);
 
 		_widget.setProperty!"state"(stateStrings[checked | hovered]);
 	}

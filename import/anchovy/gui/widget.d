@@ -43,6 +43,7 @@ enum Sides
 	BOTTOM = 8,
 }
 
+//version = Debug_widget;
 
 /// Container for common properties
 class Widget : FlexibleObject
@@ -112,7 +113,6 @@ public:
 		{
 			layout.expand(widget);
 		}
-		//writeln("expand ", widget["type"], " ", widget["name"]);
 
 		return true;
 	}
@@ -123,7 +123,7 @@ public:
 		{
 			layout.minimize(widget);
 		}
-		//writeln("minimize ", widget["type"]);
+
 		return true;
 	}
 
@@ -140,16 +140,15 @@ public:
 				widget["staticRect"] = Rect(newStaticPosition, widget.getPropertyAs!("size", ivec2));
 			}
 		}
-		
-		writeln("expand ", widget["type"], " ", widget["name"]);
+
 		return true;
 	}
 
 	bool handleDraw(Widget widget, DrawEvent event)
 	{
-		//writeln("handleDraw");
 		if(widget.getPropertyAs!("isVisible", bool))
 			event.guiRenderer.drawControlBack(widget, widget["staticRect"].get!Rect);
+
 		return true;
 	}
 
@@ -229,11 +228,9 @@ body
 	assert(*container);
 
 	Widget parent = *container;
-	//writeln("before add ", parent["children"]);
+
 	parent.setProperty!"children"(parent["children"] ~ child);
 	child.setProperty!"parent"(parent);
-
-	//writeln("after add ", parent["children"]);
 }
 
 /// Says to global layout manager that this widget needs layout update.
