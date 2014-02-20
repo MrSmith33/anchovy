@@ -34,6 +34,8 @@ import std.traits : isDelegate, ParameterTypeTuple, isFunctionPointer;
 
 import std.stdio;
 
+@trusted:
+
 struct Signal(Args...)
 {
 	alias SlotType = void delegate(Args);
