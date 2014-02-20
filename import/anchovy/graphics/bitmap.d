@@ -36,6 +36,7 @@ import derelict.freeimage.freeimage;
 import anchovy.core.types;
 public import anchovy.utils.signal;
 
+@trusted:
 
 Bitmap createBitmapFromFile(string filename)
 {
