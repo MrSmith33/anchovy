@@ -148,6 +148,10 @@ class EditBehavior : LabelBehavior
 		{
 			setCursorPos(_textLine.text.length);
 		}
+		else if (event.keyCode == KeyCode.KEY_ENTER)
+		{
+			widget.setProperty!"text"(_textLine.text);
+		}
 		else
 		{
 			doTextUpdate = false;
@@ -242,7 +246,9 @@ class EditBehavior : LabelBehavior
 		_blinkTimer = null;
 
 		_isCursorBlinkVisible = true;
-		
+
+		widget.setProperty!"text"(_textLine.text);
+				
 		return true;
 	}
 
@@ -296,7 +302,10 @@ class EditBehavior : LabelBehavior
 	dstring text(string newText) @property
 	{
 		if (_textLine is null) return "";
-		return _textLine.text = newText;
+		_textLine.text = newText;
+		_widget.setProperty!"text"(_textLine.text);
+
+		return _textLine.text;
 	}
 
 	dstring selectedText() @property

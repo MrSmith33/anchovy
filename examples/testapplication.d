@@ -22,6 +22,8 @@ class TestApplication : Application!GlfwWindow
 
 	override void load(in string[] args)
 	{
+		fpsHelper.limitFps = false;
+
 		// ----------------------------- Creating widgets -----------------------------
 		templateManager.parseFile("test.sdl");
 
@@ -43,6 +45,14 @@ class TestApplication : Application!GlfwWindow
 		auto fpsLabel = context.getWidgetById("fpsLabel");
 		auto fpsSlot = (FpsHelper* helper){fpsLabel["text"] = to!string(helper.fps);};
 		fpsHelper.fpsUpdated.connect(fpsSlot);
+
+		auto firstName = context.getWidgetById("firstName");
+		auto lastName = context.getWidgetById("lastName");
+		auto fullName = context.getWidgetById("fullName");
+		auto calc = (FlexibleObject a, Variant b){fullName["text"] = firstName["text"].coerce!dstring ~ " "d
+			 ~ lastName["text"].coerce!dstring;};
+		firstName.property("text").valueChanged.connect(calc);
+		lastName.property("text").valueChanged.connect(calc);
 
 		writeln("\n----------------------------- Load end -----------------------------\n");
 	}
