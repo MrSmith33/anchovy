@@ -34,21 +34,19 @@ import std.traits : isDelegate, ParameterTypeTuple, isFunctionPointer;
 
 import std.stdio;
 
-@trusted:
-
 struct Signal(Args...)
 {
 	alias SlotType = void delegate(Args);
 
 	SlotType[] slots;
 
-	void emit(Args args)
+	void emit(Args args) @trusted
 	{
 		foreach(slot; slots)
 			slot(args);
 	}
 
-	void connect(Slot)(Slot slot) if(is(ParameterTypeTuple!Slot == Args))
+	void connect(Slot)(Slot slot) @trusted if(is(ParameterTypeTuple!Slot == Args))
 	{
 		static if(isDelegate!Slot)
 		{
@@ -60,7 +58,7 @@ struct Signal(Args...)
 		}
 	}
 
-	void disconnect(Slot)(Slot slot)
+	void disconnect(Slot)(Slot slot) @trusted
 	{
 		static if(isDelegate!Slot)
 		{
@@ -96,7 +94,7 @@ struct Signal(Args...)
 		
 	}
 
-	void disconnectAll()
+	void disconnectAll() @trusted
 	{
 		slots = [];
 	}
