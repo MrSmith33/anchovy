@@ -98,6 +98,11 @@ class SkinnedGuiRenderer : IGuiRenderer
 		return _fontManager;
 	}
 
+	GuiSkin skin() @property
+	{
+		return _skin;
+	}
+
 	/// Creates textline with font from current skin.
 	/// If font not found then normal font will be used.
 	override TextLine createTextLine(string fontName = "normal")

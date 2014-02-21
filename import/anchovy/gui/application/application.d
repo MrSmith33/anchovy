@@ -32,7 +32,7 @@ class Application(WindowType)
 
 		auto eventAggregator = new EventAggregator!WindowType(this, window);
 		
-		window.init(windowSize, "Gui testing");
+		window.init(windowSize, caption);
 	}
 
 	void run(in string[] args)

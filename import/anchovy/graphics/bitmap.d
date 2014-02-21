@@ -49,6 +49,7 @@ Bitmap createBitmapFromFile(string filename)
 	if (fiimage is null) throw new Exception("Image loading failed");
 
 	FIBITMAP* temp = fiimage;
+	FreeImage_FlipVertical(temp);
 	fiimage = FreeImage_ConvertTo32Bits(temp);
 
 	FreeImage_Unload(temp);

@@ -127,7 +127,7 @@ void main()
 					   1 - ((position.y + gPosition.y) / gHalfTarget.y),
 					   0.0, 1.0);
 	ivec2 texSize = textureSize(gSampler, 0);
-	texCoord0 = vec2(texCoord.x/texSize.x, 1-texCoord.y/texSize.y);
+	texCoord0 = vec2(texCoord.x/texSize.x, texCoord.y/texSize.y);
 }
 `;
 
