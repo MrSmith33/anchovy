@@ -69,6 +69,9 @@ class ImageBehavior : IWidgetBehavior
 
 		void onTextureChanged(FlexibleObject obj, Variant newTexture)
 		{
+			if (auto bitmap = widget.getPropertyAs!("bitmap", Bitmap))
+				bitmap.dataChanged.disconnect(bitmapSlot);
+			
 			auto texture = newTexture.get!Texture;
 			if (texture is null) return;
 
@@ -88,7 +91,7 @@ class ImageBehavior : IWidgetBehavior
 			Texture texture = widget.getPropertyAs!("texture", Texture);
 			//writeln(texture.size);
 			if (texture is null) return true;
-
+			event.guiRenderer.renderer.setColor(Color(255, 255, 255, 255));
 			event.guiRenderer.renderer.drawTexRect(widget["staticRect"].get!Rect, Rect(ivec2(0,0), cast(ivec2)texture.size), texture);
 		}
 		return true;
