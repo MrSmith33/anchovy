@@ -48,7 +48,7 @@ class ImageBehavior : IWidgetBehavior
 		widget.setProperty!"bitmap"(bitmap);
 		widget.addEventHandler(&handleDraw);
 
-		auto bitmapSlot = {widget["prefSize"] = cast(ivec2)bitmap.size;};
+		auto bitmapSlot = {widget["prefSize"] = cast(ivec2)widget.getPropertyAs!("bitmap", Bitmap).size;};
 		bitmap.dataChanged.connect(bitmapSlot);
 
 		void onBitmapChanging(FlexibleObject obj, Variant* newBitmap)
