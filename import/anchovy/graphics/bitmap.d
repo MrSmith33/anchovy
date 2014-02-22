@@ -38,6 +38,15 @@ public import anchovy.utils.signal;
 
 @trusted:
 
+enum ImageFormat : int
+{
+	png = FIF_PNG,
+	jpeg = FIF_JPEG,
+	gif = FIF_GIF,
+	bmp = FIF_BMP,
+
+}
+
 Bitmap createBitmapFromFile(string filename)
 {
 	auto bitmap = new Bitmap(4);
@@ -72,6 +81,14 @@ Bitmap createBitmapFromFile(string filename)
 	FreeImage_Unload(fiimage);
 
 	return bitmap;
+}
+
+void saveBitmapToFile(Bitmap bitmap, string filename, ImageFormat format)
+{
+	FIBITMAP* fibitmap = FreeImage_ConvertFromRawBits(bitmap.data.ptr, cast(int)bitmap.size.x, cast(int)bitmap.size.y,
+		cast(int)bitmap.size.x, bitmap.byteDepth * 8, 0xFF, 0xFF00, 0xFF0000, true);
+
+	FreeImage_Save(format, fibitmap, toStringz(filename), 0);
 }
 
 class Bitmap
