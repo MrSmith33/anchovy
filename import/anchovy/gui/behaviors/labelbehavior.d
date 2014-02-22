@@ -65,6 +65,7 @@ public:
 		line.text = str;
 
 		obj["prefSize"] = line.size;
+		invalidateLayout(cast(Widget)obj);
 	}
 
 	bool handleDraw(Widget widget, DrawEvent event)
