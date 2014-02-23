@@ -124,8 +124,6 @@ final class TemplateParser
 			parseForwardedProperties(forwardedPropertiesTag, templ);
 		}
 
-		writeln(templ);
-
 		return templ;
 	}
 

@@ -163,7 +163,7 @@ public:
 		switch(name)
 		{
 			case "layout":
-			writeln("found layout property: ", value.get!string);
+			//writeln("found layout property: ", value.get!string);
 				if (auto factory = value.get!string in layoutFactories)
 				{
 					return Variant((*factory)());
