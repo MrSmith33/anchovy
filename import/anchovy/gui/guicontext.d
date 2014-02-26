@@ -71,7 +71,9 @@ class GuiContext
 
 			if (pressedWidget !is null)
 			{
-				updateHovered( new PointerMoveEvent(lastPointerPosition, ivec2(0, 0)));
+				scope moveEvent = new PointerMoveEvent(lastPointerPosition, ivec2(0, 0));
+				moveEvent.context = this;
+				updateHovered(moveEvent);
 			}
 		}
 	}
@@ -609,7 +611,9 @@ public:
 		{
 			pressedWidget.handleEvent(event); // pressed widget will know if pointer unpressed somwhere else.
 
-			updateHovered(new PointerMoveEvent(pointerPosition, ivec2(0, 0))); // So widget knows if pointer released not over it.
+			scope moveEvent = new PointerMoveEvent(pointerPosition, ivec2(0, 0));
+			moveEvent.context = this;
+			updateHovered(moveEvent); // So widget knows if pointer released not over it.
 		}
 
 		pressedWidget = null;
