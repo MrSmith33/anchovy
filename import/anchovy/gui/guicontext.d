@@ -229,6 +229,17 @@ public:
 			root["container"] = subwidget;
 		}
 
+		Variant* name = "name" in sub.properties;
+		if(name)
+		{
+			if (auto subtemplateName = name.peek!string)
+			{
+				Widget[string] subwidgets = root["subwidgets"].get!(Widget[string]);
+				subwidgets[*subtemplateName] = subwidget;
+				root["subwidgets"] = subwidgets;
+			}
+		}
+		
 		//------------------------ Creating subwidgets -------------------------
 		foreach(subtemplate; sub.subwidgets)
 		{
@@ -262,6 +273,7 @@ public:
 
 			baseWidget["type"] = type;
 			baseWidget["context"] = this; // widget may access context before construction ends.
+			baseWidget.setProperty!("subwidgets", Widget[string])(null);
 
 			//----------------------- Template construction ------------------------
 			// Recursively creates widgets as stated in template. widget is root of that tree.
