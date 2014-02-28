@@ -43,13 +43,6 @@ private template hasStaticProperty(T, string property)
 	enum hasStaticProperty = __traits(hasMember, T, property);
 }
 
-//
-//
-static Variant getProperty(FlexibleObjectType : FlexibleObject)(FlexibleObjectType w, string propname)
-{
-	return w[propname];
-}
-
 // ditto
 static Variant getProperty(string propname, FlexibleObjectType : FlexibleObject)(FlexibleObjectType w)
 {
@@ -71,6 +64,18 @@ static T getPropertyAs(T)(string propname, FlexibleObject w)
 	return w[propname].get!T;
 }
 
+static T getPropertyAs(T)(string propname, FlexibleObject w, T defaultValue)
+{
+	if (auto property = propname in (cast(FlexibleObject)w).properties)
+	{
+		return property.get!T;
+	}
+	else
+	{
+		return defaultValue;
+	}
+}
+
 // ditto
 static T getPropertyAs(string propname, T, FlexibleObjectType : FlexibleObject)(FlexibleObjectType w)
 {
@@ -81,6 +86,26 @@ static T getPropertyAs(string propname, T, FlexibleObjectType : FlexibleObject)(
 	else
 	{
 		return w[propname].get!T;
+	}
+}
+
+// ditto
+static T getPropertyAs(string propname, T, FlexibleObjectType : FlexibleObject)(FlexibleObjectType w, T defaultValue)
+{
+	static if(hasStaticProperty!(FlexibleObjectType, propname))
+	{
+		return mixin("w."~propname~".value.get!T");
+	}
+	else
+	{
+		if (auto property = propname in (cast(FlexibleObject)w).properties)
+		{
+			return property.get!T;
+		}
+		else
+		{
+			return defaultValue;
+		}
 	}
 }
 
@@ -148,6 +173,18 @@ static T coercePropertyAs(T)(FlexibleObject w, string propname)
 	return w[propname].coerce!T;
 }
 
+static T coercePropertyAs(T)(FlexibleObject w, string propname, T defaultValue)
+{
+	if (auto property = propname in (cast(FlexibleObject)w).properties)
+	{
+		return property.value.coerce!T;
+	}
+	else
+	{
+		return defaultValue;
+	}
+}
+
 // ditto
 static T coercePropertyAs(string propname, T, FlexibleObjectType : FlexibleObject)(FlexibleObjectType w)
 {
@@ -159,6 +196,31 @@ static T coercePropertyAs(string propname, T, FlexibleObjectType : FlexibleObjec
 	{
 		return w[propname].coerce!T;
 	}
+}
+
+// ditto
+static T coercePropertyAs(string propname, T, FlexibleObjectType : FlexibleObject)(FlexibleObjectType w, T defaultValue)
+{
+	static if(hasStaticProperty!(FlexibleObjectType, propname))
+	{
+		return mixin("w."~propname~".value.coerce!T");
+	}
+	else
+	{
+		if (auto property = propname in (cast(FlexibleObject)w).properties)
+		{
+			return (*property).value.coerce!T;
+		}
+		else
+		{
+			return defaultValue;
+		}
+	}
+}
+
+bool hasProperty(string propname, FlexibleObjectType : FlexibleObject)(FlexibleObjectType w)
+{
+	return (propname in (cast(FlexibleObject)w).properties) !is null;
 }
 
 //
@@ -175,25 +237,26 @@ static void setProperty(string propname, ValueType, FlexibleObjectType : Flexibl
 	static if(hasStaticProperty!(FlexibleObjectType, propname))
 	{
 		auto property = mixin("w."~propname);
-		if (property.value != value)
+
+		static if (is(ValueType:Variant))
 		{
-			auto oldValue = property.value;
-
-			Variant var;
-
-			static if (is(ValueType:Variant))
-			{
-				property.value = value;
-			}
-			else
-			{
-				property.value = Variant(value);
-			}
+			property.value = value;
+		}
+		else
+		{
+			property.value = Variant(value);
 		}
 	}
 	else
 	{
-		w[propname] = value;
+		static if (is(ValueType:Variant))
+		{
+			w[propname] = value;
+		}
+		else
+		{
+			w[propname] = Variant(value);
+		}
 	}
 }
 

@@ -39,16 +39,16 @@ alias HorizontalLayout = LinearLayout!false;
 
 class LinearLayout(bool vertical) : ILayout
 {
-	uint spacing = 2; // Between children
-	uint padding = 2; // Between borders and content
 
 	override void minimize(Widget root)
 	{
 		Widget[] children = root.getPropertyAs!("children", Widget[]);
 		ivec2 rootSize = root.getPropertyAs!("size", ivec2);
+		int rootSpacing = root.coercePropertyAs!("spacing", int)(0);
+		int rootPadding = root.coercePropertyAs!("padding", int)(0);
 
 		int minRootWidth = int.min; // Will be max child width. Then padding will be added
-		int minRootLength = padding * 2;
+		int minRootLength = rootPadding * 2;
 		int childrenLength;
 		uint numExpandableChildren;
 
@@ -63,9 +63,9 @@ class LinearLayout(bool vertical) : ILayout
 			if (isExpandableLength(child)) ++numExpandableChildren;
 		}
 
-		minRootLength += (children.length-1) * spacing;
+		minRootLength += (children.length-1) * rootSpacing;
 		minRootLength += childrenLength;
-		minRootWidth += padding * 2;
+		minRootWidth += rootPadding * 2;
 
 		version(debug_linear)
 		{
@@ -89,6 +89,9 @@ class LinearLayout(bool vertical) : ILayout
 	{
 		Widget[] children = root.getPropertyAs!("children", Widget[]);
 
+		int rootSpacing = root.coercePropertyAs!("spacing", int)(0);
+		int rootPadding = root.coercePropertyAs!("padding", int)(0);
+
 		uint numExpandableChildren = root.getPropertyAs!("numExpandable", uint);
 
 		ivec2 rootSize = root.getPropertyAs!("size", ivec2);
@@ -101,7 +104,7 @@ class LinearLayout(bool vertical) : ILayout
 			writeln("rootPrefSize ", rootPrefSize);
 		}
 
-		int maxChildWidth = *sizeWidth(rootSize) - padding * 2;
+		int maxChildWidth = *sizeWidth(rootSize) - rootPadding * 2;
 
 		int extraLength = *sizeLength(rootSize) - *sizeLength(rootPrefSize);
 		int extraPerWidget = extraLength / cast(int)(numExpandableChildren > 0 ? numExpandableChildren : 1);
@@ -116,16 +119,16 @@ class LinearLayout(bool vertical) : ILayout
 			writeln("rootPrefSize ", rootPrefSize);
 		}
 
-		int topOffset = padding - spacing;
+		int topOffset = rootPadding - rootSpacing;
 
 		
 		foreach(child; children)
 		{
-			topOffset += spacing;
+			topOffset += rootSpacing;
 			static if(vertical)
-				child.setProperty!("position")(ivec2(padding, topOffset));
+				child.setProperty!("position")(ivec2(rootPadding, topOffset));
 			else
-				child.setProperty!("position")(ivec2(topOffset, padding));
+				child.setProperty!("position")(ivec2(topOffset, rootPadding));
 
 			ivec2 childSize = child.getPropertyAs!("prefSize", ivec2);
 			ivec2 childMinSize = child.getPropertyAs!("minSize", ivec2);
@@ -161,17 +164,17 @@ private:
 	static bool isExpandableWidth(Widget widget)
 	{
 		static if (vertical)
-			return widget.peekPropertyAs!("hexpand", bool) !is null;
+			return widget.hasProperty!"hexpand";
 		else
-			return widget.peekPropertyAs!("vexpand", bool) !is null;
+			return widget.hasProperty!"vexpand";
 	}
 
 	static bool isExpandableLength(Widget widget)
 	{
 		static if (vertical)
-			return widget.peekPropertyAs!("vexpand", bool) !is null;
+			return widget.hasProperty!"vexpand";
 		else
-			return widget.peekPropertyAs!("hexpand", bool) !is null;
+			return widget.hasProperty!"hexpand";
 	}
 
 	static pure int* sizeLength(ref ivec2 vector)

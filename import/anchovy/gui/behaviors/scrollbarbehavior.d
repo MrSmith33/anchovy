@@ -16,6 +16,8 @@ class ScrollbarBehavior : IWidgetBehavior
 protected:
 	Widget _slider;
 	Widget _body;
+	double _sliderSize = 0.5;
+	double _sliderPos = 0.0;
 
 public:
 
@@ -27,12 +29,14 @@ public:
 		if (_slider && _body)
 		{
 			_body.size.valueChanged.connect((FlexibleObject obj, Variant value){updateSize();});
+			updateSize();
 		}
 	}
 
 	void updateSize()
 	{
-		writeln("body size changed");
+		_slider.setProperty!"size"(ivec2(_body.size.value.get!ivec2.x, cast(int)(_body.size.value.get!ivec2.y * _sliderSize)));
+		_slider.setProperty!"position"(ivec2(0, cast(int)((_body.size.value.get!ivec2.y - _slider["size"].get!ivec2.y) * _sliderPos)));
 	}
 
 }
