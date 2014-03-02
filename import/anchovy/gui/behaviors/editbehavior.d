@@ -55,7 +55,7 @@ class EditBehavior : LabelBehavior
 
 		event.guiRenderer.pushClientArea(staticRect);
 			event.guiRenderer.renderer.setColor(Color(0,0,0));
-			event.guiRenderer.drawTextLine(_textLine, ivec2(staticPos.x + _textPos.x, staticPos.y), AlignmentType.LEFT_TOP);
+			event.guiRenderer.drawTextLine(_textLine, ivec2(staticPos.x + _textPos.x + _contentOffset.left, staticPos.y), AlignmentType.LEFT_TOP);
 			
 			if (_isFocused && _isCursorVisible && _isCursorBlinkVisible)
 			{
