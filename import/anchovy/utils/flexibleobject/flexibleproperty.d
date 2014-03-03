@@ -70,12 +70,14 @@ class ValueProperty : IProperty
 
 	override Variant value(Variant newValue) @property
 	{
-		if (newValue != _value)
-		{
-			_valueChanging.emit(_owner, &newValue);
-			_value = newValue;
-			_valueChanged.emit(_owner, _value);
-		}
+		if (newValue == _value) return _value;
+
+		_valueChanging.emit(_owner, &newValue);
+		
+		if (newValue == _value) return _value;
+		_value = newValue;
+		_valueChanged.emit(_owner, _value);
+
 		return _value;
 	}
 

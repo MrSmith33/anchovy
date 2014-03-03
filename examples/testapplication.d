@@ -54,6 +54,19 @@ class TestApplication : Application!GlfwWindow
 		firstName.property("text").valueChanged.connect(calc);
 		lastName.property("text").valueChanged.connect(calc);
 
+		auto horiText = context.getWidgetById("hori-pos");
+		auto vertText = context.getWidgetById("vert-pos");
+		auto updateHori = (FlexibleObject a, Variant b){horiText["text"] = to!string(b);};
+		auto updateVert = (FlexibleObject a, Variant b){vertText["text"] = to!string(b);};
+
+		auto horiScroll = context.getWidgetById("hori-scroll");
+		horiScroll.property("sliderPos").valueChanged.connect(updateHori);
+		auto vertScroll = context.getWidgetById("vert-scroll");
+		vertScroll.property("sliderPos").valueChanged.connect(updateVert);
+
+		horiScroll["sliderPos"] = 0.2;
+		vertScroll["sliderPos"] = 0.3;
+
 		writeln("\n----------------------------- Load end -----------------------------\n");
 	}
 

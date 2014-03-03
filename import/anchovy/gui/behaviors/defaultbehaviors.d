@@ -36,6 +36,7 @@ import anchovy.gui.behaviors.labelbehavior;
 import anchovy.gui.behaviors.checkbehavior;
 import anchovy.gui.behaviors.editbehavior;
 import anchovy.gui.behaviors.scrollbarbehavior;
+import anchovy.gui.behaviors.sliderbehavior;
 
 import anchovy.gui.guicontext;
 
@@ -57,5 +58,7 @@ void attachDefaultBehaviors(GuiContext context)
 	context.behaviorFactories["label"] ~= delegate IWidgetBehavior (){return new LabelBehavior;};
 	context.behaviorFactories["check"] ~= delegate IWidgetBehavior (){return new CheckBehavior;};
 	context.behaviorFactories["edit"] ~= delegate IWidgetBehavior (){return new EditBehavior;};
-	context.behaviorFactories["scrollbar-vert"] ~= delegate IWidgetBehavior (){return new ScrollbarBehavior;};
+	context.behaviorFactories["slider"] ~= delegate IWidgetBehavior (){return new SliderBehavior;};
+	context.behaviorFactories["scrollbar-vert"] ~= delegate IWidgetBehavior (){return new ScrollbarBehaviorVert;};
+	context.behaviorFactories["scrollbar-hori"] ~= delegate IWidgetBehavior (){return new ScrollbarBehaviorHori;};
 }

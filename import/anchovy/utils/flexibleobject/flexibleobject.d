@@ -78,7 +78,7 @@ class FlexibleObject
 	{
 		IProperty property = properties.get(propName, new ValueProperty(this, Variant(null)));
 
-		property.value =  mixin("property.value " ~ op ~ " value;");
+		mixin("property.value " ~ op ~ "= value;");
 
 		return property.value;
 	}
