@@ -20,8 +20,6 @@ protected:
 	Widget _slider;
 	Widget _body;
 	Widget _widget;
-	double _sliderSize = 0.5;
-	double _sliderPos = 0.0;
 
 public:
 
@@ -36,8 +34,8 @@ public:
 			_body.size.valueChanged.connect((FlexibleObject obj, Variant value){updateSize();});
 			_slider.position.valueChanging.connect(&handleSliderMoved);
 
-			_widget["sliderSize"] = new ValueProperty(_widget, cast(double)_sliderSize);
-			_widget["sliderPos"] = new ValueProperty(_widget, cast(double)_sliderPos);
+			_widget["sliderSize"] = new ValueProperty(_widget, 0.5);
+			_widget["sliderPos"] = new ValueProperty(_widget, 0.0);
 
 			_widget.property("sliderPos").valueChanging.connect(&handleSliderPositionChanging);
 
@@ -49,13 +47,13 @@ public:
 	{
 		static if (vertical)
 		{
-			_slider.setProperty!"size"(ivec2(_body.size.value.get!ivec2.x, cast(int)(_body.size.value.get!ivec2.y * _sliderSize)));
+			_slider.setProperty!"size"(ivec2(_body.size.value.get!ivec2.x, cast(int)(_body.size.value.get!ivec2.y * _widget["sliderSize"].get!double)));
 			_slider.setProperty!"position"(ivec2(0, 
 				cast(int)((_body.size.value.get!ivec2.y - _slider["size"].get!ivec2.y) * _widget["sliderPos"].get!double)));
 		}
 		else
 		{
-			_slider.setProperty!"size"(ivec2(cast(int)(_body.size.value.get!ivec2.x * _sliderSize), _body.size.value.get!ivec2.y));
+			_slider.setProperty!"size"(ivec2(cast(int)(_body.size.value.get!ivec2.x * _widget["sliderSize"].get!double), _body.size.value.get!ivec2.y));
 			_slider.setProperty!"position"(
 				ivec2(cast(int)((_body.size.value.get!ivec2.x - _slider["size"].get!ivec2.x) * _widget["sliderPos"].get!double), 0));
 		}
@@ -101,7 +99,7 @@ public:
 		double sliderPos = cast(double)newPosition / cast(double)(bodySize - sliderSize);
 		_widget["sliderPos"] = sliderPos is double.nan ? 0 : sliderPos;
 
-		writeln("slider moved ", sliderPos);
+		//writeln("slider moved ", sliderPos);
 	}
 
 }

@@ -49,23 +49,19 @@ class TestApplication : Application!GlfwWindow
 		auto firstName = context.getWidgetById("firstName");
 		auto lastName = context.getWidgetById("lastName");
 		auto fullName = context.getWidgetById("fullName");
-		auto calc = (FlexibleObject a, Variant b){fullName["text"] = firstName["text"].coerce!dstring ~ " "d
-			 ~ lastName["text"].coerce!dstring;};
-		firstName.property("text").valueChanged.connect(calc);
-		lastName.property("text").valueChanged.connect(calc);
+		auto calc = delegate(Variant firstName, Variant lastName) => Variant(firstName.coerce!dstring ~ " "d
+			 ~ lastName.coerce!dstring);
+
+		fullName.property("text").pipeFrom(calc, firstName.property("text"), lastName.property("text"));
 
 		auto horiText = context.getWidgetById("hori-pos");
 		auto vertText = context.getWidgetById("vert-pos");
-		auto updateHori = (FlexibleObject a, Variant b){horiText["text"] = to!string(b);};
-		auto updateVert = (FlexibleObject a, Variant b){vertText["text"] = to!string(b);};
 
 		auto horiScroll = context.getWidgetById("hori-scroll");
-		horiScroll.property("sliderPos").valueChanged.connect(updateHori);
+		horiScroll.property("sliderPos").pipeTo(horiText.property("text"), (Variant val) => Variant(to!string(val)));
 		auto vertScroll = context.getWidgetById("vert-scroll");
-		vertScroll.property("sliderPos").valueChanged.connect(updateVert);
+		vertScroll.property("sliderPos").pipeTo(vertText.property("text"), (Variant val) => Variant(to!string(val)));
 
-		horiScroll["sliderPos"] = 0.2;
-		vertScroll["sliderPos"] = 0.3;
 
 		writeln("\n----------------------------- Load end -----------------------------\n");
 	}

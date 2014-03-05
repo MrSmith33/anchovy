@@ -72,11 +72,26 @@ class ValueProperty : IProperty
 	{
 		if (newValue == _value) return _value;
 
+		if (_isChanging)
+		{
+			import std.stdio;
+			writefln("already changing %s", newValue);
+			return _value;
+		}
+
+		_isChanging = true;
+
 		_valueChanging.emit(_owner, &newValue);
 		
-		if (newValue == _value) return _value;
+		if (newValue == _value)
+		{
+			_isChanging = false;
+			return _value;
+		}
 		_value = newValue;
 		_valueChanged.emit(_owner, _value);
+
+		_isChanging = false;
 
 		return _value;
 	}
@@ -95,4 +110,5 @@ class ValueProperty : IProperty
 	PropertyChangedSignal _valueChanged;
 	PropertyChangingSignal _valueChanging;
 	FlexibleObject _owner;
+	bool _isChanging = false;
 }

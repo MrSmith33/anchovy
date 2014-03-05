@@ -36,6 +36,7 @@ module anchovy.utils.flexibleobject.flexibleaccess;
 import std.traits : hasMember;
 import std.variant : Variant;
 import anchovy.utils.flexibleobject.flexibleobject : FlexibleObject;
+import anchovy.utils.flexibleobject.flexibleproperty : IProperty;
 
 
 private template hasStaticProperty(T, string property)
@@ -260,23 +261,56 @@ static void setProperty(string propname, ValueType, FlexibleObjectType : Flexibl
 	}
 }
 
-// Binds property1 to property2. when property2 changes, property1 will be notified.
-static void bindProperty(T1 : FlexibleObject, T2 : FlexibleObject)(T1 object1, string property1, T2 object2, string property2)
+/// 
+void bindTo(IProperty source, IProperty dest, Variant delegate(Variant) converter)
 {
-	assert(false);
+	auto handler = (FlexibleObject obj, Variant value){
+		dest.value = converter(value);
+	};
+
+	dest.value = converter(source.value);
+
+	source.valueChanged.connect(handler);
 }
-// ditto
-static void bindProperty(string property1, string property2, T1 : FlexibleObject, T2 : FlexibleObject)(FlexibleObject object1, FlexibleObject object2)
+
+template isVariant(T)
 {
-	assert(false);
+	enum isVariant = is(T == Variant);
 }
-// ditto
-static void bindProperty(string property2, T1 : FlexibleObject, T2 : FlexibleObject)(FlexibleObject object1, string property1, FlexibleObject object2)
+
+import std.conv;
+alias ExtractValues(Properties...) = ExtractValuesImpl!(0, Properties);
+
+template ExtractValuesImpl(uint index, Properties...)
 {
-	assert(false);
+	pragma(msg, (Properties).length);
+
+	static if(Properties.length > 1)
+		enum ExtractValuesImpl = "sources[" ~ to!string(index) ~ "].value, " ~ ExtractValuesImpl!(index + 1, Properties[1..$]);
+	else
+		enum ExtractValuesImpl = "sources[" ~ to!string(index) ~ "].value";
 }
-// ditto
-static void bindProperty(string property1, T1 : FlexibleObject, T2 : FlexibleObject)(FlexibleObject object1, FlexibleObject object2, string property2)
+
+import std.algorithm;
+import std.range;
+import std.traits;
+import std.typetuple;
+/// creates one-way binding from multiple to one property
+/// destination.pipeFrom((Variant a, Variant b)=> a+b, num1, num2);
+void pipeFrom(ConverterType, P ...)(IProperty dest, ConverterType converter, P sources)
+if  (is(ReturnType!ConverterType == Variant) &&
+	(ParameterTypeTuple!ConverterType).length == P.length &&
+	is(NoDuplicates!(ParameterTypeTuple!ConverterType) == TypeTuple!Variant) &&
+	is(NoDuplicates!P == TypeTuple!IProperty))
 {
-	assert(false);
+	auto handler = (FlexibleObject obj, Variant value){
+		dest.value = mixin("converter("~ExtractValues!sources~")");
+	};
+
+	foreach(index, IProperty source; sources)
+	{
+		source.valueChanged.connect(handler);
+	}
+
+	dest.value = mixin("converter("~ExtractValues!sources~")");
 }
