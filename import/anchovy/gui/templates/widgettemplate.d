@@ -36,7 +36,6 @@ class SubwidgetTemplate
 	Variant[string] properties;
 	SubwidgetTemplate[] subwidgets;
 	ForwardedProperty[] forwardedProperties;
-	bool isContainer = false;
 
 	override string toString()
 	{
@@ -79,6 +78,7 @@ class WidgetTemplate
 	SubwidgetTemplate[string] subwidgetsmap;
 	string baseType;
 	string name;
+	string container;
 
 	SubwidgetTemplate findSubwidgetByName(string name)
 	{
@@ -92,6 +92,6 @@ class WidgetTemplate
 	override string toString()
 	{
 		return tree.toString() ~ 
-				"base: " ~ baseType ~ "\n";
+				"base: " ~ baseType ~ " cont: " ~ container~"\n";
 	}
 }

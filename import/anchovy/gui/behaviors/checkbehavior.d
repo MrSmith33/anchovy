@@ -9,7 +9,7 @@ module anchovy.gui.behaviors.checkbehavior;
 import anchovy.gui;
 import anchovy.gui.interfaces.iwidgetbehavior;
 
-//version = Check_debug;
+version = Check_debug;
 
 
 class CheckBehavior : IWidgetBehavior
@@ -103,8 +103,8 @@ public:
 	{
 		isHovered = false;
 
+		version(Check_debug) writefln("pointerLeaved isHovered %s", isHovered);
 		updateState();
-		version(Check_debug) writeln("pointerLeaved");
 
 		return true;
 	}
@@ -115,7 +115,7 @@ public:
 	
 	void updateState()
 	{
-		version(Check_debug)  writeln(_widget["name"], " ", _widget["type"]);
+		version(Check_debug) writefln("%s %s isHovered %s", _widget["name"], _widget["type"], isHovered);
 
 		uint checked = _widget.getPropertyAs!("isChecked", bool) ? 1 : 0;
 		uint hovered = isHovered ? 2 : 0;

@@ -146,8 +146,20 @@ public:
 
 	bool handleDraw(Widget widget, DrawEvent event)
 	{
-		if(widget.getPropertyAs!("isVisible", bool))
-			event.guiRenderer.drawControlBack(widget, widget["staticRect"].get!Rect);
+		Rect staticRect = widget.getPropertyAs!("staticRect", Rect);
+		bool clipContent = widget.hasProperty!("clipContent");
+
+		if (clipContent)
+		{
+			//writeln("clipContent");
+			event.guiRenderer.pushClientArea(staticRect);
+		}
+
+		if (widget.getPropertyAs!("isVisible", bool))
+			event.guiRenderer.drawControlBack(widget, staticRect);
+
+		if (clipContent)
+			event.guiRenderer.popClientArea;
 
 		return true;
 	}

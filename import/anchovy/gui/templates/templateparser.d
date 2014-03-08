@@ -88,7 +88,7 @@ final class TemplateParser
 		templ.tree.properties["type"] = templateTag.name;
 
 		//----------------------- Parse template properties ------------------------
-		SubwidgetTemplate childrenContainer;
+		string childrenContainer;
 
 		foreach(prop; templateTag.attributes)
 		{
@@ -102,7 +102,7 @@ final class TemplateParser
 					{
 						if (childrenContainer !is null)
 							writeln("template:", templ.name, " Error: Multiple children containers not allowed. Overriding with last");
-						childrenContainer = *container;
+						childrenContainer = prop.value.coerce!string;
 					}
 					else
 					{
@@ -116,7 +116,7 @@ final class TemplateParser
 
 		if (childrenContainer)
 		{
-			childrenContainer.isContainer = true;
+			templ.container = childrenContainer;
 		}
 
 		if (forwardedPropertiesTag)

@@ -12,6 +12,7 @@ import anchovy.graphics.windows.glfwwindow;
 import anchovy.gui;
 
 import anchovy.gui.application.application;
+import anchovy.gui.databinding.list;
 
 class TestApplication : Application!GlfwWindow
 {
@@ -26,6 +27,7 @@ class TestApplication : Application!GlfwWindow
 
 		// ----------------------------- Creating widgets -----------------------------
 		templateManager.parseFile("test.sdl");
+		writeln(templateManager.getTemplate("container"));
 
 		auto mainLayer = context.createWidget("mainLayer");
 		context.addRoot(mainLayer);
@@ -58,10 +60,26 @@ class TestApplication : Application!GlfwWindow
 		auto vertText = context.getWidgetById("vert-pos");
 
 		auto horiScroll = context.getWidgetById("hori-scroll");
-		horiScroll.property("sliderPos").pipeTo(horiText.property("text"), (Variant val) => Variant(to!string(val)));
+		horiScroll.property("sliderPos").bindTo(horiText.property("text"), (Variant val) => Variant(to!string(val)));
 		auto vertScroll = context.getWidgetById("vert-scroll");
-		vertScroll.property("sliderPos").pipeTo(vertText.property("text"), (Variant val) => Variant(to!string(val)));
+		vertScroll.property("sliderPos").bindTo(vertText.property("text"), (Variant val) => Variant(to!string(val)));
 
+		auto list = new SimpleList!dstring;
+
+		void printWidget(Widget widget, string spacing)
+		{
+			writefln(spacing~"%s %s", widget["type"], widget["name"]);
+
+			foreach(child; widget["children"].get!(Widget[]))
+			{
+				printWidget(child, spacing~"  ");
+			}
+		}
+
+		foreach(root; context.roots)
+		{
+			printWidget(root, "");
+		}
 
 		writeln("\n----------------------------- Load end -----------------------------\n");
 	}

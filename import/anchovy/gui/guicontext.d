@@ -31,7 +31,7 @@ module anchovy.gui.guicontext;
 import anchovy.gui;
 import anchovy.gui.interfaces.iwidgetbehavior : IWidgetBehavior;
 
-//version = Debug_guicontext;
+version = Debug_guicontext;
 
 class GuiContext
 {
@@ -69,7 +69,7 @@ class GuiContext
 			doLayout();
 			isLayoutValid = true;
 
-			if (pressedWidget !is null)
+			if (pressedWidget is null)
 			{
 				scope moveEvent = new PointerMoveEvent(lastPointerPosition, ivec2(0, 0));
 				moveEvent.context = this;
@@ -224,11 +224,6 @@ public:
 			version(Debug_guicontext) writeln(subwidget[propertyKey]);
 		}
 
-		if (sub.isContainer)
-		{
-			root["container"] = subwidget;
-		}
-
 		Variant* name = "name" in sub.properties;
 		if(name)
 		{
@@ -243,6 +238,7 @@ public:
 		//------------------------ Creating subwidgets -------------------------
 		foreach(subtemplate; sub.subwidgets)
 		{
+			version(Debug_guicontext) writefln("%s: Adding subwidget %s", subwidget["name"], subtemplate.properties["type"].get!string);
 			createSubwidget(subtemplate, createWidget(subtemplate.properties["type"].get!string, subwidget), root);
 		}
 
@@ -278,6 +274,18 @@ public:
 			//----------------------- Template construction ------------------------
 			// Recursively creates widgets as stated in template. widget is root of that tree.
 			widget = createSubwidget(templ.tree, baseWidget, baseWidget);
+
+			if (templ.container)
+			{
+				auto subwidgets = widget.getPropertyAs!("subwidgets", Widget[string]);
+				auto container = subwidgets[templ.container];
+				if (container)
+				{
+					version(Debug_guicontext) writefln("Adding container %s", templ.container);
+					widget["container"] = container;
+				}
+			}
+
 
 			widget["template"] = templ;
 		}
