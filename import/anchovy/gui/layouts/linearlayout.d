@@ -192,9 +192,4 @@ private:
 		else
 			return &(vector.arrayof[1]);
 	}
-
-	static pure int max(int a, int b)
-	{
-		return a > b ? a : b;
-	}
 }

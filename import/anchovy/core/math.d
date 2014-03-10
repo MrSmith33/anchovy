@@ -30,7 +30,12 @@ module anchovy.core.math;
 
 import anchovy.core.types;
 
-ivec2 max(ivec2 a, ivec2 b)
+pure ivec2 max(ivec2 a, ivec2 b)
 {
 	return ivec2(a.x > b.x ? a.x : b.x, a.y > b.y ? a.y : b.y);
+}
+
+pure int max(int a, int b)
+{
+	return a > b ? a : b;
 }

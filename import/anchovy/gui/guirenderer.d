@@ -127,6 +127,12 @@ class SkinnedGuiRenderer : IGuiRenderer
 	/// Draws background of widget.
 	override void drawControlBack(Widget widget, Rect staticRect)
 	{
+		if (_clientAreaStack.length > 0)
+		{
+			Rect clip = _clientAreaStack.back;
+			if (clip.width*clip.height == 0) return;
+		}
+
 		string styleName = widget.getPropertyAs!("style", string);
 		string stateName = widget.getPropertyAs!("state", string);
 
@@ -176,6 +182,12 @@ class SkinnedGuiRenderer : IGuiRenderer
 	/// Draws line of text aligning it to the position.
 	override void drawTextLine(TextLine line, ivec2 position, in AlignmentType alignment)
 	{
+		if (_clientAreaStack.length > 0)
+		{
+			Rect clip = _clientAreaStack.back;
+			if (clip.width*clip.height == 0) return;
+		}
+
 		if (!line.isInited)
 		{
 			return;
@@ -204,6 +216,12 @@ class SkinnedGuiRenderer : IGuiRenderer
 	/// Draws line of text aligning it inside rectangle.
 	override void drawTextLine(TextLine line, in Rect area, in AlignmentType alignment)
 	{
+		if (_clientAreaStack.length > 0)
+		{
+			Rect clip = _clientAreaStack.back;
+			if (clip.width*clip.height == 0) return;
+		}
+
 		if (!line.isInited)
 		{
 			return;
