@@ -70,8 +70,13 @@ public:
 
 	bool handleDraw(Widget widget, DrawEvent event)
 	{
-		event.guiRenderer.renderer.setColor(Color(0, 0, 0, 255));
-		event.guiRenderer.drawTextLine(widget.getPropertyAs!("line", TextLine), widget.getPropertyAs!("staticPosition", ivec2), AlignmentType.LEFT_TOP);
+		if (event.sinking)
+		{
+			event.guiRenderer.renderer.setColor(Color(0, 0, 0, 255));
+			event.guiRenderer.drawTextLine(widget.getPropertyAs!("line", TextLine),
+				widget.getPropertyAs!("staticPosition", ivec2), AlignmentType.LEFT_TOP);
+		}
+		
 		return true;
 	}
 }

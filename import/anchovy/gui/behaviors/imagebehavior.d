@@ -86,7 +86,7 @@ class ImageBehavior : IWidgetBehavior
 
 	bool handleDraw(Widget widget, DrawEvent event)
 	{
-		if(widget.getPropertyAs!("isVisible", bool))
+		if(widget.getPropertyAs!("isVisible", bool) && event.sinking)
 		{
 			Texture texture = widget.getPropertyAs!("texture", Texture);
 			//writeln(texture.size);

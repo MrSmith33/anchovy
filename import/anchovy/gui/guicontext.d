@@ -505,7 +505,7 @@ public:
 
 		foreach(root; roots)
 		{
-			root.propagateEventParentFirst(event);
+			root.propagateEventSinkBubbleTree(event);
 		}
 	}
 

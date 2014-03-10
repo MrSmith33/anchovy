@@ -71,10 +71,24 @@ public:
 			_viewport.setProperty!("layout", ILayout)(new ViewportLayout);
 			_viewport.property("size").valueChanged.connect(&updateSize);
 			_canvas.property("size").valueChanged.connect(&updateSize);
+			_vertscroll.property("sliderPos").valueChanged.connect(&sliderMoved);
+
+			sliderMoved(null, _vertscroll.property("sliderPos").value);
 		}
 	}
 
-	void updateSize(FlexibleObject widget, Variant position)
+	void sliderMoved(FlexibleObject widget, Variant position)
+	{
+		ivec2 viewSize = _viewport.getPropertyAs!("size", ivec2);
+		ivec2 canvasSize = _canvas.getPropertyAs!("size", ivec2);
+
+		int avalPos = canvasSize.y - viewSize.y;
+		int newCanvasPos = avalPos < 0 ? 0 : -cast(int)(position.get!double * avalPos); 
+
+		_canvas.setProperty!("position")(ivec2(0, newCanvasPos));
+	}
+
+	void updateSize(FlexibleObject widget, Variant size)
 	{
 		_vertscroll.setProperty!"sliderSize"(scrollSize());
 	}

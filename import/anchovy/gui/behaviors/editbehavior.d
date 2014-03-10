@@ -47,31 +47,34 @@ class EditBehavior : LabelBehavior
 
 	override bool handleDraw(Widget widget, DrawEvent event)
 	{
-		ivec2 staticPos = widget.getPropertyAs!("staticPosition", ivec2);
-		Rect staticRect = widget.getPropertyAs!("staticRect", Rect);
+		if (event.sinking)
+		{
+			ivec2 staticPos = widget.getPropertyAs!("staticPosition", ivec2);
+			Rect staticRect = widget.getPropertyAs!("staticRect", Rect);
 
-		event.guiRenderer.drawControlBack(widget, staticRect);
-		assert(_textLine);
+			event.guiRenderer.drawControlBack(widget, staticRect);
+			assert(_textLine);
 
-		event.guiRenderer.pushClientArea(staticRect);
-			event.guiRenderer.renderer.setColor(Color(0,0,0));
-			event.guiRenderer.drawTextLine(_textLine, ivec2(staticPos.x + _textPos.x + _contentOffset.left, staticPos.y), AlignmentType.LEFT_TOP);
-			
-			if (_isFocused && _isCursorVisible && _isCursorBlinkVisible)
-			{
-				event.guiRenderer.renderer.fillRect(Rect(staticPos.x + _cursorRenderPos + _textPos.x + _contentOffset.left,
-			                                	staticPos.y + staticRect.size.y/2 - _textLine.height/2,
-			                                	1, _textLine.height));
-			}
-			if (_hasSelectedText)
-			{
-				event.guiRenderer.renderer.setColor(Color(0,0,255, 64));
-				uint selectionStartX = calcCharOffset(_selectionStart);
-					event.guiRenderer.renderer.fillRect(Rect(staticPos.x + _textPos.x + _contentOffset.left + selectionStartX,
+			event.guiRenderer.pushClientArea(staticRect);
+				event.guiRenderer.renderer.setColor(Color(0,0,0));
+				event.guiRenderer.drawTextLine(_textLine, ivec2(staticPos.x + _textPos.x + _contentOffset.left, staticPos.y), AlignmentType.LEFT_TOP);
+				
+				if (_isFocused && _isCursorVisible && _isCursorBlinkVisible)
+				{
+					event.guiRenderer.renderer.fillRect(Rect(staticPos.x + _cursorRenderPos + _textPos.x + _contentOffset.left,
 				                                	staticPos.y + staticRect.size.y/2 - _textLine.height/2,
-					                               	calcCharOffset(_selectionEnd) - selectionStartX, _textLine.height));
-			}
-		event.guiRenderer.popClientArea;
+				                                	1, _textLine.height));
+				}
+				if (_hasSelectedText)
+				{
+					event.guiRenderer.renderer.setColor(Color(0,0,255, 64));
+					uint selectionStartX = calcCharOffset(_selectionStart);
+						event.guiRenderer.renderer.fillRect(Rect(staticPos.x + _textPos.x + _contentOffset.left + selectionStartX,
+					                                	staticPos.y + staticRect.size.y/2 - _textLine.height/2,
+						                               	calcCharOffset(_selectionEnd) - selectionStartX, _textLine.height));
+				}
+			event.guiRenderer.popClientArea;
+		}
 
 		return true;
 	}

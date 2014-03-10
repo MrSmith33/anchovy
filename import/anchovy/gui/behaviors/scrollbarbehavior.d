@@ -38,6 +38,7 @@ public:
 			_widget["sliderPos"] = new ValueProperty(_widget, 0.0);
 
 			_widget.property("sliderPos").valueChanging.connect(&handleSliderPositionChanging);
+			_widget.property("sliderSize").valueChanging.connect(&handleSliderPositionChanging);
 
 			updateSize();
 		}
@@ -49,7 +50,7 @@ public:
 		{
 			_slider.setProperty!"size"(ivec2(_body.size.value.get!ivec2.x, cast(int)(_body.size.value.get!ivec2.y * _widget["sliderSize"].get!double)));
 			_slider.setProperty!"position"(ivec2(0, 
-				cast(int)((_body.size.value.get!ivec2.y - _slider["size"].get!ivec2.y) * _widget["sliderPos"].get!double)));
+				cast(int)((clamp(_body.size.value.get!ivec2.y - _slider["size"].get!ivec2.y, 0, int.max)) * _widget["sliderPos"].get!double)));
 		}
 		else
 		{
@@ -59,6 +60,11 @@ public:
 		}
 	}
 
+	double clampToNormal(double num)
+	{
+		return num < 0 ? 0 : (num > 1.0 ? 1.0 : num);
+	}
+
 	void handleSliderPositionChanging(FlexibleObject widget, Variant* position)
 	{
 		double* pos = (*position).peek!double;
@@ -66,8 +72,7 @@ public:
 
 		if (pos)
 		{
-			if (*pos < 0) *pos = 0;
-			else if (*pos > 1.0) *pos = 1.0;
+			*pos = clampToNormal(*pos);
 		}
 
 		*position = *pos;
@@ -92,7 +97,7 @@ public:
 			int pos = position.get!ivec2.x;
 			bodySize = _body.size.value.get!ivec2.x;
 			sliderSize = _slider.size.value.get!ivec2.x;
-			newPosition = pos < 0 ? 0 : (pos + sliderSize > bodySize ? bodySize - sliderSize : pos);
+			newPosition = pos < 0 ? 0 : ((pos + sliderSize) > bodySize ? bodySize - sliderSize : pos);
 			(*position) = ivec2(newPosition, 0);
 		}
 
