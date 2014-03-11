@@ -15,6 +15,11 @@ import anchovy.gui.interfaces.iwidgetbehavior;
 
 class SliderBehavior : IWidgetBehavior
 {
+protected:
+	ivec2 _dragPosition;
+
+public:
+
 	override void attachTo(Widget widget)
 	{
 		widget.addEventHandler(&pointerMoved);
@@ -28,10 +33,11 @@ class SliderBehavior : IWidgetBehavior
 	{
 		if (event.context.pressedWidget is widget )
 		{
-			widget["position"] = event.delta + widget["position"].get!ivec2;
+			ivec2 deltaPos = event.pointerPosition - widget.getPropertyAs!("staticPosition", ivec2) - _dragPosition;
+
+			widget["position"] = widget.getPropertyAs!("position", ivec2) + deltaPos;
 		}
 		
-
 		return true;
 	}
 
@@ -39,6 +45,8 @@ class SliderBehavior : IWidgetBehavior
 	{
 		if (event.button == PointerButton.PB_LEFT)
 		{
+			_dragPosition = event.pointerPosition - widget.getPropertyAs!("staticPosition", ivec2);
+
 			return true;
 		}
 
@@ -49,5 +57,4 @@ class SliderBehavior : IWidgetBehavior
 	{
 		return true;
 	}
-
 }

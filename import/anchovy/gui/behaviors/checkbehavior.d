@@ -9,7 +9,7 @@ module anchovy.gui.behaviors.checkbehavior;
 import anchovy.gui;
 import anchovy.gui.interfaces.iwidgetbehavior;
 
-version = Check_debug;
+//version = Check_debug;
 
 
 class CheckBehavior : IWidgetBehavior
