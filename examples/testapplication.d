@@ -44,10 +44,6 @@ class TestApplication : Application!GlfwWindow
 		auto image = context.getWidgetById("fontTexture");
 		image.setProperty!("texture")(guiRenderer.getFontTexture);
 
-		auto fpsLabel = context.getWidgetById("fpsLabel");
-		auto fpsSlot = (FpsHelper* helper){fpsLabel["text"] = to!string(helper.fps);};
-		fpsHelper.fpsUpdated.connect(fpsSlot);
-
 		auto firstName = context.getWidgetById("firstName");
 		auto lastName = context.getWidgetById("lastName");
 		auto fullName = context.getWidgetById("fullName");
@@ -65,6 +61,19 @@ class TestApplication : Application!GlfwWindow
 		vertScroll.property("sliderPos").bindTo(vertText.property("text"), (Variant val) => Variant(to!string(val)));
 
 		auto list = new SimpleList!dstring;
+
+		auto stringList = context.getWidgetById("stringlist");
+
+		stringList.setProperty!("list", List!dstring)(list);
+
+		list.push("first");
+		list.push("second");
+		list.push("third");
+		list.push("fourth");
+
+		auto fpsLabel = context.getWidgetById("fpsLabel");
+		auto fpsSlot = (FpsHelper* helper){fpsLabel["text"] = to!string(helper.fps); list.push(to!dstring(helper.fps));};
+		fpsHelper.fpsUpdated.connect(fpsSlot);
 
 		void printWidget(Widget widget, string spacing)
 		{

@@ -31,7 +31,8 @@ module anchovy.gui.interfaces.iwidgetbehavior;
 
 import anchovy.gui.widget;
 
-interface IWidgetBehavior
+abstract class IWidgetBehavior
 {
+	void attachPropertiesTo(Widget widget){}
 	void attachTo(Widget widget);
 }

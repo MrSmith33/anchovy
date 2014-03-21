@@ -248,6 +248,24 @@ public:
 	Widget createWidget(string type, Widget parent = null)
 	{
 		Widget widget;
+		IWidgetBehavior[] behaviors;
+
+		void attachBehaviorProperties(Widget _widget)
+		{
+			//----------------------- Attaching behaviors properties ---------------------------
+
+			if (auto factories = type in behaviorFactories)
+			{
+				IWidgetBehavior behavior;
+
+				foreach(factory; *factories)
+				{
+					behavior = factory();
+					behavior.attachPropertiesTo(_widget);
+					behaviors ~= behavior;
+				}
+			}
+		}
 
 		//----------------------- Instatiating templates ---------------------------
 
@@ -265,6 +283,7 @@ public:
 			else
 			{
 				baseWidget = createBaseWidget(type); // Create using factory.
+				attachBehaviorProperties(baseWidget);
 			}
 
 			baseWidget["type"] = type;
@@ -293,6 +312,7 @@ public:
 		{
 			// if there is no template, lets create regular one.
 			widget = createBaseWidget(type);
+			attachBehaviorProperties(widget);
 		}
 
 		// default style
@@ -314,12 +334,9 @@ public:
 		}
 
 		//----------------------- Attaching behaviors ---------------------------
-		if (auto factories = type in behaviorFactories)
+		foreach(behavior; behaviors)
 		{
-			foreach(factory; *factories)
-			{
-				factory().attachTo(widget);
-			}
+			behavior.attachTo(widget);
 		}
 
 		return widget;

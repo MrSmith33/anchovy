@@ -128,6 +128,31 @@ protected:
 
 public:
 
+	override void attachPropertiesTo(Widget widget)
+	{
+		widget.property("list").valueChanged.connect(&listAssigned);
+	}
+
+	void listAssigned(FlexibleObject widget, Variant newList)
+	{
+		if (newList.type !is typeid(StringList)) return;
+
+		auto oldList = _list;
+
+		_list = newList.get!StringList;
+
+		if (_list is null && oldList !is null)
+		{
+			oldList.listChangedSignal.disconnectAll();
+		}
+
+		refreshItems();
+
+		if (_list is null) return;
+
+		_list.listChangedSignal.connect((){refreshItems();writeln("update");});
+	}
+
 	override void attachTo(Widget widget)
 	{
 		super.attachTo(widget);
@@ -144,26 +169,17 @@ public:
 
 			sliderMoved(null, _vertscroll.property("sliderPos").value);
 
-			_list = new SimpleList!dstring;
-
-			foreach(_; 0..100)
-			{
-				_list.push("hello"~to!dstring(_));
-			}
-
 			refreshItems();
 		}
 	}
 
-	void list(StringList newList) @property
-	{
-		_list = newList;
-
-		refreshItems();
-	}
-
 	void refreshPageSize()
 	{
+		if (_list is null)
+		{
+			itemsPerPage = 0;
+		}
+
 		ivec2 viewSize = _viewport.getPropertyAs!("size", ivec2);
 		//writefln("viewSize %s _itemHeight %s", viewSize.y, _itemHeight);
 
@@ -186,14 +202,18 @@ public:
 		}
 
 		numLabels = itemsPerPage;
+
+		if (_list is null) return;
 		
 		double sliderSize = cast(double)itemsPerPage / _list.length;
-		//writefln("%s %s", itemsPerPage, sliderSize);
+		writefln("%s %s", itemsPerPage, sliderSize);
 		_vertscroll.setProperty!("sliderSize", double)(sliderSize);
 	}
 
 	void refreshPagePos()
 	{
+		if (_list is null) return;
+
 		double sliderPos = _vertscroll.getPropertyAs!("sliderPos", double);
 
 		firstVisible = cast(size_t)(sliderPos * (_list.length - itemsPerPage));
@@ -225,7 +245,7 @@ public:
 
 		Widget[] labels = _canvas.getPropertyAs!("children", Widget[]);
 
-		foreach(itemIndex; firstVisible..firstVisible + itemsPerPage)
+		foreach(itemIndex; firstVisible..firstVisible + itemsToShow)
 		{
 			//Widget label = context.createWidget("label", _canvas);
 			labels[itemIndex - firstVisible].setProperty!"text"(_list[itemIndex]);
@@ -254,7 +274,6 @@ public:
 
 	void updateSize(FlexibleObject widget, Variant size)
 	{
-		_vertscroll.setProperty!"sliderSize"(scrollSize());
 		refreshItems();
 	}
 

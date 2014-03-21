@@ -13,10 +13,13 @@ abstract class List(ItemType)
 	alias ItemAddedSignal = Signal!(size_t, ItemType);
 	alias ItemRemovedSignal = Signal!(size_t, ItemType);
 	alias ItemChangedSignal = Signal!(size_t, ItemType);
+	alias ListChangedSignal = Signal!();
 
 	ItemAddedSignal itemAddedSignal;
 	ItemRemovedSignal itemRemovedSignal;
 	ItemChangedSignal itemChangedSignal;
+	ListChangedSignal listChangedSignal;
+
 
 	ItemType opIndex(size_t index);
 	ItemType opIndexAssign(ItemType data, size_t index);
@@ -48,7 +51,9 @@ public:
 
 	override ItemType opIndexAssign(ItemType data, size_t index)
 	{
+		listChangedSignal.emit();
 		itemChangedSignal.emit(index, data);
+		
 		return _array[index];
 	}
 
@@ -60,6 +65,8 @@ public:
 	override size_t push(ItemType item)
 	{
 		_array ~= item;
+
+		listChangedSignal.emit();
 		itemAddedSignal.emit(length - 1, _array[length-1]);
 
 		return length - 1;
@@ -70,6 +77,7 @@ public:
 		ItemType item = _array[index];
 		_array.remove(index);
 
+		listChangedSignal.emit();
 		itemRemovedSignal.emit(index, item);
 
 		return item;
