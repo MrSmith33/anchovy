@@ -62,5 +62,6 @@ void attachDefaultBehaviors(GuiContext context)
 	context.behaviorFactories["slider"] ~= delegate IWidgetBehavior (){return new SliderBehavior;};
 	context.behaviorFactories["scrollbar-vert"] ~= delegate IWidgetBehavior (){return new ScrollbarBehaviorVert;};
 	context.behaviorFactories["scrollbar-hori"] ~= delegate IWidgetBehavior (){return new ScrollbarBehaviorHori;};
-	context.behaviorFactories["list"] ~= delegate IWidgetBehavior (){return new ListBehavior;};
+	context.behaviorFactories["widgetlist"] ~= delegate IWidgetBehavior (){return new WidgetListBehavior;};
+	context.behaviorFactories["stringlist"] ~= delegate IWidgetBehavior (){return new StringListBehavior;};
 }

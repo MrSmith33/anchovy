@@ -31,7 +31,7 @@ module anchovy.gui.guicontext;
 import anchovy.gui;
 import anchovy.gui.interfaces.iwidgetbehavior : IWidgetBehavior;
 
-version = Debug_guicontext;
+//version = Debug_guicontext;
 
 class GuiContext
 {

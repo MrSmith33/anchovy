@@ -28,7 +28,7 @@ abstract class List(ItemType)
 
 	final ItemType pop()
 	{
-		return remove(length);
+		return remove(length - 1);
 	}
 }
 

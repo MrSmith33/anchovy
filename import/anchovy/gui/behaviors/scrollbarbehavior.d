@@ -9,8 +9,6 @@ module anchovy.gui.behaviors.scrollbarbehavior;
 import anchovy.gui;
 import anchovy.gui.interfaces.iwidgetbehavior;
 
-// version = Button_debug;
-
 alias ScrollbarBehaviorVert = ScrollbarBehavior!true;
 alias ScrollbarBehaviorHori = ScrollbarBehavior!false;
 
