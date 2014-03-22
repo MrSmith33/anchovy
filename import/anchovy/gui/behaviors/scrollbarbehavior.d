@@ -6,6 +6,7 @@ Authors: Andrey Penechko.
 
 module anchovy.gui.behaviors.scrollbarbehavior;
 
+import anchovy.core.math;
 import anchovy.gui;
 import anchovy.gui.interfaces.iwidgetbehavior;
 
@@ -48,20 +49,25 @@ public:
 
 	void updateSize()
 	{
+		ivec2 minSize = _slider.getPropertyAs!("minSize", ivec2);
 		static if (vertical)
 		{
 			int size = cast(int)(_body.size.value.get!ivec2.y * _widget["sliderSize"].get!double);
-			_slider.setProperty!"size"(ivec2(_body.size.value.get!ivec2.x, size));
+			_slider.setProperty!"size"(ivec2(_body.size.value.get!ivec2.x, max(size, minSize.y)));
 
 			int bodyy = _body.size.value.get!ivec2.y;
-			int position = cast(int)((clamp(bodyy - _slider["size"].get!ivec2.y, 0, int.max)) * _widget["sliderPos"].get!double);
+			int position = cast(int)((clamp(bodyy - _slider["size"].get!ivec2.y, 0, int.max)) *
+				_widget["sliderPos"].get!double);
 			_slider.setProperty!"position"(ivec2(0, bodyy - size));
 		}
 		else
 		{
-			_slider.setProperty!"size"(ivec2(cast(int)(_body.size.value.get!ivec2.x * _widget["sliderSize"].get!double), _body.size.value.get!ivec2.y));
+			_slider.setProperty!"size"(
+				ivec2(cast(int)(_body.size.value.get!ivec2.x * _widget["sliderSize"].get!double),
+						max(minSize.x, _body.size.value.get!ivec2.y)));
 			_slider.setProperty!"position"(
-				ivec2(cast(int)((_body.size.value.get!ivec2.x - _slider["size"].get!ivec2.x) * _widget["sliderPos"].get!double), 0));
+				ivec2(cast(int)((_body.size.value.get!ivec2.x - _slider["size"].get!ivec2.x) *
+					_widget["sliderPos"].get!double), 0));
 		}
 	}
 
