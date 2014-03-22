@@ -66,13 +66,15 @@ class TestApplication : Application!GlfwWindow
 
 		stringList.setProperty!("list", List!dstring)(list);
 
+		ulong counter = 0;
+
 		list.push("first");
 		list.push("second");
 		list.push("third");
 		list.push("fourth");
 
 		auto fpsLabel = context.getWidgetById("fpsLabel");
-		auto fpsSlot = (FpsHelper* helper){fpsLabel["text"] = to!string(helper.fps); list.push(to!dstring(helper.fps));};
+		auto fpsSlot = (FpsHelper* helper){fpsLabel["text"] = to!string(helper.fps); list.push(to!dstring(++counter)~": "~to!dstring(helper.fps));};
 		fpsHelper.fpsUpdated.connect(fpsSlot);
 
 		void printWidget(Widget widget, string spacing)

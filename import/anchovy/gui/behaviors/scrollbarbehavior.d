@@ -21,6 +21,12 @@ protected:
 
 public:
 
+	override void attachPropertiesTo(Widget widget)
+	{
+		widget["sliderSize"] = new ValueProperty(_widget, 0.5);
+		widget["sliderPos"] = new ValueProperty(_widget, 0.0);
+	}
+
 	override void attachTo(Widget widget)
 	{
 		_body = widget["subwidgets"].get!(Widget[string]).get("body", null);
@@ -30,13 +36,11 @@ public:
 		if (_slider && _body)
 		{
 			_body.size.valueChanged.connect((FlexibleObject obj, Variant value){updateSize();});
+
 			_slider.position.valueChanging.connect(&handleSliderMoved);
 
-			_widget["sliderSize"] = new ValueProperty(_widget, 0.5);
-			_widget["sliderPos"] = new ValueProperty(_widget, 0.0);
-
 			_widget.property("sliderPos").valueChanging.connect(&handleSliderPositionChanging);
-			_widget.property("sliderSize").valueChanging.connect(&handleSliderPositionChanging);
+			_widget.property("sliderSize").valueChanging.connect(&handleSliderSizeChanging);
 
 			updateSize();
 		}
@@ -46,9 +50,12 @@ public:
 	{
 		static if (vertical)
 		{
-			_slider.setProperty!"size"(ivec2(_body.size.value.get!ivec2.x, cast(int)(_body.size.value.get!ivec2.y * _widget["sliderSize"].get!double)));
-			_slider.setProperty!"position"(ivec2(0, 
-				cast(int)((clamp(_body.size.value.get!ivec2.y - _slider["size"].get!ivec2.y, 0, int.max)) * _widget["sliderPos"].get!double)));
+			int size = cast(int)(_body.size.value.get!ivec2.y * _widget["sliderSize"].get!double);
+			_slider.setProperty!"size"(ivec2(_body.size.value.get!ivec2.x, size));
+
+			int bodyy = _body.size.value.get!ivec2.y;
+			int position = cast(int)((clamp(bodyy - _slider["size"].get!ivec2.y, 0, int.max)) * _widget["sliderPos"].get!double);
+			_slider.setProperty!"position"(ivec2(0, bodyy - size));
 		}
 		else
 		{
@@ -63,17 +70,25 @@ public:
 		return num < 0 ? 0 : (num > 1.0 ? 1.0 : num);
 	}
 
-	void handleSliderPositionChanging(FlexibleObject widget, Variant* position)
+	// clamps value to [0.0..1.0]
+	void handleSliderPositionChanging(FlexibleObject widget, Variant* value)
 	{
-		double* pos = (*position).peek!double;
-		if (!pos) *pos = (*position).coerce!double;
+		double* val = (*value).peek!double;
+		if (!val) *val = (*value).coerce!double;
 
-		if (pos)
+		if (val)
 		{
-			*pos = clampToNormal(*pos);
+			*val = clampToNormal(*val);
 		}
 
-		*position = *pos;
+		*value = *val;
+	}
+
+	void handleSliderSizeChanging(FlexibleObject widget, Variant* value)
+	{
+		handleSliderPositionChanging(widget, value);
+
+		updateSize();
 	}
 
 	void handleSliderMoved(FlexibleObject slider, Variant* position)

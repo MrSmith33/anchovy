@@ -150,7 +150,7 @@ public:
 
 		if (_list is null) return;
 
-		_list.listChangedSignal.connect((){refreshItems();writeln("update");});
+		_list.listChangedSignal.connect((){refreshItems();});
 	}
 
 	override void attachTo(Widget widget)
@@ -206,7 +206,7 @@ public:
 		if (_list is null) return;
 		
 		double sliderSize = cast(double)itemsPerPage / _list.length;
-		writefln("%s %s", itemsPerPage, sliderSize);
+		//writefln("%s %s", itemsPerPage, sliderSize);
 		_vertscroll.setProperty!("sliderSize", double)(sliderSize);
 	}
 
@@ -216,7 +216,8 @@ public:
 
 		double sliderPos = _vertscroll.getPropertyAs!("sliderPos", double);
 
-		firstVisible = cast(size_t)(sliderPos * (_list.length - itemsPerPage));
+		ptrdiff_t visible = cast(ptrdiff_t)(sliderPos * (_list.length - itemsPerPage));
+		firstVisible = visible < 0 ? 0 : visible;
 
 		if (_list.length > itemsPerPage)
 		{
@@ -244,6 +245,7 @@ public:
 		//writefln("itemsToShow %s itemsPerPage %s", itemsToShow, itemsPerPage);
 
 		Widget[] labels = _canvas.getPropertyAs!("children", Widget[]);
+		//writefln("%s %s", firstVisible, itemsToShow);
 
 		foreach(itemIndex; firstVisible..firstVisible + itemsToShow)
 		{
