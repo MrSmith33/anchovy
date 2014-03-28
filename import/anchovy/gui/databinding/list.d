@@ -51,7 +51,7 @@ public:
 
 	override ItemType opIndexAssign(ItemType data, size_t index)
 	{
-		array[index] = data;
+		_array[index] = data;
 		listChangedSignal.emit();
 		itemChangedSignal.emit(index, _array[index]);
 		
