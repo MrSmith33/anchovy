@@ -69,15 +69,19 @@ class EventAggregator(WindowType)
 		application.context.pointerMoved(position, deltaPos);
 	}
 
-	KeyModifiers getCurrentKeyModifiers()
+	uint getCurrentKeyModifiers()
 	{
-		KeyModifiers modifiers;
+		uint modifiers;
+
 		if (window.isKeyPressed(KeyCode.KEY_LEFT_SHIFT) || window.isKeyPressed(KeyCode.KEY_RIGHT_SHIFT))
 			modifiers |= KeyModifiers.SHIFT;
+			
 		if (window.isKeyPressed(KeyCode.KEY_LEFT_CONTROL) || window.isKeyPressed(KeyCode.KEY_RIGHT_CONTROL))
 			modifiers |= KeyModifiers.CONTROL;
+
 		if (window.isKeyPressed(KeyCode.KEY_LEFT_ALT) || window.isKeyPressed(KeyCode.KEY_RIGHT_ALT))
 			modifiers |= KeyModifiers.ALT;
+
 		return modifiers;
 	}
 

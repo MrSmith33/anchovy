@@ -137,18 +137,18 @@ class CharEnterEvent : Event
 
 abstract class KeyEvent : Event
 {
-	this(uint keyCode, KeyModifiers modifiers)
+	this(uint keyCode, uint modifiers)
 	{
 		this.keyCode = keyCode;
 		this.modifiers = modifiers;
 	}
 	uint keyCode;
-	KeyModifiers modifiers;
+	uint modifiers;
 }
 
 class KeyPressEvent : KeyEvent
 {
-	this(uint keyCode, KeyModifiers modifiers)
+	this(uint keyCode, uint modifiers)
 	{
 		super(keyCode, modifiers);
 	}
@@ -156,7 +156,7 @@ class KeyPressEvent : KeyEvent
 
 class KeyReleaseEvent : KeyEvent
 {
-	this(uint keyCode, KeyModifiers modifiers)
+	this(uint keyCode, uint modifiers)
 	{
 		super(keyCode, modifiers);
 	}

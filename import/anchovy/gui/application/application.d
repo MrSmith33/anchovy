@@ -16,6 +16,7 @@ public import anchovy.gui.application.fpshelper;
 class Application(WindowType)
 {
 	IWindow window;
+	EventAggregator!WindowType aggregator;
 	FpsHelper fpsHelper;
 	TimerManager timerManager;
 	bool isRunning = true;
@@ -30,7 +31,7 @@ class Application(WindowType)
 	{
 		window = new WindowType();
 
-		auto eventAggregator = new EventAggregator!WindowType(this, window);
+		aggregator = new EventAggregator!WindowType(this, window);
 		
 		window.init(windowSize, caption);
 	}

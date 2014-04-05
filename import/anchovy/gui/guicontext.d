@@ -79,7 +79,9 @@ class GuiContext
 	}
 
 protected:
-	KeyModifiers modifiers;
+
+	// Key modifiers
+	uint modifiers;
 
 	/// Gui renderer used for drawing all children widgets.
 	IGuiRenderer	_guiRenderer;
@@ -529,7 +531,7 @@ public:
 	/// Handler for key press event.
 	/// 
 	/// Must be called by user application.
-	bool keyPressed(in KeyCode key, KeyModifiers modifiers)
+	bool keyPressed(in KeyCode key, uint modifiers)
 	{
 		if (_focusedWidget !is null)
 		{
@@ -544,7 +546,7 @@ public:
 	/// Handler for key release event.
 	/// 
 	/// Must be called by user application.
-	bool keyReleased(in KeyCode key, KeyModifiers modifiers)
+	bool keyReleased(in KeyCode key, uint modifiers)
 	{
 		if (_focusedWidget !is null)
 		{
