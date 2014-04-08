@@ -10,6 +10,7 @@
    "homepage" : "http://github.com/MrSmith33/anchovy",
    "license" : "BSL-1.0",
    "name" : "anchovy",
+   "targetType" : "library",
    "subPackages" : [
       {
          "dependencies" : {
@@ -52,7 +53,7 @@
             "derelict-gl3" : "~master",
             "derelict-glfw3" : "~master",
             "dlib" : "~master",
-            "sdlang-d" : "0.8.4"
+            "sdlang-d" : "~master"
          },
          "importPaths" : [ "import" ],
          "name" : "gui",
@@ -68,8 +69,15 @@
          "sourcePaths" : [ "import/anchovy/utils" ],
          "targetPath" : "lib",
          "targetType" : "library"
+      },
+      {
+         "name" : "guidemo",
+         "sourcePaths" : ["examples"],
+         "dependencies" : {
+            "anchovy:gui" : "~master"
+         },
+         "targetPath" : "bin",
+         "targetType" : "executable"
       }
-   ],
-   "targetPath" : "lib",
-   "targetType" : "library"
+   ]
 }

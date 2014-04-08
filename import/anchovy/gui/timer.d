@@ -56,7 +56,7 @@ class Timer
 	/// 	handler specifies handler to be called when delay exceeds.
 
 	/// 	tickType sets processing method to be used with this timer.
-	void init(double _firstTime, double _currentTime, double _delay, TimerHandler _handler, TimerTickType _tickType = TimerTickType.init)
+	void initialize(double _firstTime, double _currentTime, double _delay, TimerHandler _handler, TimerTickType _tickType = TimerTickType.init)
 	in
 	{
 		assert(_handler);

@@ -91,7 +91,7 @@ class TimerManager
 		else
 			startTime += _delay;
 
-		timer.init(startTime, currentTime(), _delay, _handler, _tickType);
+		timer.initialize(startTime, currentTime(), _delay, _handler, _tickType);
 		addToQueue(timer);
 
 		return timer;
@@ -123,7 +123,7 @@ class TimerManager
 			}
 		}
 
-		debug throw new Exception("Tried to stop not running timer");
+		assert("Tried to stop not running timer");
 	}
 
 protected:
@@ -150,7 +150,7 @@ protected:
 
 	void sortTimers()
 	{
-		sort!("a.nextUpdateTime<b.nextUpdateTime")(queue);
+		sort!(q{a.nextUpdateTime < b.nextUpdateTime})(queue);
 	}
 
 	Timer[]	freeTimers;
