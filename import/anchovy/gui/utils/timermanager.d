@@ -26,9 +26,9 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.gui.timermanager;
+module anchovy.gui.utils.timermanager;
 
-public import anchovy.gui.timer;
+public import anchovy.gui.utils.timer;
 
 import core.time;
 import std.array;

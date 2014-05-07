@@ -26,7 +26,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.gui.guiskin;
+module anchovy.gui.skin.guiskin;
 
 import anchovy.gui;
 import anchovy.graphics.interfaces.irenderer;

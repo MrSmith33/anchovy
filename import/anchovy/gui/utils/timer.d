@@ -26,7 +26,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.gui.timer;
+module anchovy.gui.utils.timer;
 
 import core.time;
 import std.math: isNaN, trunc;

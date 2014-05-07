@@ -4,7 +4,7 @@ License: a$(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
 Authors: Andrey Penechko.
 */
 
-module anchovy.gui.widgetmanager;
+module anchovy.gui.utils.widgetmanager;
 
 import anchovy.gui;
 

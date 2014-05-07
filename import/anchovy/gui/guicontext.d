@@ -7,8 +7,6 @@ Authors: Andrey Penechko.
 module anchovy.gui.guicontext;
 
 import anchovy.gui;
-import anchovy.gui.interfaces.iwidgetbehavior : IWidgetBehavior;
-public import anchovy.gui.widgetmanager;
 
 //version = Debug_guicontext;
 

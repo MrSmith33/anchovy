@@ -26,7 +26,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.gui.jsonguiskinparser;
+module anchovy.gui.skin.jsonguiskinparser;
 
 import std.array;
 import std.conv;

@@ -26,7 +26,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-module anchovy.gui.textline;
+module anchovy.gui.utils.textline;
 
 import anchovy.gui;
 public import anchovy.graphics.texrectarray;
