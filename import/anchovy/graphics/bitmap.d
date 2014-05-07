@@ -117,7 +117,7 @@ class Bitmap
 	{
 		assert(false, "putSubRect is not yet implemented");
 
-		dataChanged.emit();
+		//dataChanged.emit();
 	}
 
 	void putCustomSubRect(uvec2 dest, in Rect source, ubyte[] sourceData, in ubyte sDataByteDepth, in uint sDataWidth, in uint sDataHeight)

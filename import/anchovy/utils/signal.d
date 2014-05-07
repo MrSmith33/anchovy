@@ -178,7 +178,7 @@ unittest
 
 	auto num = 0;
 	// Testing static functions. 
-	static void staticSlot(int* num, int inc){*num += inc;};
+	static void staticSlot(int* num, int inc){*num += inc;}
 
 	test4.connect(&staticSlot);
 	assert(num == 0);

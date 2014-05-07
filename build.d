@@ -112,5 +112,5 @@ void main()
 		["deps/derelict-util-1.0.0/lib/DerelictUtil","deps/derelict-glfw3-master/lib/DerelictGLFW3", "deps/derelict-gl3-master/lib/DerelictGL3", "deps/derelict-ft-master/lib/DerelictFT", "deps/derelict-fi-master/lib/DerelictFI", "deps/dlib/dlib","lib/debug/utils", "lib/debug/core", "lib/debug/graphics", "deps/sdlang-d-0.8.4/sdlang-d", "lib/debug/gui"].retro.array, "bin/guidemo", executable)];
 	
 	foreach(ref pack; packages)
-		buildPackage(pack, "-debug -gc -m32");
+		buildPackage(pack, "-debug -de -gc -w -m32");
 }

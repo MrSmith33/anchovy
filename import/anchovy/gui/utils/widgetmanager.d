@@ -186,7 +186,6 @@ private:
 					writefln("Error parsing %s %s", name, e);
 				}
 				return Variant(ivec2(16, 16));
-				break;
 			case "id":
 				string id = value.get!string;
 				if (id in _ids)
@@ -196,7 +195,6 @@ private:
 				_ids[id] = widget;
 
 				return value;
-				break;
 			default:
 				return value;
 		}
