@@ -27,7 +27,6 @@ class TestApplication : Application!GlfwWindow
 
 		// ----------------------------- Creating widgets -----------------------------
 		templateManager.parseFile("test.sdl");
-		//writeln(templateManager.getTemplate("container"));
 
 		auto mainLayer = context.createWidget("mainLayer");
 		context.addRoot(mainLayer);

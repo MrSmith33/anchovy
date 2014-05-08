@@ -254,6 +254,8 @@ body
 
 void removeChild(Widget root, Widget child)
 {
+	if (child is null) return;
+	
 	import std.algorithm : remove;
 
 	Widget parent = getParentFromWidget(root);

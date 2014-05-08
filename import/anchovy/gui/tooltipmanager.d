@@ -14,8 +14,7 @@ private:
 	GuiContext _context;
 
 	Widget _tooltip;
-	Widget _overlay;
-
+	
 public:
 
 	@disable this();
@@ -23,6 +22,27 @@ public:
 	this(GuiContext context)
 	{
 		_context = context;
+	}
+
+
+	void onWidgetHovered(Widget widget)
+	{
+		if (widget is null)
+		{
+			hideTooltip();
+
+			return;
+		}
+
+		if (widget.hasProperty("tooltip"))
+		{
+			showTooltip(widget.coercePropertyAs!("tooltip", string),
+				_context.eventDispatcher.lastPointerPosition() + ivec2(0, 20));
+		}
+		else
+		{
+			hideTooltip();
+		}
 	}
 
 	void showTooltip(string text, ivec2 pos)
@@ -36,27 +56,14 @@ public:
 			}
 		}
 
-		if (_overlay is null)
-		{
-			_overlay = _context.getWidgetById("overlay");
-			if (_overlay is null)
-			{
-				_overlay = _context.createWidget("widget");
-				_overlay["id"] = "overlay";
-				_overlay["isVisible"] = false;
-				_overlay.setProperty!("layout", ILayout) = new AbsoluteLayout;
-				_context.addRoot(_overlay);
-			}
-		}
-
 		_tooltip["text"] = text;
 		_tooltip["position"] = pos;
 		_tooltip["isVisible"] = true;
-		_overlay.addChild(_tooltip);
+		_context.overlay.addChild(_tooltip);
 	}
 
 	void hideTooltip()
 	{
-		_overlay.removeChild(_tooltip);
+		_context.overlay.removeChild(_tooltip);
 	}
 }

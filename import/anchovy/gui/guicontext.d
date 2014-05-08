@@ -20,9 +20,10 @@ class GuiContext
 	LayoutCreator[string] layoutFactories;
 	BehaviorCreator[][string] behaviorFactories;
 
-	Widget[] roots;
-
 protected:
+
+	Widget[] _roots;
+	Widget _overlay;
 
 	// Key modifiers
 	uint modifiers;
@@ -64,6 +65,10 @@ public:
 		_wman = WidgetManager(this);
 		_eventDispatcher = EventDispatcher(this);
 		_tooltipManager = TooltipManager(this);
+
+		_overlay = createWidget("widget");
+		_overlay["isVisible"] = false;
+		_overlay.setProperty!("layout", ILayout) = new AbsoluteLayout;
 	}
 
 	void update(double deltaTime)
@@ -74,7 +79,7 @@ public:
 	void addRoot(Widget root)
 	{
 		root.setProperty!"size"(cast(ivec2)_guiRenderer.renderer.windowSize);
-		roots ~= root;
+		_roots ~= root;
 	}
 
 	/// Returns widget found by given id.
@@ -94,6 +99,18 @@ public:
 
 @property
 {
+	Widget overlay()
+	{
+		return _overlay;
+	}
+
+	auto roots()
+	{
+		import std.range : chain, repeat;
+
+		return chain(_roots, _overlay.repeat(1));
+	}
+
 	TemplateManager templateManager()
 	{
 		return _templateManager;

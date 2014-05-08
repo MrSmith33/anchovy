@@ -224,6 +224,11 @@ bool hasProperty(string propname, FlexibleObjectType : FlexibleObject)(FlexibleO
 	return (propname in (cast(FlexibleObject)w).properties) !is null;
 }
 
+bool hasProperty(FlexibleObjectType : FlexibleObject)(FlexibleObjectType w, string propname)
+{
+	return (propname in (cast(FlexibleObject)w).properties) !is null;
+}
+
 //
 //
 //

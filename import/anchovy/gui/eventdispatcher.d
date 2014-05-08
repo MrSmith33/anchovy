@@ -84,7 +84,7 @@ public:
 				event.context = _context;
 				_hoveredWidget.handleEvent(event);
 			}
-
+			
 			if (widget !is null)
 			{
 				auto event = new PointerEnterEvent;
@@ -92,6 +92,7 @@ public:
 				widget.handleEvent(event);
 			}
 
+			_context.tooltipManager.onWidgetHovered(widget);
 			_hoveredWidget = widget;
 		}
 	}
