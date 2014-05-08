@@ -227,6 +227,17 @@ public:
 	bool delegate(Widget, Event)[][TypeInfo] _eventHandlers;
 }
 
+Widget getParentFromWidget(Widget root)
+{
+	Widget* container;
+	container = root.peekPropertyAs!("container", Widget);
+
+	if (container is null) container = &root;
+	assert(*container);
+
+	return *container;
+}
+
 void addChild(Widget root, Widget child)
 in
 {
@@ -235,20 +246,23 @@ in
 }
 body
 {
-	Widget* container;
-	container = root.peekPropertyAs!("container", Widget);
-
-	if (container is null) container = &root;
-	assert(*container);
-
-	Widget parent = *container;
+	Widget parent = getParentFromWidget(root);
 
 	parent.setProperty!"children"(parent["children"] ~ child);
 	child.setProperty!"parent"(parent);
 }
 
+void removeChild(Widget root, Widget child)
+{
+	import std.algorithm : remove;
+
+	Widget parent = getParentFromWidget(root);
+	child["parent"] = null;
+	parent["children"] = parent["children"].get!(Widget[]).remove!((a) => a == child);
+}
+
 /// Says to global layout manager that this widget needs layout update.
 void invalidateLayout(Widget widget)
 {
-	widget.getPropertyAs!("context", GuiContext).invalidateWidgetLayout(widget);
+	widget.getPropertyAs!("context", GuiContext).eventDispatcher.invalidateWidgetLayout(widget);
 }

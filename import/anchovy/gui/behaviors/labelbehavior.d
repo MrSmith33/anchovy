@@ -70,7 +70,7 @@ public:
 
 	bool handleDraw(Widget widget, DrawEvent event)
 	{
-		if (event.sinking)
+		if (event.sinking && widget["isVisible"] == true)
 		{
 			event.guiRenderer.renderer.setColor(Color(0, 0, 0, 255));
 			event.guiRenderer.drawTextLine(widget.getPropertyAs!("line", TextLine),

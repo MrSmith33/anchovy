@@ -32,6 +32,8 @@ import anchovy.gui;
 
 public import anchovy.gui.interfaces.ilayout;
 
+//version = debug_absolute;
+
 class AbsoluteLayout : ILayout
 {
 	override void minimize(Widget root)
@@ -40,6 +42,19 @@ class AbsoluteLayout : ILayout
 
 	override void expand(Widget root)
 	{
+		Widget[] children = root.getPropertyAs!("children", Widget[]);
+
+		version(debug_absolute) writefln("AbsoluteLayout expand %s", root["id"]);
+		
+		foreach(child; children)
+		{
+			version(debug_absolute) writeln(child["id"]);
+
+			ivec2 childSize = child.getPropertyAs!("prefSize", ivec2);
+			ivec2 childMinSize = child.getPropertyAs!("minSize", ivec2);
+			childSize = ivec2(max(childSize.x, childMinSize.x), max(childSize.y, childMinSize.y));
+			child.setProperty!("size")(childSize);
+		}
 	}
 
 	override void onContainerResized(Widget root, ivec2 oldSize, ivec2 newSize)

@@ -53,5 +53,6 @@ public
 	import anchovy.gui.events;
 	import anchovy.gui.guicontext;
 	import anchovy.gui.guirenderer;
+	import anchovy.gui.tooltipmanager;
 	import anchovy.gui.widget;
 }

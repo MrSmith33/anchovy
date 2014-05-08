@@ -22,39 +22,6 @@ class GuiContext
 
 	Widget[] roots;
 
-	bool isLayoutValid; // Will be updated in update method
-
-	void invalidateWidgetLayout(Widget container)
-	{
-		isLayoutValid = false;
-	}
-
-	void update(double deltaTime)
-	{
-		if (!isLayoutValid)
-		{
-			doLayout();
-			isLayoutValid = true;
-
-			if (_eventDispatcher.pressedWidget is null)
-			{
-				scope moveEvent = new PointerMoveEvent(_eventDispatcher.lastPointerPosition, ivec2(0, 0));
-				moveEvent.context = this;
-				_eventDispatcher.updateHovered(moveEvent);
-			}
-		}
-	}
-
-	void doLayout()
-	{
-		foreach(root; roots)
-		{
-			root.propagateEventChildrenFirst(new MinimizeLayoutEvent);
-			root.propagateEventParentFirst(new ExpandLayoutEvent);
-			root.propagateEventParentFirst(new UpdatePositionEvent);
-		}
-	}
-
 protected:
 
 	// Key modifiers
@@ -71,6 +38,8 @@ protected:
 	WidgetManager _wman;
 
 	EventDispatcher _eventDispatcher;
+
+	TooltipManager _tooltipManager;
 
 	/// This will be called when widget sets clipboard string.
 	void delegate(dstring newClipboardString) _setClipboardStringCallback;
@@ -94,6 +63,12 @@ public:
 		_templateManager = templateMan;
 		_wman = WidgetManager(this);
 		_eventDispatcher = EventDispatcher(this);
+		_tooltipManager = TooltipManager(this);
+	}
+
+	void update(double deltaTime)
+	{
+		_eventDispatcher.update(deltaTime);
 	}
 
 	void addRoot(Widget root)
@@ -129,9 +104,14 @@ public:
 		return _timerManager;
 	}
 
-	EventDispatcher eventDispatcher()
+	ref EventDispatcher eventDispatcher()
 	{
 		return _eventDispatcher;
+	}
+
+	ref TooltipManager tooltipManager()
+	{
+		return _tooltipManager;
 	}
 
 	IGuiRenderer guiRenderer()

@@ -120,8 +120,7 @@ class LinearLayout(bool vertical) : ILayout
 		}
 
 		int topOffset = rootPadding - rootSpacing;
-
-		
+	
 		foreach(child; children)
 		{
 			topOffset += rootSpacing;

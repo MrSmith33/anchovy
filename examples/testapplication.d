@@ -52,6 +52,17 @@ class TestApplication : Application!GlfwWindow
 
 		fullName.property("text").pipeFrom(calc, firstName.property("text"), lastName.property("text"));
 
+		auto showTooltip = context.getWidgetById("showTooltip");
+		showTooltip.addEventHandler(delegate bool(Widget widget, PointerClickEvent event){
+			context.tooltipManager.showTooltip("It's a tooltip!!!", ivec2(10, 10));
+			return true;
+		});
+		auto hideTooltip = context.getWidgetById("hideTooltip");
+		hideTooltip.addEventHandler(delegate bool(Widget widget, PointerClickEvent event){
+			context.tooltipManager.hideTooltip();
+			return true;
+		});
+
 		auto horiText = context.getWidgetById("hori-pos");
 		auto vertText = context.getWidgetById("vert-pos");
 

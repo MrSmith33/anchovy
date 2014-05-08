@@ -38,6 +38,8 @@ private:
 	/// Will receive all key events if input is not grabbed by other widget.
 	Widget		_focusedWidget;
 
+	bool isLayoutValid; // Will be updated in update method
+
 public:
 
 	@disable this();
@@ -155,6 +157,37 @@ public:
 	static bool containsPointer(Widget widget, ivec2 pointerPosition)
 	{
 		return widget.getPropertyAs!("staticRect", Rect).contains(pointerPosition);
+	}
+
+	void invalidateWidgetLayout(Widget container)
+	{
+		isLayoutValid = false;
+	}
+
+	void update(double deltaTime)
+	{
+		if (!isLayoutValid)
+		{
+			doLayout();
+			isLayoutValid = true;
+
+			if (pressedWidget is null)
+			{
+				scope moveEvent = new PointerMoveEvent(lastPointerPosition, ivec2(0, 0));
+				moveEvent.context = _context;
+				updateHovered(moveEvent);
+			}
+		}
+	}
+
+	void doLayout()
+	{
+		foreach(root; _context.roots)
+		{
+			root.propagateEventChildrenFirst(new MinimizeLayoutEvent);
+			root.propagateEventParentFirst(new ExpandLayoutEvent);
+			root.propagateEventParentFirst(new UpdatePositionEvent);
+		}
 	}
 
 	void draw()
