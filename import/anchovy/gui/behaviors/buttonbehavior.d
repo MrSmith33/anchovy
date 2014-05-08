@@ -78,7 +78,7 @@ public:
 
 	bool pointerEntered(Widget widget, PointerEnterEvent event)
 	{
-		if (event.context.pressedWidget is this)
+		if (event.context.eventDispatcher.pressedWidget is this)
 		{
 			widget.setProperty!"state"("pressed");
 			

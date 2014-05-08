@@ -49,6 +49,7 @@ public
 	import anchovy.gui.templates;
 	import anchovy.gui.utils;
 
+	import anchovy.gui.eventdispatcher;
 	import anchovy.gui.events;
 	import anchovy.gui.guicontext;
 	import anchovy.gui.guirenderer;

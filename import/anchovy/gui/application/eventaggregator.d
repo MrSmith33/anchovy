@@ -33,27 +33,27 @@ class EventAggregator(WindowType)
 
 	void keyPressed(uint keyCode)
 	{
-		application.context.keyPressed(cast(KeyCode)keyCode, getCurrentKeyModifiers());
+		application.context.eventDispatcher.keyPressed(cast(KeyCode)keyCode, getCurrentKeyModifiers());
 	}
 
 	void keyReleased(uint keyCode)
 	{
-		application.context.keyReleased(cast(KeyCode)keyCode, getCurrentKeyModifiers());
+		application.context.eventDispatcher.keyReleased(cast(KeyCode)keyCode, getCurrentKeyModifiers());
 	}
 
 	void charEntered(dchar unicode)
 	{
-		application.context.charEntered(unicode);
+		application.context.eventDispatcher.charEntered(unicode);
 	}
 
 	void mousePressed(uint mouseButton)
 	{
-		application.context.pointerPressed(window.mousePosition, cast(PointerButton)mouseButton);
+		application.context.eventDispatcher.pointerPressed(window.mousePosition, cast(PointerButton)mouseButton);
 	}
 
 	void mouseReleased(uint mouseButton)
 	{
-		application.context.pointerReleased(window.mousePosition, cast(PointerButton)mouseButton);
+		application.context.eventDispatcher.pointerReleased(window.mousePosition, cast(PointerButton)mouseButton);
 	}
 
 	void windowResized(uvec2 newSize)
@@ -66,7 +66,7 @@ class EventAggregator(WindowType)
 	{
 		ivec2 deltaPos = position - pointerPosition;
 		pointerPosition = position;
-		application.context.pointerMoved(position, deltaPos);
+		application.context.eventDispatcher.pointerMoved(position, deltaPos);
 	}
 
 	uint getCurrentKeyModifiers()

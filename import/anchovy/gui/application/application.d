@@ -138,7 +138,7 @@ class Application(WindowType)
 		guiRenderer.setClientArea(Rect(0, 0, window.size.x, window.size.y));
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		context.draw();
+		context.eventDispatcher.draw();
 
 		window.swapBuffers();
 	}

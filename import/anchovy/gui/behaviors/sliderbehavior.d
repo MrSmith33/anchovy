@@ -31,7 +31,7 @@ public:
 
 	bool pointerMoved(Widget widget, PointerMoveEvent event)
 	{
-		if (event.context.pressedWidget is widget )
+		if (event.context.eventDispatcher.pressedWidget is widget )
 		{
 			ivec2 deltaPos = event.pointerPosition - widget.getPropertyAs!("staticPosition", ivec2) - _dragPosition;
 

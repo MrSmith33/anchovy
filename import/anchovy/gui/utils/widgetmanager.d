@@ -16,10 +16,6 @@ alias BehaviorCreator = IWidgetBehavior delegate();
 
 struct WidgetManager
 {
-	//WidgetCreator[string] widgetFactories;
-	//LayoutCreator[string] layoutFactories;
-	//BehaviorCreator[][string] behaviorFactories;
-
 	@disable this();
 
 	this(GuiContext context)

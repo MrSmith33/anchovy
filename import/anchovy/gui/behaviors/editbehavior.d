@@ -212,7 +212,7 @@ class EditBehavior : LabelBehavior
 
 	bool pointerMoved(Widget widget, PointerMoveEvent event)
 	{
-		if (event.context.pressedWidget is widget )
+		if (event.context.eventDispatcher.pressedWidget is widget )
 		{
 			moveCursorToClickPos(event.pointerPosition);
 			_selectionEnd = _cursorPos;
