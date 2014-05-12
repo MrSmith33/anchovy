@@ -73,6 +73,7 @@ public:
 		properties["isFocusable"] = isFocusable = new ValueProperty(this, false);
 		properties["isEnabled"] = isEnabled = new ValueProperty(this, true);
 		properties["isHovered"] = isHovered = new ValueProperty(this, false);
+		properties["respondsToPointer"] = respondsToPointer = new ValueProperty(this, true);
 		properties["context"] = context = new ValueProperty(this, null);
 
 		auto onParentChanged = (FlexibleObject obj, Variant newParent){
@@ -189,6 +190,7 @@ public:
 	ValueProperty isEnabled;
 	ValueProperty isHovered;
 	ValueProperty isVisible;
+	ValueProperty respondsToPointer;
 	
 	void addEventHandler(T)(T handler)
 	{
@@ -255,7 +257,7 @@ body
 void removeChild(Widget root, Widget child)
 {
 	if (child is null) return;
-	
+
 	import std.algorithm : remove;
 
 	Widget parent = getParentFromWidget(root);

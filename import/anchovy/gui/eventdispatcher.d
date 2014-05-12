@@ -373,13 +373,13 @@ public:
 		{
 			Widget[] widgetChain = buildPathToLeaf!(containsPointer)(rootWidget, event.pointerPosition);
 
-			Widget[] eventConsumerChain = propagateEventSinkBubble(widgetChain, event);
-
-			if (eventConsumerChain.length > 0)
+			foreach_reverse(widget; widgetChain)
 			{
-				hoveredWidget = eventConsumerChain[$-1];
-
-				return true;
+				if (widget.getPropertyAs!("respondsToPointer", bool))
+				{
+					hoveredWidget = widget;
+					return true;
+				}
 			}
 		}
 
