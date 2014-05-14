@@ -33,7 +33,7 @@ public:
 
 	bool pointerMoved(Widget widget, PointerMoveEvent event)
 	{
-		if (event.context.eventDispatcher.pressedWidget is widget )
+		if (event.context.eventDispatcher.pressedWidget is widget)
 		{
 			ivec2 deltaPos = event.pointerPosition - widget.getPropertyAs!("staticPosition", ivec2) - _dragPosition;
 			
@@ -41,15 +41,14 @@ public:
 			dragEvent.context = event.context;
 			_widget.handleEvent(dragEvent);
 
-			//widget["position"] = widget.getPropertyAs!("position", ivec2) + deltaPos;
+			return true;
 		}
-		
-		return true;
+		return false;
 	}
 
 	bool pointerPressed(Widget widget, PointerPressEvent event)
 	{
-		if (event.button == PointerButton.PB_LEFT)
+		if (event.button == PointerButton.PB_LEFT && event.bubbling)
 		{
 			_dragPosition = event.pointerPosition - widget.getPropertyAs!("staticPosition", ivec2);
 
@@ -61,6 +60,7 @@ public:
 
 	bool pointerReleased(Widget widget, PointerReleaseEvent event)
 	{
+		if (event.sinking) return false;
 		return true;
 	}
 }
