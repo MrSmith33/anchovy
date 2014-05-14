@@ -38,6 +38,7 @@ public:
 		{
 			_body.size.valueChanged.connect((FlexibleObject obj, Variant value){updateSize();});
 
+			_slider.addEventHandler(&handleSliderDrag);
 			_slider.position.valueChanging.connect(&handleSliderMoving);
 
 			_widget.property("sliderPos").valueChanging.connect(&handleSliderPositionChanging);
@@ -96,6 +97,12 @@ public:
 		handleSliderPositionChanging(widget, value);
 
 		updateSize();
+	}
+
+	bool handleSliderDrag(Widget widget, DragEvent event)
+	{
+		_slider["position"] = _slider.getPropertyAs!("position", ivec2) + event.delta;
+		return true;
 	}
 
 	void handleSliderMoving(FlexibleObject slider, Variant* position)

@@ -23,7 +23,7 @@ public:
 		_frame = widget;
 		_header = widget["subwidgets"].get!(Widget[string]).get("header", null);
 
-		if (_header && _header.getWidgetBehavior!SliderBehavior)
+		if (_header && _header.getWidgetBehavior!DragableBehavior)
 		{
 			_header.addEventHandler(&handleHeaderDrag);
 		}

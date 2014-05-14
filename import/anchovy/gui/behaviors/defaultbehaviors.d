@@ -33,13 +33,13 @@ import anchovy.gui.widget;
 
 import anchovy.gui.behaviors.buttonbehavior;
 import anchovy.gui.behaviors.checkbehavior;
+import anchovy.gui.behaviors.dragablebehavior;
 import anchovy.gui.behaviors.editbehavior;
 import anchovy.gui.behaviors.framebehavior;
 import anchovy.gui.behaviors.imagebehavior;
 import anchovy.gui.behaviors.labelbehavior;
 import anchovy.gui.behaviors.listbehavior;
 import anchovy.gui.behaviors.scrollbarbehavior;
-import anchovy.gui.behaviors.sliderbehavior;
 
 import anchovy.gui.guicontext;
 
@@ -63,7 +63,7 @@ void attachDefaultBehaviors(GuiContext context)
 	context.behaviorFactories["label"] ~= delegate IWidgetBehavior (){return new LabelBehavior;};
 	context.behaviorFactories["check"] ~= delegate IWidgetBehavior (){return new CheckBehavior;};
 	context.behaviorFactories["edit"] ~= delegate IWidgetBehavior (){return new EditBehavior;};
-	context.behaviorFactories["slider"] ~= delegate IWidgetBehavior (){return new SliderBehavior;};
+	context.behaviorFactories["dragable"] ~= delegate IWidgetBehavior (){return new DragableBehavior;};
 	context.behaviorFactories["scrollbar-vert"] ~= delegate IWidgetBehavior (){return new ScrollbarBehaviorVert;};
 	context.behaviorFactories["scrollbar-hori"] ~= delegate IWidgetBehavior (){return new ScrollbarBehaviorHori;};
 	context.behaviorFactories["widgetlist"] ~= delegate IWidgetBehavior (){return new WidgetListBehavior;};

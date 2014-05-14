@@ -12,10 +12,10 @@ import anchovy.gui.behaviors.defaultbehaviors;
 
 import anchovy.gui.behaviors.buttonbehavior;
 import anchovy.gui.behaviors.checkbehavior;
+import anchovy.gui.behaviors.dragablebehavior;
 import anchovy.gui.behaviors.editbehavior;
 import anchovy.gui.behaviors.framebehavior;
 import anchovy.gui.behaviors.imagebehavior;
 import anchovy.gui.behaviors.labelbehavior;
 import anchovy.gui.behaviors.listbehavior;
 import anchovy.gui.behaviors.scrollbarbehavior;
-import anchovy.gui.behaviors.sliderbehavior;

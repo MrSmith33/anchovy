@@ -5,7 +5,7 @@ Authors: Andrey Penechko.
 */
 
 
-module anchovy.gui.behaviors.sliderbehavior;
+module anchovy.gui.behaviors.dragablebehavior;
 
 import std.algorithm;
 import std.stdio;
@@ -13,7 +13,7 @@ import std.stdio;
 import anchovy.gui;
 import anchovy.gui.interfaces.iwidgetbehavior;
 
-class SliderBehavior : IWidgetBehavior
+class DragableBehavior : IWidgetBehavior
 {
 protected:
 	ivec2 _dragPosition;
@@ -41,7 +41,7 @@ public:
 			dragEvent.context = event.context;
 			_widget.handleEvent(dragEvent);
 
-			widget["position"] = widget.getPropertyAs!("position", ivec2) + deltaPos;
+			//widget["position"] = widget.getPropertyAs!("position", ivec2) + deltaPos;
 		}
 		
 		return true;
