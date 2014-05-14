@@ -30,15 +30,16 @@ module anchovy.gui.behaviors.defaultbehaviors;
 
 import anchovy.gui.interfaces.iwidgetbehavior;
 import anchovy.gui.widget;
+
 import anchovy.gui.behaviors.buttonbehavior;
-import anchovy.gui.behaviors.labelbehavior;
-import anchovy.gui.behaviors.imagebehavior;
-import anchovy.gui.behaviors.labelbehavior;
 import anchovy.gui.behaviors.checkbehavior;
 import anchovy.gui.behaviors.editbehavior;
+import anchovy.gui.behaviors.framebehavior;
+import anchovy.gui.behaviors.imagebehavior;
+import anchovy.gui.behaviors.labelbehavior;
+import anchovy.gui.behaviors.listbehavior;
 import anchovy.gui.behaviors.scrollbarbehavior;
 import anchovy.gui.behaviors.sliderbehavior;
-import anchovy.gui.behaviors.listbehavior;
 
 import anchovy.gui.guicontext;
 
@@ -54,6 +55,8 @@ void attachDefaultBehaviors(GuiContext context)
 		return widget;
 	};
 
+
+	context.behaviorFactories["frame"] ~= delegate IWidgetBehavior (){return new FrameBehavior;};
 	context.behaviorFactories["button"] ~= delegate IWidgetBehavior (){return new ButtonBehavior;};
 	context.behaviorFactories["label"] ~= delegate IWidgetBehavior (){return new LabelBehavior;};
 	context.behaviorFactories["image"] ~= delegate IWidgetBehavior (){return new ImageBehavior;};

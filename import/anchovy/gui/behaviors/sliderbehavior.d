@@ -17,11 +17,13 @@ class SliderBehavior : IWidgetBehavior
 {
 protected:
 	ivec2 _dragPosition;
+	Widget _widget;
 
 public:
 
 	override void attachTo(Widget widget)
 	{
+		_widget = widget;
 		widget.addEventHandler(&pointerMoved);
 		widget.addEventHandler(&pointerPressed);
 		widget.addEventHandler(&pointerReleased);
@@ -34,6 +36,10 @@ public:
 		if (event.context.eventDispatcher.pressedWidget is widget )
 		{
 			ivec2 deltaPos = event.pointerPosition - widget.getPropertyAs!("staticPosition", ivec2) - _dragPosition;
+			
+			auto dragEvent = new DragEvent(event.pointerPosition, deltaPos, _widget);
+			dragEvent.context = event.context;
+			_widget.handleEvent(dragEvent);
 
 			widget["position"] = widget.getPropertyAs!("position", ivec2) + deltaPos;
 		}

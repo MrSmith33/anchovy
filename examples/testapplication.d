@@ -31,6 +31,9 @@ class TestApplication : Application!GlfwWindow
 		auto mainLayer = context.createWidget("mainLayer");
 		context.addRoot(mainLayer);
 
+		auto frameLayer = context.createWidget("frameLayer");
+		context.addRoot(frameLayer);
+
 		auto button1 = context.getWidgetById("button1");
 		button1.addEventHandler(delegate bool(Widget widget, PointerClickEvent event){
 			widget["text"] = to!string(event.pointerPosition);

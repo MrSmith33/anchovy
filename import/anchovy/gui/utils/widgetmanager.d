@@ -127,6 +127,8 @@ struct WidgetManager
 			behavior.attachTo(widget);
 		}
 
+		widget["behaviors"] = behaviors;
+
 		return widget;
 	}
 

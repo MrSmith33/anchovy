@@ -124,6 +124,16 @@ class PointerMoveEvent : PointerEvent
 	ivec2 delta;
 }
 
+class DragEvent : PointerMoveEvent
+{
+	this(ivec2 newPointerPosition, ivec2 delta, Widget target)
+	{
+		super(newPointerPosition, delta);
+		this.target = target;
+	}
+	Widget target;
+}
+
 // Keyboard
 
 class CharEnterEvent : Event
