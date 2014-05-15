@@ -1,18 +1,19 @@
 {
+   "name" : "anchovy",
+   "description" : "Set of multimedia libraries for games and gui applications",
+   "homepage" : "http://github.com/MrSmith33/anchovy",
    "authors" : [ "Andrey Penechko" ],
+   "license" : "BSL-1.0",
    "dependencies" : {
       "anchovy:core" : "~master",
       "anchovy:graphics" : "~master",
       "anchovy:gui" : "~master",
       "anchovy:utils" : "~master"
    },
-   "description" : "Set of multimedia libraries for games and gui applications",
-   "homepage" : "http://github.com/MrSmith33/anchovy",
-   "license" : "BSL-1.0",
-   "name" : "anchovy",
    "targetType" : "library",
    "subPackages" : [
       {
+         "name" : "core",
          "dependencies" : {
             "anchovy:utils" : "~master",
             "derelict-fi" : "~master",
@@ -22,7 +23,6 @@
             "dlib" : "~master"
          },
          "importPaths" : [ "import" ],
-         "name" : "core",
          "sourcePaths" : [ "import/anchovy/core" ],
          "targetPath" : "lib",
          "targetType" : "library"
@@ -55,8 +55,8 @@
             "dlib" : "~master",
             "sdlang-d" : "~master"
          },
-         "importPaths" : [ "import" ],
          "name" : "gui",
+         "importPaths" : [ "import" ],
          "sourcePaths" : [ "import/anchovy/gui" ],
          "targetPath" : "lib",
          "targetType" : "library"
@@ -64,9 +64,9 @@
       {
          "dependencies" : {
          },
-         "importPaths" : [ "import" ],
          "name" : "utils",
          "sourcePaths" : [ "import/anchovy/utils" ],
+         "importPaths" : [ "import" ],
          "targetPath" : "lib",
          "targetType" : "library"
       },
