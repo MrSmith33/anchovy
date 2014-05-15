@@ -20,6 +20,11 @@ class CheckBehavior : IWidgetBehavior
 
 public:
 
+	override void attachPropertiesTo(Widget widget)
+	{
+		widget.setProperty!("isChecked", bool) = false;
+	}
+
 	override void attachTo(Widget widget)
 	{
 		version(Check_debug) writeln("attachTo ", widget["name"], " ", widget["type"], " ", widget["isChecked"]);

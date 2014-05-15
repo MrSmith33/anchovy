@@ -18,4 +18,5 @@ import anchovy.gui.behaviors.framebehavior;
 import anchovy.gui.behaviors.imagebehavior;
 import anchovy.gui.behaviors.labelbehavior;
 import anchovy.gui.behaviors.listbehavior;
+import anchovy.gui.behaviors.radiobehavior;
 import anchovy.gui.behaviors.scrollbarbehavior;

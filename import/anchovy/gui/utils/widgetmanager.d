@@ -34,7 +34,46 @@ struct WidgetManager
 			return null;
 	}
 
+	void setGroupSelected(int groupId, Widget widget)
+	{
+		auto wasSelectedPtr = groupId in _groupSelections;
+		Widget wasSelected = wasSelectedPtr ? *wasSelectedPtr : null;
+
+		_groupSelections[groupId] = widget;
+
+		if (wasSelected !is null)
+		{
+			wasSelected.handleEvent(new GroupSelectionEvent(widget));
+		}
+	}
+
+	Widget getGroupSelected(uint groupId)
+	{
+		if (auto selection = groupId in _groupSelections)
+		{
+			return *selection;
+		}
+
+		return null;
+	}
+
 	Widget createWidget(string type, Widget parent = null)
+	{
+		return createWidgetImpl(type, parent);
+	}
+
+private:
+
+	/// Stores widgets with id property.
+	Widget[string] _ids;
+
+	Widget[int] _groupSelections;
+
+	GuiContext _context;
+
+	//---------------------------- Helpers ---------------------------------
+
+	Widget createWidgetImpl(string type, Widget parent)
 	{
 		Widget widget;
 		IWidgetBehavior[] behaviors;
@@ -132,14 +171,6 @@ struct WidgetManager
 		return widget;
 	}
 
-private:
-
-	/// Stores widgets with id property.
-	Widget[string] _ids;
-
-	GuiContext _context;
-
-	//---------------------------- Helpers ---------------------------------
 	Widget createBaseWidget(string type)
 	{
 		if (auto factory = type in _context.widgetFactories)
@@ -160,17 +191,17 @@ private:
 		switch(name)
 		{
 			case "layout":
-			version(Debug_wman) writeln("found layout property: ", value.get!string);
+				version(Debug_wman) writeln("found layout property: ", value.get!string);
 				if (auto factory = value.get!string in _context.layoutFactories)
 				{
 					auto result = Variant((*factory)());
-					//writeln(result);
 
 					return result;
 				}
 				version(Debug_wman) writefln("Error: unknown layout '%s' found", value.get!string);
 				break;
-			case "minSize", "prefSize":
+
+			case "minSize", "prefSize", "position":
 				try
 				{
 					string nums = value.get!string;
@@ -181,9 +212,10 @@ private:
 				}
 				catch (Exception e)
 				{
-					writefln("Error parsing %s %s", name, e);
+					writefln("Error parsing %s %s from %s", name, e, value);
 				}
 				return Variant(ivec2(16, 16));
+
 			case "id":
 				string id = value.get!string;
 				if (id in _ids)
@@ -193,6 +225,7 @@ private:
 				_ids[id] = widget;
 
 				return value;
+
 			default:
 				return value;
 		}
@@ -205,8 +238,8 @@ private:
 		//----------------------- Forwarding properties ------------------------
 		foreach(forwardedProperty; sub.forwardedProperties)
 		{
-			version(Debug_wman) writeln("forwarding ", forwardedProperty.propertyName ," to ",
-				forwardedProperty.targetPropertyName);
+			version(Debug_wman) writefln("forwarding %s.%s to %s.%s", root["type"], forwardedProperty.propertyName, 
+				subwidget["name"], forwardedProperty.targetPropertyName);
 			root[forwardedProperty.propertyName] = subwidget.property(forwardedProperty.targetPropertyName);
 		}
 
@@ -216,10 +249,9 @@ private:
 			version(Debug_wman)writeln("new property ", propertyKey);
 			Variant value = parseProperty(propertyKey, sub.properties[propertyKey], subwidget);
 			version(Debug_wman)writeln("Parsed value ", value);
-			version(Debug_wman) writeln("Assigning properties ", propertyKey," ",value,
-			 " ", subwidget["name"], " ", subwidget["type"], " ", root["name"], " ", root["type"]);
+			version(Debug_wman)writefln("Assigning properties %s %s %s %s %s %s", propertyKey, value,
+			 subwidget["name"], subwidget["type"], root["name"], root["type"]);
 			subwidget[propertyKey] = value;
-			version(Debug_wman) writeln(subwidget[propertyKey]);
 		}
 
 		Variant* name = "name" in sub.properties;

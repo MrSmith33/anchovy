@@ -39,6 +39,7 @@ import anchovy.gui.behaviors.framebehavior;
 import anchovy.gui.behaviors.imagebehavior;
 import anchovy.gui.behaviors.labelbehavior;
 import anchovy.gui.behaviors.listbehavior;
+import anchovy.gui.behaviors.radiobehavior;
 import anchovy.gui.behaviors.scrollbarbehavior;
 
 import anchovy.gui.guicontext;
@@ -64,6 +65,7 @@ void attachDefaultBehaviors(GuiContext context)
 	context.behaviorFactories["check"] ~= delegate IWidgetBehavior (){return new CheckBehavior;};
 	context.behaviorFactories["edit"] ~= delegate IWidgetBehavior (){return new EditBehavior;};
 	context.behaviorFactories["dragable"] ~= delegate IWidgetBehavior (){return new DragableBehavior;};
+	context.behaviorFactories["radio"] ~= delegate IWidgetBehavior (){return new RadioBehavior;};
 	context.behaviorFactories["scrollbar-vert"] ~= delegate IWidgetBehavior (){return new ScrollbarBehaviorVert;};
 	context.behaviorFactories["scrollbar-hori"] ~= delegate IWidgetBehavior (){return new ScrollbarBehaviorHori;};
 	context.behaviorFactories["widgetlist"] ~= delegate IWidgetBehavior (){return new WidgetListBehavior;};

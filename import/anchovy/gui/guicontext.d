@@ -121,6 +121,11 @@ public:
 		return _timerManager;
 	}
 
+	ref WidgetManager widgetManager()
+	{
+		return _wman;
+	}
+
 	ref EventDispatcher eventDispatcher()
 	{
 		return _eventDispatcher;

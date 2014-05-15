@@ -216,3 +216,13 @@ class DrawEvent : Event
 class UpdatePositionEvent : Event
 {
 }
+
+class GroupSelectionEvent : Event
+{
+	this(Widget selected)
+	{
+		this.selected = selected;
+	}
+
+	Widget selected;
+}
