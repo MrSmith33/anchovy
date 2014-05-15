@@ -9,8 +9,7 @@ module anchovy.gui.behaviors.radiobehavior;
 import anchovy.gui;
 import anchovy.gui.interfaces.iwidgetbehavior;
 
-version = Radio_debug;
-
+//version = Radio_debug;
 
 class RadioBehavior : CheckBehavior
 {
@@ -55,7 +54,7 @@ class RadioBehavior : CheckBehavior
 	void onGroupChanged(FlexibleObject a, Variant b)
 	{
 		auto groupId = a.getPropertyAs!("group", int);
-		writefln("group changed %s", groupId);
+		version(Radio_debug) writefln("group changed %s", groupId);
 		a.setProperty!("isChecked", bool)(false);
 	}
 

@@ -97,7 +97,6 @@ private:
 
 		//----------------------- Instatiating templates ---------------------------
 
-		//writeln("template for ", type, " is ", _templateManager.getTemplate(type));
 		if (WidgetTemplate templ = _context.templateManager.getTemplate(type))
 		{
 			//----------------------- Base type construction -----------------------
@@ -198,7 +197,7 @@ private:
 
 					return result;
 				}
-				version(Debug_wman) writefln("Error: unknown layout '%s' found", value.get!string);
+				writefln("Error: unknown layout '%s' found", value.get!string);
 				break;
 
 			case "minSize", "prefSize", "position":

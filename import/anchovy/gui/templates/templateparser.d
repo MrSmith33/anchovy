@@ -34,6 +34,8 @@ import anchovy.gui.templates.widgettemplate;
 
 import anchovy.gui;
 
+//version = TemplateParser_debug;
+
 final class TemplateParser
 {
 	WidgetTemplate[] parse(string source, string filename = "")
@@ -78,7 +80,7 @@ final class TemplateParser
 					treeTag = section;
 					break;
 				default:
-					writeln("template:", templ.name, " Error: unknown section found: ", section.name);
+					stderr.writeln("template:", templ.name, " Error: unknown section found: ", section.name);
 			}
 		}
 
@@ -101,16 +103,18 @@ final class TemplateParser
 					if (auto container = prop.value.coerce!string in templ.subwidgetsmap)
 					{
 						if (childrenContainer !is null)
-							writeln("template:", templ.name, " Error: Multiple children containers not allowed. Overriding with last");
+						{
+							stderr.writefln("template:%s Error: Multiple children containers not allowed. Overriding with last", templ.name);
+						}
 						childrenContainer = prop.value.coerce!string;
 					}
 					else
 					{
-						writeln("template:", templ.name, " Error: In template children container widget '", prop.name, "' not found");
+						stderr.writeln("template:", templ.name, " Error: In template children container widget '", prop.name, "' not found");
 					}
 					break;
 				default:
-					writeln("template:", templ.name, " Error: In template unknown property found: ", prop.name);
+					stderr.writeln("template:", templ.name, " Error: In template unknown property found: ", prop.name);
 			}
 		}
 
@@ -183,34 +187,38 @@ final class TemplateParser
 						property.targetPropertyName = attrib.value.get!string;
 						break;
 					default:
-						writeln("template:", templ.name, " Error: unknown attribute '",
+						stderr.writeln("template:", templ.name, " Error: unknown attribute '",
 							attrib.name , "' for forwarded property '", prop.name, "' found");
 				}
 			}
 
 			if (subwidgetName == "")
 			{
-				writeln("template:", templ.name, " Error: no target widget for forwarded property: '",
+				stderr.writeln("template:", templ.name, " Error: no target widget for forwarded property: '",
 					property.propertyName, "' specified, skipping property");
 				continue; // Skip property.
 			}
 			else if (subwidgetName !in templ.subwidgetsmap)
 			{
-				writeln("template:", templ.name, " Error: target widget '",subwidgetName,
+				stderr.writeln("template:", templ.name, " Error: target widget '",subwidgetName,
 					"' for forwarded property '", property.propertyName, "' not found, skipping property");
 				continue; // Skip property.
 			}
 
-			if (auto fproparray = subwidgetName in properties)
+			if (auto forwardedProperties = subwidgetName in properties)
 			{
 				import std.algorithm;
-				if (canFind(*fproparray, property))
-					writeln("template:", templ.name, " Error: duplicate for forwarded property '",
+				if (canFind(*forwardedProperties, property))
+				{
+					stderr.writeln("template:", templ.name, " Error: duplicate for forwarded property '",
 						property.targetPropertyName, ":", property.propertyName, "' found, skipping duplicate");
-				continue; // Skip property.
+					continue; // Skip property.
+				}
 			}
 
 			properties[subwidgetName] ~= property;
+			version(TemplateParser_debug)writefln("Found forwarding %s.%s to %s.%s",
+				templ.name, property.propertyName, subwidgetName, property.targetPropertyName);
 
 			SubwidgetTemplate target = templ.subwidgetsmap[subwidgetName];
 			// Add info about forwarded property to target subtemplate, so at instantiation time we can lookup it

@@ -9,7 +9,7 @@ module anchovy.gui.behaviors.framebehavior;
 import anchovy.gui;
 import anchovy.gui.interfaces.iwidgetbehavior;
 
-// version = Button_debug;
+// version = Frame_debug;
 
 class FrameBehavior : IWidgetBehavior
 {

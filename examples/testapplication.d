@@ -90,6 +90,13 @@ class TestApplication : Application!GlfwWindow
 		auto fpsSlot = (FpsHelper* helper){fpsLabel["text"] = to!string(helper.fps); list.push(to!dstring(++counter)~": "~to!dstring(helper.fps));};
 		fpsHelper.fpsUpdated.connect(fpsSlot);
 
+		//printTree();
+
+		writeln("\n----------------------------- Load end -----------------------------\n");
+	}
+
+	void printTree()
+	{
 		void printWidget(Widget widget, string spacing)
 		{
 			writefln(spacing~"%s %s", widget["type"], widget["name"]);
@@ -104,8 +111,6 @@ class TestApplication : Application!GlfwWindow
 		{
 			printWidget(root, "");
 		}
-
-		writeln("\n----------------------------- Load end -----------------------------\n");
 	}
 
 	override void closePressed()
