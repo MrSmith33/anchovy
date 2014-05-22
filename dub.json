@@ -5,17 +5,17 @@
    "authors" : [ "Andrey Penechko" ],
    "license" : "BSL-1.0",
    "dependencies" : {
-      "anchovy:core" : "~master",
-      "anchovy:graphics" : "~master",
-      "anchovy:gui" : "~master",
-      "anchovy:utils" : "~master"
+      ":core" : "*",
+      ":graphics" : "*",
+      ":gui" : "*",
+      ":utils" : "*"
    },
-   "targetType" : "library",
+   "targetType" : "none",
    "subPackages" : [
       {
          "name" : "core",
          "dependencies" : {
-            "anchovy:utils" : "~master",
+            ":utils" : "*",
             "derelict-fi" : "~master",
             "derelict-ft" : "~master",
             "derelict-gl3" : "~master",
@@ -29,8 +29,8 @@
       },
       {
          "dependencies" : {
-            "anchovy:core" : "~master",
-            "anchovy:utils" : "~master",
+            ":core" : "*",
+            ":utils" : "*",
             "derelict-fi" : "~master",
             "derelict-ft" : "~master",
             "derelict-gl3" : "~master",
@@ -45,9 +45,9 @@
       },
       {
          "dependencies" : {
-            "anchovy:core" : "~master",
-            "anchovy:graphics" : "~master",
-            "anchovy:utils" : "~master",
+            ":core" : "*",
+            ":graphics" : "*",
+            ":utils" : "*",
             "derelict-fi" : "~master",
             "derelict-ft" : "~master",
             "derelict-gl3" : "~master",
@@ -62,8 +62,6 @@
          "targetType" : "library"
       },
       {
-         "dependencies" : {
-         },
          "name" : "utils",
          "sourcePaths" : [ "import/anchovy/utils" ],
          "importPaths" : [ "import" ],
@@ -74,7 +72,7 @@
          "name" : "guidemo",
          "sourcePaths" : ["examples"],
          "dependencies" : {
-            "anchovy:gui" : "~master"
+            "anchovy:gui" : "*"
          },
          "targetPath" : "bin",
          "targetType" : "executable"
