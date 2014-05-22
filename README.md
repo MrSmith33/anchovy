@@ -4,7 +4,7 @@ Set of multimedia libraries for games and gui applications.
 Currently in active development, so usage in big projects is not recomended.
 API can change with every version.
 
-![0 5 0](https://f.cloud.github.com/assets/1129910/2315659/bf93125a-a326-11e3-8b39-31f4c0364b37.png)
+![v0 6 0](https://cloud.githubusercontent.com/assets/1129910/3053639/9b3fac46-e1ac-11e3-8ba7-4ae4a67788d4.png)
 
 ##Structure:
 * anchovy.core - basic interfaces.
