@@ -24,7 +24,6 @@ public:
 		_context = context;
 	}
 
-
 	void onWidgetHovered(Widget widget)
 	{
 		if (widget is null)

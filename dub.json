@@ -1,81 +1,28 @@
 {
-   "name" : "anchovy",
-   "description" : "Set of multimedia libraries for games and gui applications",
-   "homepage" : "http://github.com/MrSmith33/anchovy",
-   "authors" : [ "Andrey Penechko" ],
-   "license" : "BSL-1.0",
-   "dependencies" : {
-      ":core" : "*",
-      ":graphics" : "*",
-      ":gui" : "*",
-      ":utils" : "*"
-   },
-   "targetType" : "none",
-   "subPackages" : [
-      {
-         "name" : "core",
-         "dependencies" : {
-            ":utils" : "*",
-            "derelict-fi" : "~master",
-            "derelict-ft" : "~master",
-            "derelict-gl3" : "~master",
-            "derelict-glfw3" : "~master",
-            "dlib" : "~master"
-         },
-         "importPaths" : [ "import" ],
-         "sourcePaths" : [ "import/anchovy/core" ],
-         "targetPath" : "lib",
-         "targetType" : "library"
-      },
-      {
-         "dependencies" : {
-            ":core" : "*",
-            ":utils" : "*",
-            "derelict-fi" : "~master",
-            "derelict-ft" : "~master",
-            "derelict-gl3" : "~master",
-            "derelict-glfw3" : "~master",
-            "dlib" : "~master"
-         },
-         "importPaths" : [ "import" ],
-         "name" : "graphics",
-         "sourcePaths" : [ "import/anchovy/graphics" ],
-         "targetPath" : "lib",
-         "targetType" : "library"
-      },
-      {
-         "dependencies" : {
-            ":core" : "*",
-            ":graphics" : "*",
-            ":utils" : "*",
-            "derelict-fi" : "~master",
-            "derelict-ft" : "~master",
-            "derelict-gl3" : "~master",
-            "derelict-glfw3" : "~master",
-            "dlib" : "~master",
-            "sdlang-d" : "~master"
-         },
-         "name" : "gui",
-         "importPaths" : [ "import" ],
-         "sourcePaths" : [ "import/anchovy/gui" ],
-         "targetPath" : "lib",
-         "targetType" : "library"
-      },
-      {
-         "name" : "utils",
-         "sourcePaths" : [ "import/anchovy/utils" ],
-         "importPaths" : [ "import" ],
-         "targetPath" : "lib",
-         "targetType" : "library"
-      },
-      {
-         "name" : "guidemo",
-         "sourcePaths" : ["examples"],
-         "dependencies" : {
-            "anchovy:gui" : "*"
-         },
-         "targetPath" : "bin",
-         "targetType" : "executable"
-      }
-   ]
+	"name" : "anchovy",
+	"description" : "Set of multimedia libraries for games and gui applications",
+
+	"homepage" : "http://github.com/MrSmith33/anchovy",
+	"authors" : [ "Andrey Penechko" ],
+
+	"license" : "BSL-1.0",
+
+	"dependencies" : {
+		"derelict-fi" : "~master",
+		"derelict-ft" : "~master",
+		"derelict-gl3" : "~master",
+		"derelict-glfw3" : "~master",
+		"derelict-sdl2" : "~master",
+		"dlib" : "~master",
+		"sdlang-d" : "~master"
+	},
+
+	"importPaths" : [ "import" ],
+	"sourcePaths" : [ "import" ],
+
+	"targetType" : "library",
+
+	"subPackages" : [
+		"examples/example01"
+	]
 }
