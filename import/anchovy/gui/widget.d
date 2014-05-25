@@ -47,6 +47,7 @@ public:
 		properties["style"] = style = new ValueProperty(this, "");
 		properties["geometry"] = geometry = new ValueProperty(this, (TexRectArray[string]).init);
 
+		properties["hasBack"] = hasBack = new ValueProperty(this, true);
 		properties["isVisible"] = isVisible = new ValueProperty(this, true);
 		properties["isFocusable"] = isFocusable = new ValueProperty(this, false);
 		properties["isEnabled"] = isEnabled = new ValueProperty(this, true);
@@ -136,7 +137,7 @@ public:
 				event.guiRenderer.pushClientArea(staticRect);
 			}
 
-			if (widget.getPropertyAs!("isVisible", bool))
+			if (widget.getPropertyAs!("hasBack", bool))
 				event.guiRenderer.drawControlBack(widget, staticRect);
 		}
 		else if (clipContent)
@@ -168,6 +169,7 @@ public:
 	ValueProperty isEnabled;
 	ValueProperty isHovered;
 	ValueProperty isVisible;
+	ValueProperty hasBack;
 	ValueProperty respondsToPointer;
 	
 	void addEventHandler(T)(T handler)

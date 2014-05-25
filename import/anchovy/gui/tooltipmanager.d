@@ -57,7 +57,6 @@ public:
 
 		_tooltip["text"] = text;
 		_tooltip["position"] = pos;
-		_tooltip["isVisible"] = true;
 		_context.overlay.addChild(_tooltip);
 	}
 

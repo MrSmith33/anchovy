@@ -67,7 +67,7 @@ public:
 		_tooltipManager = TooltipManager(this);
 
 		_overlay = createWidget("widget");
-		_overlay["isVisible"] = false;
+		_overlay["hasBack"] = false;
 		_overlay.setProperty!("layout", ILayout) = new AbsoluteLayout;
 	}
 
