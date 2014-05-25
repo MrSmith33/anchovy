@@ -29,24 +29,21 @@ API can change with every version.
 ##Contributing:
 Any improvements, bug reports, feature-requests are highly appreciated.
 
-##Building (Now builds and works in linux too)
+##Building
 ###Windows and linux
-You need to install all dependencies in deps folder. Actual packages can be found in build.d script.
-Go to deps folder.
 
-Execute there:
+Now the library can be built with dub.
 
-	dub install --local derelict- all-libs
-	dub install --local dlib
+To use in your project put a dependency like:
+```
+"dependencies": {
+	"anchovy": ">=0.6.1"
+}
+```
 
-Compile all __derelict-__ packages, __dlib__ and __sdlang-d__ packages using command:
-
-	dub build --arch=x86
-
-or --arch=x86_64 but it is not guaranteed to work.
-
-If you face any issues with that feel free to post an issue.
-
-Build __build.d__ file located in root folder and run it. All .lib/.a files must be located in __/lib__ folder (As used in build.d). Gui demo will be located in __bin__ folder.
+To build example application execute in root folder:
+```
+dub build anchovy:example01 --build=debug --nodeps
+```
 
 In order to run compiled example you will need to download resourses from [latest release](https://github.com/MrSmith33/anchovy/releases) and install libraries if you are on linux. (glfw3, freetype, freeimage)
