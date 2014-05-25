@@ -14,5 +14,6 @@
 	"sourceFiles" : ["main.d", "testapplication.d"],
 	"mainSourceFile": "main.d",
 	"targetPath" : "../../bin",
+	"workingDirectory" : "../../bin",
 	"targetType" : "executable"
 }

@@ -4,10 +4,11 @@
 *.obj
 *.a
 *.so
+.DS_Store
 lib/
 obj/
-.DS_Store
 deps/
 bin/
 .dub/
 .sublime*
+dub.selections.json
