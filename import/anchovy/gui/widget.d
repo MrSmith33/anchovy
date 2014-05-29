@@ -33,6 +33,7 @@ public:
 		properties["type"] = new ValueProperty(this, "widget");
 		properties["anchor"] = anchor = new ValueProperty(this, defaultAnchor);
 		properties["children"] = children = new ValueProperty(this, cast(Widget[])[]);
+		properties["logicalChildren"] = logicalChildren = new ValueProperty(this, cast(Widget[])[]);
 		properties["parent"] = parent = new ValueProperty(this, null);
 
 		properties["position"] = position = new ValueProperty(this, ivec2(0,0));
@@ -77,9 +78,25 @@ public:
 
 			(cast(Widget)obj).invalidateLayout;
 		};
+
+		auto onVisibilityChanged = (FlexibleObject obj, Variant isVisible)
+		{
+			Widget parent = obj.getPropertyAs!("parent", Widget);
+			if (parent is null) return;
+
+			Widget child = cast(Widget)obj;
+
+			import std.algorithm : remove;
+
+			if (obj["isVisible"] == true)
+				parent.setProperty!"children"(parent["children"] ~ child);
+			else
+				parent["children"] = parent["children"].get!(Widget[]).remove!((a) => a == child);
+		};
 		
 		property("staticPosition").valueChanged.connect(onStaticPositionChanged);
 		property("size").valueChanged.connect(onSizeChanged);
+		property("isVisible").valueChanged.connect(onVisibilityChanged);
 
 		addEventHandler(&handleDraw);
 		addEventHandler(&handleUpdatePosition);
@@ -149,7 +166,8 @@ public:
 
 	ValueProperty anchor;
 
-	ValueProperty children;
+	ValueProperty children; // visible children
+	ValueProperty logicalChildren; // all children
 	ValueProperty parent;
 	ValueProperty context;
 
@@ -244,8 +262,10 @@ body
 {
 	Widget parent = getParentFromWidget(root);
 
-	parent.setProperty!"children"(parent["children"] ~ child);
+	parent.setProperty!"logicalChildren"(parent["logicalChildren"] ~ child);
 	child.setProperty!"parent"(parent);
+	if (child.isVisible.value == true)
+		parent.setProperty!"children"(parent["children"] ~ child);
 }
 
 void removeChild(Widget root, Widget child)
@@ -257,6 +277,7 @@ void removeChild(Widget root, Widget child)
 	Widget parent = getParentFromWidget(root);
 	child["parent"] = null;
 	parent["children"] = parent["children"].get!(Widget[]).remove!((a) => a == child);
+	parent["logicalChildren"] = parent["logicalChildren"].get!(Widget[]).remove!((a) => a == child);
 }
 
 /// Says to global layout manager that this widget needs layout update.

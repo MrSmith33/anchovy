@@ -34,6 +34,18 @@ class TestApplication : Application!GlfwWindow
 		auto frameLayer = context.createWidget("frameLayer");
 		context.addRoot(frameLayer);
 
+		auto frame = context.getWidgetById("test-frame");
+		Widget closeButton = frame["subwidgets"].get!(Widget[string])["close"];
+		closeButton.addEventHandler(delegate bool(Widget widget, PointerClickEvent event){
+			frame["isVisible"] = false;
+			return true;
+		});
+
+		context.getWidgetById("showFrame").addEventHandler(delegate bool(Widget widget, PointerClickEvent event){
+			frame["isVisible"] = true;
+			return true;
+		});
+
 		auto button1 = context.getWidgetById("button1");
 		button1.addEventHandler(delegate bool(Widget widget, PointerClickEvent event){
 			widget["text"] = to!string(event.pointerPosition);
