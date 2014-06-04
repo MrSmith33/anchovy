@@ -12,19 +12,15 @@ API can change with every version.
 * anchovy.graphics - windows and rendering.
 * anchovy.gui - skinnable graphical interface. The only usable package right now.
 
-####planned packages:
-* anchovy.audio - OpenAL sound manager.
-* anchovy.locale - translation management.
-
 ##Dependencies:
-* dlib
-* sdlang-d
-* derelict-fi
-* derelict-ft
-* derelict-gl3
-* derelict-glfw3
-* derelict-sdl2
-* derelict-util
+* dlib - vectors and matrixes
+* sdlang-d - gui markup files are stored in .sdl files
+* derelict-fi - for image loading (may be replaced by dlib image loader in the future).
+* derelict-ft - font rendering
+* derelict-gl3 - OpenGL renderer
+* derelict-glfw3 - window creation, input handling
+* derelict-sdl2 - window creation, input handling (abandoned)
+* derelict-util - used by other derelict packages
 
 ##Contributing:
 Any improvements, bug reports, feature-requests are highly appreciated.
