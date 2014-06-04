@@ -74,8 +74,6 @@ class ValueProperty : IProperty
 
 		if (_isChanging)
 		{
-			import std.stdio;
-			writefln("already changing %s", newValue);
 			return _value;
 		}
 
