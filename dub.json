@@ -10,11 +10,11 @@
 	"dependencies" : {
 		"derelict-fi" : "~master",
 		"derelict-ft" : "~master",
-		"derelict-gl3" : "~master",
-		"derelict-glfw3" : "~master",
-		"derelict-sdl2" : "~master",
-		"dlib" : "~master",
-		"sdlang-d" : "~master"
+		"derelict-gl3" : "==1.0.0",
+		"derelict-glfw3" : "==1.0.0",
+		"derelict-sdl2" : "==1.2.0",
+		"dlib" : "==0.3.1",
+		"sdlang-d" : "0.8.4"
 	},
 
 	"importPaths" : [ "import" ],
