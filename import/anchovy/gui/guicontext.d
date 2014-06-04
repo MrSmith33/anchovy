@@ -66,9 +66,12 @@ public:
 		_eventDispatcher = EventDispatcher(this);
 		_tooltipManager = TooltipManager(this);
 
-		_overlay = createWidget("widget");
+		_overlay = createWidget("overlay");
 		_overlay["hasBack"] = false;
+		_overlay["respondsToPointer"] = false;
+		_overlay["id"] = "overlay";
 		_overlay.setProperty!("layout", ILayout) = new AbsoluteLayout;
+		_overlay.setProperty!"size"(cast(ivec2)_guiRenderer.renderer.windowSize);
 	}
 
 	void update(double deltaTime)
