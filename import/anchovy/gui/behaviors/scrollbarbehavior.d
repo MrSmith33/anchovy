@@ -43,6 +43,7 @@ public:
 
 			_widget.property("sliderPos").valueChanging.connect(&handleSliderPositionChanging);
 			_widget.property("sliderSize").valueChanging.connect(&handleSliderSizeChanging);
+			_widget.property("sliderSize").valueChanged.connect(&handleSliderSizeChanged);
 
 			updateSize();
 		}
@@ -95,7 +96,10 @@ public:
 	void handleSliderSizeChanging(FlexibleObject widget, Variant* value)
 	{
 		handleSliderPositionChanging(widget, value);
+	}
 
+	void handleSliderSizeChanged(FlexibleObject obj, Variant value)
+	{
 		updateSize();
 	}
 

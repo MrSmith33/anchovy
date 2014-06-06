@@ -181,7 +181,6 @@ public:
 		}
 
 		ivec2 viewSize = _viewport.getPropertyAs!("size", ivec2);
-		//writefln("viewSize %s _itemHeight %s", viewSize.y, _itemHeight);
 
 		itemsPerPage = cast(size_t)(cast(real)viewSize.y / _itemHeight).ceil;
 
@@ -206,7 +205,6 @@ public:
 		if (_list is null) return;
 		
 		double sliderSize = cast(double)itemsPerPage / _list.length;
-		//writefln("%s %s", itemsPerPage, sliderSize);
 		_vertscroll.setProperty!("sliderSize", double)(sliderSize);
 	}
 
@@ -225,9 +223,6 @@ public:
 			long canvasSize = _list.length * _itemHeight;
 			long viewPos = cast(long)(sliderPos * cast(double)(canvasSize - viewSize.y));
 
-			//writefln("sliderPos %s firstVisible %s canvasSize %s viewPos %s delta %s",
-			//	sliderPos, firstVisible, canvasSize, viewPos, cast(int)(firstVisible*_itemHeight - viewPos));
-
 			_canvas.setProperty!("position")(ivec2(0, cast(int)(firstVisible*_itemHeight - viewPos)));
 		}
 		else
@@ -242,17 +237,12 @@ public:
 
 		size_t listLength = _list.length;
 		size_t itemsToShow = itemsPerPage < listLength ? itemsPerPage : listLength;
-		//writefln("itemsToShow %s itemsPerPage %s", itemsToShow, itemsPerPage);
 
 		Widget[] labels = _canvas.getPropertyAs!("children", Widget[]);
-		//writefln("%s %s", firstVisible, itemsToShow);
 
 		foreach(itemIndex; firstVisible..firstVisible + itemsToShow)
 		{
-			//Widget label = context.createWidget("label", _canvas);
 			labels[itemIndex - firstVisible].setProperty!"text"(_list[itemIndex]);
-
-			//writeln(_list[itemIndex], label.getPropertyAs!("prefSize", ivec2));
 		}
 	}
 
