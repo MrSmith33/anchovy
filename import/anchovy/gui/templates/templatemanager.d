@@ -6,7 +6,9 @@ Authors: Andrey Penechko.
 
 module anchovy.gui.templates.templatemanager;
 
-import std.file : read;
+import std.algorithm : canFind;
+import std.array : Appender;
+import std.file : read, exists;
 
 import anchovy.gui;
 
@@ -16,6 +18,7 @@ import anchovy.gui.templates.templateparser;
 class TemplateManager
 {
 	WidgetTemplate[string] templates;
+	Appender!string parsedFiles;
 	private TemplateParser parser;
 
 	this(TemplateParser parser)
@@ -26,18 +29,44 @@ class TemplateManager
 
 	void parseFile(string filename)
 	{
-		string file = cast(string)read(filename);
-		parseString(file, filename);
+		Appender!(string[]) filesToParse;
+		filesToParse ~= filename;
+
+		string nextFilename;
+
+		while (filesToParse.data.length > 0)
+		{
+			nextFilename = filesToParse.data[$-1];
+			writefln("Parsing %s", nextFilename);
+			filesToParse.shrinkTo(filesToParse.data.length - 1);
+
+			if (!parsedFiles.data.canFind(nextFilename))
+			{
+				parsedFiles ~= nextFilename;
+
+				if (!exists(nextFilename))
+				{
+					stderr.writefln("Template file %s not found", nextFilename);
+					continue;
+				}
+
+				string file = cast(string)read(nextFilename);
+
+				filesToParse ~= parseString(file, nextFilename);
+			}
+		}
 	}
 
-	void parseString(string str, string filename = null)
+	string[] parseString(string str, string filename = null)
 	{
-		auto parsedTemplates = parser.parse(str, filename);
+		TemplateParserResult parserResult = parser.parse(str, filename);
 		
-		foreach(templ; parsedTemplates)
+		foreach(templ; parserResult.parsedTemplates)
 		{
 			templates[templ.tree.properties["type"].get!string] = templ;
 		}
+
+		return parserResult.filesToParse;
 	}
 
 	/// Returns true if given type name exists.

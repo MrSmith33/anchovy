@@ -14,9 +14,15 @@ import anchovy.gui;
 
 //version = TemplateParser_debug;
 
+struct TemplateParserResult
+{
+	WidgetTemplate[] parsedTemplates;
+	string[] filesToParse;
+}
+
 final class TemplateParser
 {
-	WidgetTemplate[] parse(string source, string filename = "")
+	TemplateParserResult parse(string source, string filename = "")
 	{
 		WidgetTemplate[] templates;
 
@@ -29,7 +35,30 @@ final class TemplateParser
 		catch(SDLangParseException e)
 		{
 			stderr.writeln(e.msg);
-			return null;
+			return TemplateParserResult();
+		}
+
+		string[] filesToParse;
+
+		foreach(templateImport; root.tags)
+		{
+			if (templateImport.name == "import")
+			{
+				if (templateImport.values.length == 0)
+				{
+					stderr.writefln("Invalid import statement at %s", templateImport.location);
+					continue;
+				}
+
+				auto value = templateImport.values[0];
+				if (value.type != typeid(string))
+				{
+					stderr.writefln("Invalid filename %s of import statement at %s", value, templateImport.location);
+					continue;
+				}
+
+				filesToParse ~= templateImport.values[0].get!string ~ ".sdl";
+			}
 		}
 
 		foreach(templ; root.maybe.namespaces["template"].tags)
@@ -37,7 +66,7 @@ final class TemplateParser
 			templates ~= parseTemplate(templ);
 		}
 
-		return templates;
+		return TemplateParserResult(templates, filesToParse);
 	}
 
 	WidgetTemplate parseTemplate(Tag templateTag)
