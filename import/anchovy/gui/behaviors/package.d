@@ -12,6 +12,7 @@ import anchovy.gui.behaviors.defaultbehaviors;
 
 import anchovy.gui.behaviors.buttonbehavior;
 import anchovy.gui.behaviors.checkbehavior;
+import anchovy.gui.behaviors.dockingrootbehavior;
 import anchovy.gui.behaviors.dragablebehavior;
 import anchovy.gui.behaviors.editbehavior;
 import anchovy.gui.behaviors.framebehavior;

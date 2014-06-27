@@ -1,0 +1,19 @@
+{
+	"name" : "example02",
+
+	"description" : "Example application that uses anchovy library",
+	"authors" : [ "Andrey Penechko" ],
+	"license" : "BSL-1.0",
+
+	"dependencies" : {
+		"anchovy" : {"path" : "../../", "version" : "~master"}
+	},
+
+	"targetName" : "example02",
+	
+	"sourceFiles" : ["main.d", "testapplication.d"],
+	"mainSourceFile": "main.d",
+	"targetPath" : "../../bin",
+	"workingDirectory" : "../../bin",
+	"targetType" : "executable"
+}

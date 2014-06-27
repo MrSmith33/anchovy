@@ -288,8 +288,6 @@ alias ExtractValues(Properties...) = ExtractValuesImpl!(0, Properties);
 
 template ExtractValuesImpl(uint index, Properties...)
 {
-	pragma(msg, (Properties).length);
-
 	static if(Properties.length > 1)
 		enum ExtractValuesImpl = "sources[" ~ to!string(index) ~ "].value, " ~ ExtractValuesImpl!(index + 1, Properties[1..$]);
 	else

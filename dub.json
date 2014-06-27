@@ -14,7 +14,7 @@
 		"derelict-glfw3" : "==1.0.0",
 		"derelict-sdl2" : "==1.2.0",
 		"dlib" : "==0.3.1",
-		"sdlang-d" : "0.8.4"
+		"sdlang-d" : "~master"
 	},
 
 	"importPaths" : [ "import" ],
@@ -23,6 +23,7 @@
 	"targetType" : "library",
 
 	"subPackages" : [
-		"examples/example01"
+		"examples/example01",
+		"examples/example02"
 	]
 }

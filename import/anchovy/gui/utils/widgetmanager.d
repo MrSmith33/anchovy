@@ -263,6 +263,9 @@ private:
 				root["subwidgets"] = subwidgets;
 			}
 		}
+
+		// Attach subwidgets root widget.
+		subwidget["root"] = root;
 		
 		//------------------------ Creating subwidgets -------------------------
 		foreach(subtemplate; sub.subwidgets)

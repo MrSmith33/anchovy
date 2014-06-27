@@ -82,10 +82,6 @@ class Application(WindowType)
 
 	void init(in string[] args)
 	{
-		writeln("---------------------- System info ----------------------");
-		foreach(item; getHardwareInfo())
-			writeln(item);
-		writeln("---------------------------------------------------------\n");
 
 		dstring cyrillicChars = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяє"d;
 

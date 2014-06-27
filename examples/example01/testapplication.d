@@ -23,10 +23,15 @@ class TestApplication : Application!GlfwWindow
 
 	override void load(in string[] args)
 	{
+		writeln("---------------------- System info ----------------------");
+		foreach(item; getHardwareInfo())
+			writeln(item);
+		writeln("---------------------------------------------------------\n");
+
 		fpsHelper.limitFps = false;
 
 		// ----------------------------- Creating widgets -----------------------------
-		templateManager.parseFile("test.sdl");
+		templateManager.parseFile("test1.sdl");
 
 		auto mainLayer = context.createWidget("mainLayer");
 		context.addRoot(mainLayer);
@@ -99,7 +104,7 @@ class TestApplication : Application!GlfwWindow
 		list.push("fourth");
 
 		auto fpsLabel = context.getWidgetById("fpsLabel");
-		auto fpsSlot = (FpsHelper* helper){fpsLabel["text"] = to!string(helper.fps); list.push(to!dstring(++counter)~": "~to!dstring(helper.fps));};
+		auto fpsSlot = (FpsHelper* helper){fpsLabel["text"] = "FPS: "~to!string(helper.fps); list.push(to!dstring(++counter)~": "~to!dstring(helper.fps));};
 		fpsHelper.fpsUpdated.connect(fpsSlot);
 
 		//printTree();

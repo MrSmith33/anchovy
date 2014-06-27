@@ -10,15 +10,15 @@ import std.traits;
 import anchovy.gui;
 public import anchovy.utils.flexibleobject;
 
-enum defaultAnchor = Sides.LEFT | Sides.TOP;
+enum defaultAnchor = Sides.left | Sides.top;
 
 /// Used to specify Widget.anchor.
 enum Sides
 {
-	LEFT = 1,
-	RIGHT = 2,
-	TOP = 4,
-	BOTTOM = 8,
+	left = 1,
+	right = 2,
+	top = 4,
+	bottom = 8,
 }
 
 //version = Debug_widget;
@@ -266,6 +266,19 @@ body
 	child.setProperty!"parent"(parent);
 	if (child.isVisible.value == true)
 		parent.setProperty!"children"(parent["children"] ~ child);
+}
+
+void detachFromParent(Widget child)
+{
+	if (child is null) return;
+
+	import std.algorithm : remove;
+
+	Widget parent = child.getPropertyAs!("parent", Widget);
+
+	child["parent"] = null;
+	parent["children"] = parent["children"].get!(Widget[]).remove!((a) => a == child);
+	parent["logicalChildren"] = parent["logicalChildren"].get!(Widget[]).remove!((a) => a == child);
 }
 
 void removeChild(Widget root, Widget child)

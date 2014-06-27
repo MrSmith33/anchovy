@@ -49,7 +49,7 @@ class AbsoluteLayout : ILayout
 			ivec2 size = widget.getPropertyAs!("size", ivec2);
 			anchor = widget.getPropertyAs!("anchor", int);
 
-			if ((anchor & Sides.LEFT) && (anchor & Sides.RIGHT))
+			if ((anchor & Sides.left) && (anchor & Sides.right))
 			{
 				int newWidth = size.x + dx;
 				if (newWidth >= 0)
@@ -57,11 +57,11 @@ class AbsoluteLayout : ILayout
 				else
 					size = ivec2(0, size.y);
 			}
-			else if (anchor & Sides.LEFT)
+			else if (anchor & Sides.left)
 			{
 				// Do nothing. X position stays unchanged, as well as width
 			}
-			else if (anchor & Sides.RIGHT)
+			else if (anchor & Sides.right)
 			{
 				pos = ivec2(pos.x + dx, pos.y);
 			}
@@ -70,15 +70,15 @@ class AbsoluteLayout : ILayout
 				assert(false); // Not yet implemented
 			}
 
-			if (anchor & Sides.TOP && anchor & Sides.BOTTOM)
+			if (anchor & Sides.top && anchor & Sides.bottom)
 			{
 				size = ivec2(size.x, size.y + dy);
 			}
-			else if (anchor & Sides.TOP)
+			else if (anchor & Sides.top)
 			{
 				// Do nothing. Y position stays unchanged, as well as height
 			}
-			else if (anchor & Sides.BOTTOM)
+			else if (anchor & Sides.bottom)
 			{
 				pos = ivec2(pos.x, pos.y + dy);
 			}

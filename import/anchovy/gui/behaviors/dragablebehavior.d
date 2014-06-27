@@ -16,7 +16,7 @@ import anchovy.gui.interfaces.iwidgetbehavior;
 class DragableBehavior : IWidgetBehavior
 {
 protected:
-	ivec2 _dragPosition;
+	ivec2 _dragOffset;
 	Widget _widget;
 
 public:
@@ -35,11 +35,12 @@ public:
 	{
 		if (event.context.eventDispatcher.pressedWidget is widget)
 		{
-			ivec2 deltaPos = event.pointerPosition - widget.getPropertyAs!("staticPosition", ivec2) - _dragPosition;
+			ivec2 deltaPos = event.pointerPosition - widget.getPropertyAs!("staticPosition", ivec2) - _dragOffset;
 			
-			auto dragEvent = new DragEvent(event.pointerPosition, deltaPos, _widget);
+			auto dragEvent = new DragEvent(event.pointerPosition, deltaPos, _dragOffset, _widget);
 			dragEvent.context = event.context;
 			_widget.handleEvent(dragEvent);
+			_dragOffset = dragEvent.dragOffset;
 
 			return true;
 		}
@@ -50,7 +51,7 @@ public:
 	{
 		if (event.button == PointerButton.PB_LEFT && event.bubbling)
 		{
-			_dragPosition = event.pointerPosition - widget.getPropertyAs!("staticPosition", ivec2);
+			_dragOffset = event.pointerPosition - widget.getPropertyAs!("staticPosition", ivec2);
 
 			return true;
 		}
@@ -61,6 +62,11 @@ public:
 	bool pointerReleased(Widget widget, PointerReleaseEvent event)
 	{
 		if (event.sinking) return false;
+
+		auto dragEndEvent = new DragEndEvent(event.pointerPosition, ivec2(0, 0), _dragOffset, _widget);
+		dragEndEvent.context = event.context;
+		_widget.handleEvent(dragEndEvent);
+
 		return true;
 	}
 }

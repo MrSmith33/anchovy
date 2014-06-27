@@ -11,6 +11,7 @@ import anchovy.gui.widget;
 
 import anchovy.gui.behaviors.buttonbehavior;
 import anchovy.gui.behaviors.checkbehavior;
+import anchovy.gui.behaviors.dockingrootbehavior;
 import anchovy.gui.behaviors.dragablebehavior;
 import anchovy.gui.behaviors.editbehavior;
 import anchovy.gui.behaviors.framebehavior;
@@ -35,6 +36,7 @@ void attachDefaultBehaviors(GuiContext context)
 	};
 
 
+	context.behaviorFactories["dockingroot"] ~= delegate IWidgetBehavior (){return new DockingRootBehavior;};
 	context.behaviorFactories["frame"] ~= delegate IWidgetBehavior (){return new FrameBehavior;};
 	context.behaviorFactories["button"] ~= delegate IWidgetBehavior (){return new ButtonBehavior;};
 	context.behaviorFactories["label"] ~= delegate IWidgetBehavior (){return new LabelBehavior;};

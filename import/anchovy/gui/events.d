@@ -104,12 +104,23 @@ class PointerMoveEvent : PointerEvent
 
 class DragEvent : PointerMoveEvent
 {
-	this(ivec2 newPointerPosition, ivec2 delta, Widget target)
+	this(ivec2 newPointerPosition, ivec2 delta, ivec2 dragOffset, Widget target)
 	{
 		super(newPointerPosition, delta);
 		this.target = target;
+		this.dragOffset = dragOffset;
 	}
+
 	Widget target;
+	ivec2 dragOffset;
+}
+
+class DragEndEvent : DragEvent
+{
+	this(ivec2 newPointerPosition, ivec2 delta, ivec2 dragOffset, Widget target)
+	{
+		super(newPointerPosition, delta, dragOffset, target);
+	}
 }
 
 // Keyboard

@@ -157,7 +157,7 @@ public:
 	{
 		super.attachTo(widget);
 
-		writeln(_viewport , _canvas , _vertscroll);
+		//writeln(_viewport , _canvas , _vertscroll);
 
 		if (_viewport && _canvas && _vertscroll)
 		{
