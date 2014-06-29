@@ -23,6 +23,7 @@ protected:
 	Widget _hoveredDocked;
 	Widget _hoveredDockedParent;
 	Sides _hoveredSide;
+
 	VerticalLayout vlayout;
 	HorizontalLayout hlayout;
 	HorizontalLayout boxlayout;
@@ -33,7 +34,7 @@ public:
 	{
 		vlayout = new VerticalLayout;
 		hlayout = new HorizontalLayout;
-		boxlayout = new HorizontalLayout;
+		boxlayout = hlayout;
 	}
 
 	override void attachTo(Widget widget)
@@ -198,8 +199,8 @@ public:
 	void handleDock(Widget floating, Widget docked, Widget dockedParent, Sides side)
 	{
 		assert(docked);
+		assert(floating);
 
-		writeln("dock");
 		floating["isDocked"] = true;
 		floating.detachFromParent;
 
@@ -211,21 +212,97 @@ public:
 		}
 		else
 		{
+			auto layout = dockedParent.getPropertyAs!("layout", ILayout);
 
+			void splitDocked(Widget floating, bool after, ILayout layout)
+			{
+				auto context = floating.getPropertyAs!("context", GuiContext);
+				auto container = context.createWidget("dockContainer");
+				
+				container.setProperty!("layout", ILayout)(layout);
+
+				dockedParent.replaceChildBy(docked, container);
+
+				if (after)
+				{
+					container.addChild(docked);
+					container.addChild(floating);
+				}
+				else
+				{
+					container.addChild(floating);
+					container.addChild(docked);
+				}
+			}
+
+			if (layout is hlayout)
+			{
+				final switch(side)
+				{
+					case Sides.left:
+						dockedParent.addChildBefore(floating, docked);
+						break;
+					case Sides.right:
+						dockedParent.addChildAfter(floating, docked);
+						break;
+					case Sides.top:
+						splitDocked(floating, false, vlayout);
+						break;
+					case Sides.bottom:
+						splitDocked(floating, true, vlayout);
+						break;
+				}
+			}
+			else
+			{
+				final switch(side)
+				{
+					case Sides.left:
+						splitDocked(floating, false, hlayout);
+						break;
+					case Sides.right:
+						splitDocked(floating, true, hlayout);
+						break;
+					case Sides.top:
+						dockedParent.addChildBefore(floating, docked);
+						break;
+					case Sides.bottom:
+						dockedParent.addChildAfter(floating, docked);
+						break;
+				}
+			}
 		}
 
 		_hoveredDocked = null;
 		_hoveredDockedParent = null;
 	}
 
+	void foldContainer(Widget container)
+	{
+		assert(container !is _dockingRoot);
+
+		Widget[] children = container.getPropertyAs!("children", Widget[]);
+		Widget child = children[0];
+		child.detachFromParent;
+
+		Widget parent = container.getPropertyAs!("parent", Widget);
+
+		parent.replaceChildBy(container, child);
+	}
+
 	void handleUndock(Widget docked)
 	{
-		writeln("undock");
-
+		Widget container = docked.getPropertyAs!("parent", Widget);
+		
 		docked.detachFromParent;
 		_undockedStorage.addChild(docked);
-		
 		docked["isDocked"] = false;
+
+		Widget[] children = container.getPropertyAs!("children", Widget[]);
+		if (children.length == 1 && container !is _dockingRoot)
+		{
+			foldContainer(container);
+		}
 	}
 
 	bool handleDraw(Widget dockRoot, DrawEvent event)

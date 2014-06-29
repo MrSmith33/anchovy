@@ -51,6 +51,20 @@ class TestApplication : Application!GlfwWindow
 		auto frameLayer = context.createWidget("frameLayer");
 		context.addRoot(frameLayer);
 
+		context.getWidgetById("createFrame")
+			.addEventHandler(
+				delegate bool(Widget w, PointerClickEvent e){
+					addFrame();
+					return true;
+			});
+
+		context.getWidgetById("printTree")
+			.addEventHandler(
+				delegate bool(Widget w, PointerClickEvent e){
+					printTree();
+					return true;
+			});
+
 		auto dockingRoot = context.getWidgetById("dockingroot");
 
 		dockManager = cast(DockingRootBehavior)dockingRoot.getWidgetBehavior!DockingRootBehavior;

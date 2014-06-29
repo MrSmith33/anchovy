@@ -70,6 +70,9 @@ class ValueProperty : IProperty
 
 	override Variant value(Variant newValue) @property
 	{
+		// Strange error when comparing two variant with Widget[] inside
+		// object.Error: object.Exception@src\object_.d(107):
+		// need opCmp for class anchovy.gui.widget.Widget
 		if (newValue == _value) return _value;
 
 		if (_isChanging)

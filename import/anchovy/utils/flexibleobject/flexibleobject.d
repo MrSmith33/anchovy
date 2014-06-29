@@ -37,6 +37,8 @@ import anchovy.utils.signal : Signal;
 // Object that can have any number of properties
 class FlexibleObject
 {
+	override int opCmp(Object o) { return cast(int)cast(void*)this - cast(int)cast(void*)o; }
+	
 	package IProperty[string] properties;
 
 	Variant opIndex(string propName)

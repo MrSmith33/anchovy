@@ -89,7 +89,7 @@ public:
 			import std.algorithm : remove;
 
 			if (obj["isVisible"] == true)
-				parent.setProperty!"children"(parent["children"] ~ child);
+				parent.setProperty!"children"(parent["children"] ~ child); // FIX, sholud insert in the same position
 			else
 				parent["children"] = parent["children"].get!(Widget[]).remove!((a) => a == child);
 		};
@@ -252,6 +252,72 @@ IWidgetBehavior getWidgetBehavior(Behavior)(Widget widget)
 		return null;
 }
 
+import std.range : only;
+void addChildBefore(Widget root, Widget child, Widget before)
+{
+	import std.algorithm : findSplitBefore;
+
+	Widget parent = getParentFromWidget(root);
+
+	child.setProperty!"parent"(parent);
+
+	Widget[] logicalChildren = parent.getPropertyAs!("logicalChildren", Widget[]);
+	auto result1 = findSplitBefore(logicalChildren, only(before));
+	parent.setProperty!"logicalChildren"(result1[0] ~ child ~ result1[1]);
+
+	if (child.isVisible.value == true)
+	{
+		Widget[] children = parent.getPropertyAs!("children", Widget[]);
+		auto result2 = findSplitBefore(children, only(before));
+		parent.setProperty!"children"(result2[0] ~ child ~ result2[1]);
+	}
+}
+
+void addChildAfter(Widget root, Widget child, Widget after)
+{
+	import std.algorithm : findSplitAfter;
+
+	Widget parent = getParentFromWidget(root);
+
+	child.setProperty!"parent"(parent);
+
+	Widget[] logicalChildren = parent.getPropertyAs!("logicalChildren", Widget[]);
+	auto result1 = findSplitAfter(logicalChildren, only(after));
+	parent.setProperty!"logicalChildren"(result1[0] ~ child ~ result1[1]);
+
+	if (child.isVisible.value == true)
+	{
+		Widget[] children = parent.getPropertyAs!("children", Widget[]);
+		auto result2 = findSplitAfter(children, only(after));
+		parent.setProperty!"children"(result2[0] ~ child ~ result2[1]);
+	}
+}
+
+void replaceChildBy(Widget root, Widget child, Widget replacement)
+{
+	assert(root);
+	assert(child);
+	assert(replacement);
+
+	import std.algorithm : findSplit;
+
+	Widget parent = getParentFromWidget(root);
+
+	replacement.setProperty!"parent"(parent);
+	child.setProperty!"parent"(null);
+
+	Widget[] logicalChildren = parent.getPropertyAs!("logicalChildren", Widget[]);
+	auto result1 = findSplit(logicalChildren, only(child));
+	parent.setProperty!"logicalChildren"(result1[0] ~ replacement ~ result1[2]);
+
+	if (replacement.isVisible.value == true)
+	{
+		Widget[] children = parent.getPropertyAs!("children", Widget[]);
+		auto result2 = findSplit(children, only(child));
+		parent.setProperty!"children"(result2[0] ~ replacement ~ result2[2]);
+	}
+}
+
 void addChild(Widget root, Widget child)
 in
 {
@@ -270,7 +336,7 @@ body
 
 void detachFromParent(Widget child)
 {
-	if (child is null) return;
+	assert(child);
 
 	import std.algorithm : remove;
 

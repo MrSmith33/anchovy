@@ -142,4 +142,30 @@ class Application(WindowType)
 	void closePressed()
 	{
 	}
+
+	void printTree()
+	{
+		void printWidget(Widget widget, string spacing)
+		{
+			auto children = widget["children"].get!(Widget[]);
+			writefln("-%s %s", widget["type"], widget["name"]);
+
+			if (children.length > 0)
+			{
+				foreach(child; children[0..$-1])
+				{
+					writef("%s ├", spacing);
+					printWidget(child, spacing~" |");
+				}
+				writef("%s └", spacing);
+				printWidget(children[$-1], spacing~"  ");
+			}
+		}
+
+		foreach(root; context.roots)
+		{
+			printWidget(root, "");
+		}
+		writeln;
+	}
 }

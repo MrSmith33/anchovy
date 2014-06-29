@@ -96,8 +96,10 @@ private:
 		}
 
 		//----------------------- Instatiating templates ---------------------------
-
-		if (WidgetTemplate templ = _context.templateManager.getTemplate(type))
+		
+		WidgetTemplate templ = _context.templateManager.getTemplate(type);
+		
+		if (templ)
 		{
 			//----------------------- Base type construction -----------------------
 
@@ -113,7 +115,6 @@ private:
 				attachBehaviorProperties(baseWidget);
 			}
 
-			baseWidget["type"] = type;
 			baseWidget["context"] = _context; // widget may access context before construction ends.
 			baseWidget.setProperty!("subwidgets", Widget[string])(null);
 
@@ -140,6 +141,10 @@ private:
 			widget = createBaseWidget(type);
 			attachBehaviorProperties(widget);
 		}
+
+		// Set given type, even if no such template exists.
+		// Helps to distinguish widgets.
+		widget["type"] = type;
 
 		// default style
 		if (widget["style"] == Variant(null))
