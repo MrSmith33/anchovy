@@ -20,6 +20,7 @@ class Application(WindowType)
 	FpsHelper fpsHelper;
 	TimerManager timerManager;
 	bool isRunning = true;
+	Color clearColor = Color(50, 10, 45);
 
 	IRenderer renderer;
 	IGuiRenderer guiRenderer;
@@ -87,7 +88,7 @@ class Application(WindowType)
 
 		// ----------------------------- Setting renderer -----------------------------
 		renderer = new Ogl3Renderer(window);
-		renderer.setClearColor(Color(50, 10, 45));
+		renderer.setClearColor(clearColor);
 
 		// ----------------------------- Skin loading ---------------------------------
 		string graySkinSource = cast(string)read("skingray.json");

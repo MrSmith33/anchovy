@@ -13,7 +13,7 @@
 		"derelict-gl3" : "==1.0.0",
 		"derelict-glfw3" : "==1.0.0",
 		"derelict-sdl2" : "==1.2.0",
-		"dlib" : "==0.3.1",
+		"dlib" : "~master",
 		"sdlang-d" : "~master"
 	},
 

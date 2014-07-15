@@ -136,5 +136,5 @@ static this()
 	 0xB5 : "Missing Encoding Field",
 	 0xB6 : "Missing Bbx Field"
  	];
-	ftErrorStringTable.rehash;
+	//ftErrorStringTable.rehash;
 }

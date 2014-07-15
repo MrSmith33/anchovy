@@ -31,7 +31,7 @@ class TestApplication : Application!GlfwWindow
 		fpsHelper.limitFps = false;
 
 		// ----------------------------- Creating widgets -----------------------------
-		templateManager.parseFile("test1.sdl");
+		templateManager.parseFile("example01.sdl");
 
 		auto mainLayer = context.createWidget("mainLayer");
 		context.addRoot(mainLayer);
@@ -110,24 +110,6 @@ class TestApplication : Application!GlfwWindow
 		//printTree();
 
 		writeln("\n----------------------------- Load end -----------------------------\n");
-	}
-
-	void printTree()
-	{
-		void printWidget(Widget widget, string spacing)
-		{
-			writefln(spacing~"%s %s", widget["type"], widget["name"]);
-
-			foreach(child; widget["children"].get!(Widget[]))
-			{
-				printWidget(child, spacing~"  ");
-			}
-		}
-
-		foreach(root; context.roots)
-		{
-			printWidget(root, "");
-		}
 	}
 
 	override void closePressed()

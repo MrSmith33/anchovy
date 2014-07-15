@@ -43,7 +43,7 @@ class TestApplication : Application!GlfwWindow
 		fpsHelper.limitFps = false;
 
 		// ----------------------------- Creating widgets -----------------------------
-		templateManager.parseFile("test2.sdl");
+		templateManager.parseFile("example02.sdl");
 
 		auto mainLayer = context.createWidget("mainLayer");
 		context.addRoot(mainLayer);

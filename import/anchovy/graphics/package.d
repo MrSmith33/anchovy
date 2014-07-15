@@ -30,10 +30,7 @@ module anchovy.graphics;
 
 public{
 	import anchovy.graphics.font;
-	import anchovy.graphics.camera;
-	//import anchovy.graphics.cameracontroller;
 	import anchovy.graphics.interfaces.irenderer;
-	import anchovy.graphics.mesh;
 	import anchovy.graphics.shaderprogram;
 	import anchovy.graphics.renderers.ogl3renderer;
 	import anchovy.graphics.glerrors;
