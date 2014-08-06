@@ -60,6 +60,8 @@ class Application(WindowType)
 			fpsHelper.sleepAfterFrame(lastTime - window.elapsedTime);
 		}
 
+		unload();
+
 		window.releaseWindow;
 	}
 
@@ -119,6 +121,11 @@ class Application(WindowType)
 	}
 
 	void load(in string[] args)
+	{
+
+	}
+
+	void unload()
 	{
 
 	}

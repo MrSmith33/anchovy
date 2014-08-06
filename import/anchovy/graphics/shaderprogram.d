@@ -367,5 +367,4 @@ static this()
 	           0x1405 : "GL_UNSIGNED_INT",
 	           0x1406 : "GL_FLOAT",
 	           0x140A : "GL_DOUBLE",];
-	glTypes.rehash;
 }
