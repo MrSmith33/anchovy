@@ -123,7 +123,7 @@ protected:
 	size_t firstVisible;
 
 	uint _itemHeight = 16;
-	uint numLabels = 0;
+	size_t numLabels = 0;
 	GuiContext context;
 
 public:
@@ -259,7 +259,7 @@ public:
 
 		ivec2 viewSize = _viewport.getPropertyAs!("size", ivec2);
 
-		int avalPos = _list.length * _itemHeight - viewSize.y;
+		long avalPos = _list.length * _itemHeight - viewSize.y;
 		
 		refreshItems();
 	}

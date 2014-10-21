@@ -158,7 +158,8 @@ final class TemplateParser
 		// Adding widget properties.
 		foreach(prop; section.attributes)
 		{
-			subwidget.properties[prop.name] = cast(Variant)prop.value;
+			if (prop.value.type !is typeid(DateTimeFracUnknownZone))
+				subwidget.properties[prop.name] = *cast(Variant*)&prop.value;
 		}
 
 		// Adding widget flags.

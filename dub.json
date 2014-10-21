@@ -8,13 +8,13 @@
 	"license" : "BSL-1.0",
 
 	"dependencies" : {
-		"derelict-fi" : "~master",
-		"derelict-ft" : "~master",
+		"derelict-fi" : "==1.0.0",
+		"derelict-ft" : "==1.0.0",
 		"derelict-gl3" : "==1.0.0",
 		"derelict-glfw3" : "==1.0.0",
 		"derelict-sdl2" : "==1.2.0",
-		"dlib" : "~master",
-		"sdlang-d" : "~master"
+		"dlib" : "==0.3.3",
+		"sdlang-d" : "==0.8.4"
 	},
 
 	"importPaths" : [ "import" ],

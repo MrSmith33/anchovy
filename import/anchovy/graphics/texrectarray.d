@@ -103,7 +103,7 @@ class TexRectArray
 	
 	void draw()
 	{
-		glDrawArrays(GL_TRIANGLES, 0, vertieces.length);
+		glDrawArrays(GL_TRIANGLES, 0, cast(uint)vertieces.length);
 	}
 	
 	void unbind()

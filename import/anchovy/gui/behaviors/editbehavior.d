@@ -68,10 +68,10 @@ class EditBehavior : LabelBehavior
 				if (_hasSelectedText)
 				{
 					event.guiRenderer.renderer.setColor(Color(0,0,255, 64));
-					uint selectionStartX = calcCharOffset(_selectionStart);
-						event.guiRenderer.renderer.fillRect(Rect(staticPos.x + _textPos.x + _contentOffset.left + selectionStartX,
+					size_t selectionStartX = calcCharOffset(cast(uint)_selectionStart);
+						event.guiRenderer.renderer.fillRect(Rect(staticPos.x + _textPos.x + _contentOffset.left + cast(uint)selectionStartX,
 					                                	staticPos.y + staticRect.size.y/2 - _textLine.height/2,
-						                               	calcCharOffset(_selectionEnd) - selectionStartX, _textLine.height));
+						                               	calcCharOffset(cast(uint)_selectionEnd) - cast(uint)selectionStartX, _textLine.height));
 				}
 			event.guiRenderer.popClientArea;
 		}
@@ -348,7 +348,7 @@ class EditBehavior : LabelBehavior
 		_hasSelectedText = false;
 	}
 
-	void select(uint start, uint end)
+	void select(size_t start, size_t end)
 	{
 		_selectionStart = start;
 		_selectionEnd   = end;
@@ -365,7 +365,7 @@ protected:
 	{
 		if (_selectionStart > _selectionEnd)
 		{
-			uint temp = _selectionEnd;
+			size_t temp = _selectionEnd;
 			_selectionEnd = _selectionStart;
 			_selectionStart = temp;
 		}
@@ -373,8 +373,8 @@ protected:
 
 	void updateSelection()
 	{
-		_selectionStart = clamp!uint(_selectionStart, 0, _textLine.text.length);
-		_selectionEnd = clamp!uint(_selectionEnd, 0, _textLine.text.length);
+		_selectionStart = clamp!size_t(_selectionStart, 0, _textLine.text.length);
+		_selectionEnd = clamp!size_t(_selectionEnd, 0, _textLine.text.length);
 
 		if (_selectionEnd - _selectionStart > 0)
 			_hasSelectedText = true;
@@ -451,13 +451,13 @@ protected:
 		}
 	}
 
-	void setCursorPos(uint position)
+	void setCursorPos(size_t position)
 	{
 		scope(exit) onCursorMove();
 
 		if (position > _textLine.text.length)
 		{
-			_cursorPos = _textLine.text.length;
+			_cursorPos = cast(uint)_textLine.text.length;
 			_cursorRenderPos = _textLine.width;
 			return;
 		}
@@ -551,7 +551,7 @@ private:
 	bool _isFocused = false;
 
 	/// if there is no current selection _selectionStart and _selectionEnd are equal to _cursorPos.
-	uint _selectionStart, _selectionEnd;
+	size_t _selectionStart, _selectionEnd;
 
 	int _cursorPos = 0;
 	int _cursorRenderPos = 0;

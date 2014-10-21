@@ -387,7 +387,7 @@ class Ogl3Renderer : IRenderer
 		
 		texture.validateBind();
 		array.bind;
-		glDrawArrays(GL_TRIANGLES, 0, array.vertieces.length);
+		glDrawArrays(GL_TRIANGLES, 0, cast(uint)array.vertieces.length);
 		array.unbind;
 		texture.unbind;
 	}
