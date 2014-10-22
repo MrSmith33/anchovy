@@ -1,0 +1,73 @@
+import "widgets"
+
+template:mainLayer {
+	tree layout="vertical" hasBack=false {
+		#widget prefSize="50 50" vexpand=true style="button"
+		#widget prefSize="50 50" hexpand=true
+		scrollbar-hori id="hori-scroll" sliderPos=0.7
+		widgetlist minSize="100 50" {
+			label id="hori-pos"
+			label id="vert-pos"
+			text-check text="check me!"
+			text-check text="check me!"
+			text-check "isChecked" id="check" text="initially checked"
+			caption-edit caption="First name:" text="John" id="firstName" hexpand=true
+			caption-edit caption="Last name:" text="Smith" id="lastName" hexpand=true
+			label id="fullName" tooltip="full name"
+			text-button text="show tooltip" id="showTooltip" tooltip="show"
+			text-button text="hide tooltip" id="hideTooltip" tooltip="hide"
+			text-button id="showFrame" text="Show frame"
+		}
+
+		stringlist id="stringlist"
+
+		widget prefSize="50 50" hexpand=true vexpand=true layout="horizontal" {
+			mybutton prefSize="50 50" vexpand=true
+			mybutton prefSize="50 50"
+			text-button id="button1" minSize="50 50" vexpand=true text="Click me!"
+			scrollbar-vert minSize="18 32" id="vert-scroll" sliderPos=0.4
+			image id="fontTexture"
+			label id="fpsLabel"
+		}
+	}
+}
+
+template:frameLayer {
+	tree layout="absolute" hasBack=false respondsToPointer=false {
+		frame id="test-frame" layout="vertical" minSize="100 100" caption="frame" position="200 200" tooltip="header" {
+			text-button text="some button" hexpand=true
+			text-button text="some button" hexpand=true
+			text-check text="some check"
+			text-check text="some check"
+			label text="group 1"
+			text-radio text="radio 1"
+			text-radio text="radio 2"
+			label text="group 2"
+			text-radio text="radio 3" group=1
+			text-radio text="radio 4" group=1
+			widget layout="horizontal" hasBack=false {
+				text-radiobutton text="1" group=2 minSize="14 14"
+				text-radiobutton text="2" group=2 minSize="14 14"
+				text-radiobutton text="3" group=2 minSize="14 14"
+			}
+		}
+	}
+}
+
+
+
+template:invalid extends="button" container="non-existing" {
+	properties {
+		text subwidget="text" property="text" # valid
+		text subwidget="text" property="text" # invalid: duplicated
+		text subwidget="non-existing" property="text" # invalid: non existing subwidget 'non-existing'
+		text property="text" lolattribute="nonce" # invalid: not allowed attribute 'lolattribute'
+	}
+
+	tree layout="docking" {
+		label dock="fill" name="text"
+	}
+
+	unknown { # invalid: unknown section of template
+	}
+}

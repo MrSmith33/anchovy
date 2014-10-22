@@ -1,0 +1,19 @@
+import "widgets"
+
+template:mainLayer {
+	tree layout="vertical" hasBack=false {
+		widget layout="horizontal" style="button" {
+			text-button id="createFrame" text="Create frame"
+			text-button id="printTree" text="Print tree"
+		}
+		dockingroot id="dockingroot" hexpand=true vexpand=true style="edit"
+	}
+}
+
+template:frameLayer {
+	tree layout="absolute" hasBack=false respondsToPointer=false
+}
+
+template:dockContainer {
+	tree hexpand=true vexpand=true
+}
