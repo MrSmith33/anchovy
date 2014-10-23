@@ -238,18 +238,17 @@ Widget getParentFromWidget(Widget root)
 	return *container;
 }
 
-IWidgetBehavior getWidgetBehavior(Behavior)(Widget widget)
+Behavior getWidgetBehavior(Behavior)(Widget widget)
 {
 	IWidgetBehavior[] behaviors = widget.getPropertyAs!("behaviors", IWidgetBehavior[]);
-	
-	import std.algorithm : find;
-	auto found = find!((a) => cast(Behavior)a !is null)(behaviors);
 
-	import std.array : empty;
-	if (!found.empty)
-		return found[0];
-	else
-		return null;
+	foreach(b; behaviors)
+	{
+		if (auto beh = cast(Behavior)b)
+			return beh;
+	}
+
+	return null;
 }
 
 import std.range : only;
