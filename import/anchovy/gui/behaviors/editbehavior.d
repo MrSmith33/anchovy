@@ -308,6 +308,9 @@ class EditBehavior : LabelBehavior
 		_textLine.text = newText;
 		_widget.setProperty!"text"(_textLine.text);
 
+		setCursorPos(0);
+		deselect();
+
 		return _textLine.text;
 	}
 
