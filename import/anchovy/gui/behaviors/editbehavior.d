@@ -302,7 +302,7 @@ class EditBehavior : LabelBehavior
 		return _textLine.text;
 	}
 	
-	dstring text(string newText) @property
+	dstring text(dstring newText) @property
 	{
 		if (_textLine is null) return "";
 		_textLine.text = newText;

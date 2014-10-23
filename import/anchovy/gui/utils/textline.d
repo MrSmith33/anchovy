@@ -74,11 +74,6 @@ public:
 		return _text;
 	}
 
-	dstring text(in string newText) @property
-	{
-		return text = to!dstring(newText);
-	}
-
 	dstring text(in dstring newText) @property
 	{
 		if (_text == newText)
