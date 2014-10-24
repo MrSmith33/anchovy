@@ -6,6 +6,9 @@ API can change with every version.
 
 ![v0 6 0](https://cloud.githubusercontent.com/assets/1129910/3053639/9b3fac46-e1ac-11e3-8ba7-4ae4a67788d4.png)
 
+##Simple docking implementation
+![guiex02](https://cloud.githubusercontent.com/assets/1129910/4738342/44ed2ddc-59fc-11e4-8510-9670860b17a0.gif)
+
 ##Structure:
 * anchovy.core - basic interfaces.
 * anchovy.utils - additional helpers.
@@ -33,7 +36,7 @@ Now the library can be built with dub.
 To use in your project put a dependency like:
 ```
 "dependencies": {
-	"anchovy": ">=0.6.1"
+	"anchovy": ">=0.7.1"
 }
 ```
 
@@ -42,4 +45,5 @@ To build example application execute in root folder:
 dub build anchovy:example01 --build=debug --nodeps
 ```
 
-In order to run compiled example you will need to download resourses from [latest release](https://github.com/MrSmith33/anchovy/releases) and install libraries if you are on linux. (glfw3, freetype, freeimage)
+You can download compiled examples from [latest release](https://github.com/MrSmith33/anchovy/releases).
+They include nesessary dll's. For linux you need to install libraries (glfw3, freetype, freeimage).
