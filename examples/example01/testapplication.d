@@ -16,11 +16,6 @@ import anchovy.gui.databinding.list;
 
 class TestApplication : Application!GlfwWindow
 {
-	this(uvec2 windowSize, string caption)
-	{
-		super(windowSize, caption);
-	}
-
 	override void load(in string[] args)
 	{
 		writeln("---------------------- System info ----------------------");
@@ -59,7 +54,7 @@ class TestApplication : Application!GlfwWindow
 		});
 		button1.addEventHandler(delegate bool(Widget widget, PointerLeaveEvent event)
 			{widget["text"] = "Click me!"; return true;});
-	
+
 		auto image = context.getWidgetById("fontTexture");
 		image.setProperty!("texture")(guiRenderer.getFontTexture);
 

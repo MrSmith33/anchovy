@@ -38,7 +38,7 @@ import anchovy.utils.signal : Signal;
 class FlexibleObject
 {
 	override int opCmp(Object o) { return cast(int)cast(void*)this - cast(int)cast(void*)o; }
-	
+
 	package IProperty[string] properties;
 
 	Variant opIndex(string propName)

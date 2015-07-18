@@ -25,7 +25,7 @@ private:
 	/// Last clicked widget. Used for double-click checking.
 	/// See_Also: lastClickedWidget
 	Widget		_lastClickedWidget;
-	
+
 	/// Currently pressed widget
 	Widget		_pressedWidget;
 
@@ -34,7 +34,7 @@ private:
 	Widget		_hoveredWidget;
 
 	/// Focused widget.
-	/// 
+	///
 	/// Will receive all key events if input is not grabbed by other widget.
 	Widget		_focusedWidget;
 
@@ -84,7 +84,7 @@ public:
 				event.context = _context;
 				_hoveredWidget.handleEvent(event);
 			}
-			
+
 			if (widget !is null)
 			{
 				auto event = new PointerEnterEvent;
@@ -108,7 +108,7 @@ public:
 	{
 		_inputOwnerWidget = widget;
 	}
-	
+
 	/// Used to get current focused input owner widget
 	Widget pressedWidget() @safe pure
 	{
@@ -203,7 +203,7 @@ public:
 	}
 
 	/// Handler for key press event.
-	/// 
+	///
 	/// Must be called by user application.
 	bool keyPressed(in KeyCode key, uint modifiers)
 	{
@@ -218,7 +218,7 @@ public:
 	}
 
 	/// Handler for key release event.
-	/// 
+	///
 	/// Must be called by user application.
 	bool keyReleased(in KeyCode key, uint modifiers)
 	{
@@ -233,7 +233,7 @@ public:
 	}
 
 	/// Handler for char enter event.
-	/// 
+	///
 	/// Must be called by user application.
 	bool charEntered(in dchar chr)
 	{
@@ -248,15 +248,15 @@ public:
 	}
 
 	/// Handler for pointer press event.
-	/// 
+	///
 	/// Must be called by user application.
 	bool pointerPressed(ivec2 pointerPosition, PointerButton button)
-	{	
+	{
 		_lastPointerPosition = pointerPosition;
 
 		auto event = new PointerPressEvent(pointerPosition, button);
 		event.context = _context;
-		
+
 		foreach_reverse(rootWidget; _context.roots)
 		{
 			Widget[] widgetChain = buildPathToLeaf!(containsPointer)(rootWidget, pointerPosition);
@@ -267,9 +267,9 @@ public:
 			{
 				if (eventConsumerChain[$-1].getPropertyAs!("isFocusable", bool))
 					focusedWidget = eventConsumerChain[$-1];
-				
+
 				pressedWidget = eventConsumerChain[$-1];
-				
+
 				return false;
 			}
 		}
@@ -280,7 +280,7 @@ public:
 	}
 
 	/// Handler for pointer release event.
-	/// 
+	///
 	/// Must be called by user application.
 	bool pointerReleased(ivec2 pointerPosition, PointerButton button)
 	{
@@ -330,21 +330,21 @@ public:
 		}
 
 		pressedWidget = null;
-	
+
 		return false;
 	}
 
 
 	/// Handler for pointer move event.
-	/// 
+	///
 	/// Must be called by user application.
 	bool pointerMoved(ivec2 newPointerPosition, ivec2 delta)
-	{	
+	{
 		_lastPointerPosition = newPointerPosition;
 
 		scope event = new PointerMoveEvent(newPointerPosition, delta);
 		event.context = _context;
-		
+
 		if (pressedWidget !is null)
 		{
 			bool handled = pressedWidget.handleEvent(event);
@@ -357,13 +357,13 @@ public:
 			}
 		}
 		else
-		{	
+		{
 			if (updateHovered(event))
 				return true;
 		}
 
 		hoveredWidget = null;
-		
+
 		return false;
 	}
 

@@ -48,7 +48,7 @@ class ViewportLayout : ILayout
 	/// Called by container to update its children positions and sizes.
 	void onContainerResized(Widget root, ivec2 oldSize, ivec2 newSize)
 	{
-		
+
 	}
 }
 
@@ -93,7 +93,7 @@ class WidgetListBehavior : BasicListBehavior
 		ivec2 canvasSize = _canvas.getPropertyAs!("size", ivec2);
 
 		int avalPos = canvasSize.y - viewSize.y;
-		int newCanvasPos = avalPos < 0 ? 0 : -cast(int)(position.get!double * avalPos); 
+		int newCanvasPos = avalPos < 0 ? 0 : -cast(int)(position.get!double * avalPos);
 
 		_canvas.setProperty!("position")(ivec2(0, newCanvasPos));
 	}
@@ -203,7 +203,7 @@ public:
 		numLabels = itemsPerPage;
 
 		if (_list is null) return;
-		
+
 		double sliderSize = cast(double)itemsPerPage / _list.length;
 		_vertscroll.setProperty!("sliderSize", double)(sliderSize);
 	}
@@ -260,7 +260,7 @@ public:
 		ivec2 viewSize = _viewport.getPropertyAs!("size", ivec2);
 
 		long avalPos = _list.length * _itemHeight - viewSize.y;
-		
+
 		refreshItems();
 	}
 

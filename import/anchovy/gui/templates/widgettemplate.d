@@ -69,7 +69,7 @@ class WidgetTemplate
 
 	override string toString()
 	{
-		return tree.toString() ~ 
+		return tree.toString() ~
 				"base: " ~ baseType ~ " cont: " ~ container~"\n";
 	}
 }

@@ -58,7 +58,7 @@ class EditBehavior : LabelBehavior
 			event.guiRenderer.pushClientArea(staticRect);
 				event.guiRenderer.renderer.setColor(Color(0,0,0));
 				event.guiRenderer.drawTextLine(_textLine, ivec2(staticPos.x + _textPos.x + _contentOffset.left, staticPos.y), AlignmentType.LEFT_TOP);
-				
+
 				if (_isFocused && _isCursorVisible && _isCursorBlinkVisible)
 				{
 					event.guiRenderer.renderer.fillRect(Rect(staticPos.x + _cursorRenderPos + _textPos.x + _contentOffset.left,
@@ -79,11 +79,11 @@ class EditBehavior : LabelBehavior
 		return true;
 	}
 
-	
+
 	bool keyPressed(Widget widget, KeyPressEvent event)
 	{
 		if (!_isEditable) return true;
-		
+
 		bool doTextUpdate = true;
 		bool doDeselect = true;
 
@@ -93,11 +93,11 @@ class EditBehavior : LabelBehavior
 			{
 				event.context.clipboardString = to!string(copy());
 				doDeselect = false;
-			}		
+			}
 			else if (event.keyCode == KeyCode.KEY_V)
 			{
 				paste(to!dstring(event.context.clipboardString));
-			}	
+			}
 			else if (event.keyCode == KeyCode.KEY_X)
 			{
 				event.context.clipboardString = to!string(copy());
@@ -159,7 +159,7 @@ class EditBehavior : LabelBehavior
 		{
 			doTextUpdate = false;
 		}
-		
+
 		if (doTextUpdate)
 		{
 			calcTextXPos();
@@ -168,10 +168,10 @@ class EditBehavior : LabelBehavior
 				deselect();
 			}
 		}
-		
+
 		return true;
 	}
-	
+
 	bool keyReleased(Widget widget, KeyReleaseEvent)
 	{
 		return true;
@@ -196,7 +196,7 @@ class EditBehavior : LabelBehavior
 		if (event.button == PointerButton.PB_LEFT)
 		{
 			moveCursorToClickPos(event.pointerPosition);
-		
+
 			_selectionStart = _cursorPos;
 			_selectionEnd = _cursorPos;
 			return true;
@@ -221,7 +221,7 @@ class EditBehavior : LabelBehavior
 
 		return true;
 	}
-	
+
 	bool focusGained(Widget widget, FocusGainEvent event)
 	out
 	{
@@ -236,10 +236,10 @@ class EditBehavior : LabelBehavior
 		_isFocused = true;
 
 		_blinkTimer = event.context.timerManager.addTimer(_blinkInterval, &onCursorBlink, double.nan, TimerTickType.PROCESS_LAST);
-		
+
 		return true;
 	}
-	
+
 	bool focusLost(Widget widget, FocusLoseEvent event)
 	{
 		widget.setProperty!"state"("normal");
@@ -251,7 +251,7 @@ class EditBehavior : LabelBehavior
 		_isCursorBlinkVisible = true;
 
 		widget.setProperty!"text"(_textLine.text);
-				
+
 		return true;
 	}
 
@@ -301,7 +301,7 @@ class EditBehavior : LabelBehavior
 		if (_textLine is null) return "";
 		return _textLine.text;
 	}
-	
+
 	dstring text(dstring newText) @property
 	{
 		if (_textLine is null) return "";
@@ -483,7 +483,7 @@ protected:
 			assert(glyph !is null);
 			charX += glyph.metrics.advanceX;
 			++charIndex;
-			
+
 			if (charIndex == _textLine.text.length) break;
 		}
 
@@ -499,11 +499,11 @@ protected:
 
 		int charX = 0;
 		uint charIndex = 0;
-		
+
 		while (true)
 		{
 			if (charIndex == index) break;
-			
+
 			charX += _textLine.font.getGlyph(_textLine.text[charIndex]).metrics.advanceX;
 			++charIndex;
 		}
@@ -537,7 +537,7 @@ protected:
 
 		//writeln("contentWidth ", contentWidth, " _cursorRenderPos ", _cursorRenderPos, " x ", _textPos.x);
 	}
-	
+
 protected:
 	TextLine _textLine;
 	GuiContext _context;

@@ -52,7 +52,7 @@ static const string[uint] ftErrorStringTable;
 
 static this()
 {
-	ftErrorStringTable = 
+	ftErrorStringTable =
 	[0x00 : "Ok",
 	 0x01 : "Cannot Open Resource",
 	 0x02 : "Unknown File Format",

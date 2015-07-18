@@ -54,7 +54,7 @@ public:
 		_array[index] = data;
 		listChangedSignal.emit();
 		itemChangedSignal.emit(index, _array[index]);
-		
+
 		return _array[index];
 	}
 

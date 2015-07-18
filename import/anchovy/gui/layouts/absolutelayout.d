@@ -23,7 +23,7 @@ class AbsoluteLayout : ILayout
 		Widget[] children = root.getPropertyAs!("children", Widget[]);
 
 		version(debug_absolute) writefln("AbsoluteLayout expand %s", root["id"]);
-		
+
 		foreach(child; children)
 		{
 			version(debug_absolute) writeln(child["id"]);

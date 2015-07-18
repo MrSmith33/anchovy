@@ -67,7 +67,7 @@ public:
 
 		return true;
 	}
-	
+
 	bool pointerReleased(Widget widget, PointerReleaseEvent event)
 	{
 		if (event.button == PointerButton.PB_LEFT)
@@ -103,7 +103,7 @@ public:
 		updateState();
 		return true;
 	}
-	
+
 	bool pointerLeaved(Widget widget, PointerLeaveEvent event)
 	{
 		isHovered = false;
@@ -117,7 +117,7 @@ public:
 	// normal_unchecked == normal
 	static const string[6] stateStrings = ["normal", "normal_checked", "hovered_unchecked",
 	 "hovered_checked", "pressed_unchecked", "pressed_checked"];
-	
+
 	void updateState()
 	{
 		version(Check_debug) writefln("%s %s isHovered %s", _widget["name"], _widget["type"], isHovered);

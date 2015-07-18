@@ -54,8 +54,7 @@ public:
 			event.guiRenderer.drawTextLine(widget.getPropertyAs!("line", TextLine),
 				widget.getPropertyAs!("staticPosition", ivec2), AlignmentType.LEFT_TOP);
 		}
-		
+
 		return true;
 	}
 }
-

@@ -99,7 +99,7 @@ struct GuiStyleState
 
 	/// Maximal size of the widget. By default equal to [0,0]. If maxSize is zero maxSize is not limited.
 	ivec2 maxSize;
-	
+
 	/// Defines offset of content rect from widget borders.
 	RectOffset contentPadding;
 
@@ -107,14 +107,14 @@ struct GuiStyleState
 	/// If skin has drawn outline, with this parameter set
 	/// guiRenderer will draw that sides outside of rect.
 	RectOffset outline;
-	
+
 	/// Defines non-stretchable borders of texture.
 	/// Corner parts will stay non-stretched.
 	/// Left/right sides will be stretched vertically.
 	/// Top/bottom sides will be stretched horizontally.
-	/// Middle part will be stretched 
+	/// Middle part will be stretched
 	RectOffset fixedBorders;
-	
+
 	Color textColor;
 	Color backgroundColor;
 }

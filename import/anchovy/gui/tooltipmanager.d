@@ -14,7 +14,7 @@ private:
 	GuiContext _context;
 
 	Widget _tooltip;
-	
+
 public:
 
 	@disable this();

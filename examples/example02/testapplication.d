@@ -16,11 +16,6 @@ import anchovy.gui.databinding.list;
 
 class TestApplication : Application!GlfwWindow
 {
-	this(uvec2 windowSize, string caption)
-	{
-		super(windowSize, caption);
-	}
-
 	DockingRootBehavior dockManager;
 	size_t frameCounter;
 

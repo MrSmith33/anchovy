@@ -36,7 +36,7 @@ public:
 		if (event.context.eventDispatcher.pressedWidget is widget)
 		{
 			ivec2 deltaPos = event.pointerPosition - widget.getPropertyAs!("staticPosition", ivec2) - _dragOffset;
-			
+
 			auto dragEvent = new DragEvent(event.pointerPosition, deltaPos, _dragOffset, _widget);
 			dragEvent.context = event.context;
 			_widget.handleEvent(dragEvent);

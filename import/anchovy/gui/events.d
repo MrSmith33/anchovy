@@ -17,7 +17,7 @@ abstract class Event
 	 + it is bubbling from target to root.
 	 +/
 	bool	sinking = true;
-	
+
 	/// Pseudo flag for convenience.
 	/// Opposite to sinking.
 	bool bubbling() @property
@@ -29,7 +29,7 @@ abstract class Event
 	{
 		return sinking = !newBubbling;
 	}
-	
+
 	/// Specifies if event was already handled.
 	/// Useful for checking if any child has handled this event.
 	/// Set automatically by EventPropagator

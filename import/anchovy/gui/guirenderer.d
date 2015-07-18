@@ -16,7 +16,7 @@ import anchovy.graphics.shaderprogram;
 import anchovy.gui;
 
 string textvshader=`
-#version 330 
+#version 330
 layout (location = 0) in vec2 Position;
 layout (location = 1) in vec2 TexCoord;
 uniform vec2 gPosition;
@@ -32,7 +32,7 @@ void main()
 }`;
 
 string textfshader=`
-#version 330 
+#version 330
 in vec2 TexCoord0;
 
 out vec4 FragColor;
@@ -43,7 +43,7 @@ uniform vec4 gColor;
 void main()
 {
 	FragColor = texture2D(gSampler, TexCoord0).r*gColor;
-} 	
+}
 `;
 
 /// Gives means for rendering widgets and text lines.
@@ -171,21 +171,21 @@ class SkinnedGuiRenderer : IGuiRenderer
 			return;
 		}
 		line.update;
-		
+
 		int renderX, renderY;
 
 		if (alignment & HoriAlignment.LEFT)
 			renderX = position.x;
 		else if (alignment & HoriAlignment.CENTER)
 			renderX = position.x - (line.width / 2);
-		else 
+		else
 			renderX = position.x - line.width;
 
 		if (alignment & VertAlignment.TOP)
 			renderY = position.y + line.height;
 		else if (alignment & VertAlignment.CENTER)
 			renderY = position.y + (line.height / 2);
-		else 
+		else
 			renderY = position.y;
 
 		_renderer.drawTexRectArray(line.geometry, ivec2(renderX , renderY), _fontTexture, _textShader);
@@ -205,9 +205,9 @@ class SkinnedGuiRenderer : IGuiRenderer
 			return;
 		}
 		line.update;
-		
+
 		int renderX, renderY;
-		
+
 		if (alignment & HoriAlignment.LEFT)
 			renderX = area.x;
 		else if (alignment & HoriAlignment.CENTER)
@@ -216,7 +216,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 			renderX = area.x + area.width - line.width;
 		else
 			renderX = area.x;
-		
+
 		if (alignment & VertAlignment.TOP)
 			renderY = area.y;
 		else if (alignment & VertAlignment.CENTER)
@@ -225,7 +225,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 			renderY = area.y + area.height - line.height;
 		else
 			renderY = area.y;
-		
+
 		_renderer.drawTexRectArray(line.geometry, ivec2(renderX , renderY), _fontTexture, _textShader);
 	}
 
@@ -237,7 +237,7 @@ class SkinnedGuiRenderer : IGuiRenderer
 		_clientAreaStack ~= area;
 		setClientArea(_clientAreaStack.back);
 	}
-	
+
 	/// Pops clip rect from stack.
 	/// Useful for containers which clips their children.
 	/// Must be called when parent ends drawing its children.
@@ -366,4 +366,3 @@ private:
 	GuiSkin _skin;
 	TextLine[] _lines;
 }
-

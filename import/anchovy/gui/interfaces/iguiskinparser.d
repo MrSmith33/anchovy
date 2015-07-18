@@ -12,4 +12,3 @@ interface IGuiSkinParser
 {
 	GuiSkin parse(string skinData);
 }
-

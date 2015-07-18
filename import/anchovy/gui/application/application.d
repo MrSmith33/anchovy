@@ -28,25 +28,23 @@ class Application(WindowType)
 	GuiContext context;
 	TemplateManager templateManager;
 
-	this(uvec2 windowSize, string caption)
+	this()
 	{
 		window = new WindowType();
 
 		aggregator = new EventAggregator!WindowType(this, window);
-		
-		window.init(windowSize, caption);
 	}
 
-	void run(in string[] args)
+	void run(in string[] args, uvec2 windowSize, string caption)
 	{
-		init(args);
+		init(args, windowSize, caption);
 		load(args);
 
 		double lastTime = window.elapsedTime;
 		double newTime;
 
 		while(isRunning)
-		{	
+		{
 			window.processEvents();
 
 			newTime = window.elapsedTime;
@@ -83,8 +81,10 @@ class Application(WindowType)
 		];
 	}
 
-	void init(in string[] args)
+	void init(in string[] args, uvec2 windowSize, string caption)
 	{
+		initLibs();
+		window.init(windowSize, caption);
 
 		dstring cyrillicChars = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяє"d;
 
@@ -120,6 +120,19 @@ class Application(WindowType)
 		glEnable(GL_SCISSOR_TEST);
 	}
 
+	void initLibs()
+	{
+		import derelict.freetype.ft;
+		import derelict.freeimage.freeimage;
+		import derelict.glfw3.glfw3;
+		import derelict.opengl3.gl3;
+
+		DerelictFI.load(SharedLibVersion(3, 15, 0));
+		DerelictFT.load();
+		DerelictGL3.load();
+		DerelictGLFW3.load();
+	}
+
 	void load(in string[] args)
 	{
 
@@ -127,7 +140,7 @@ class Application(WindowType)
 
 	void unload()
 	{
-
+		renderer.close();
 	}
 
 	void update(double dt)

@@ -27,7 +27,7 @@ final class TemplateParser
 		WidgetTemplate[] templates;
 
 		Tag root;
-	
+
 		try
 		{
 			root = parseSource(source, filename);
@@ -177,7 +177,7 @@ final class TemplateParser
 	{
 		// key target subtemplate. Key target property name, root property name.
 		ForwardedProperty[][string] properties;
-		
+
 		// fetch all forwarded properties for template templ
 		foreach(prop; section.tags)
 		{

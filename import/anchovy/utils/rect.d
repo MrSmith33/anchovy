@@ -90,7 +90,7 @@ struct Rect
 		Rect newRect;
 		newRect.width = width + deltaSize.x;
 		newRect.height = height + deltaSize.y;
-		
+
 		if (newRect.width < 0) newRect.width = 0;
 		if (newRect.height < 0) newRect.height = 0;
 
@@ -123,7 +123,7 @@ struct Rect
 			height = clampValue!uint(height, minSize.y, maxSize.y);
 		}
 	}
-	
+
 	ivec2 position() @property
 	{
 		return ivec2(x, y);

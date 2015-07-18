@@ -96,9 +96,9 @@ private:
 		}
 
 		//----------------------- Instatiating templates ---------------------------
-		
+
 		WidgetTemplate templ = _context.templateManager.getTemplate(type);
-		
+
 		if (templ)
 		{
 			//----------------------- Base type construction -----------------------
@@ -242,7 +242,7 @@ private:
 		//----------------------- Forwarding properties ------------------------
 		foreach(forwardedProperty; sub.forwardedProperties)
 		{
-			version(Debug_wman) writefln("forwarding %s.%s to %s.%s", root["type"], forwardedProperty.propertyName, 
+			version(Debug_wman) writefln("forwarding %s.%s to %s.%s", root["type"], forwardedProperty.propertyName,
 				subwidget["name"], forwardedProperty.targetPropertyName);
 			root[forwardedProperty.propertyName] = subwidget.property(forwardedProperty.targetPropertyName);
 		}
@@ -271,7 +271,7 @@ private:
 
 		// Attach subwidgets root widget.
 		subwidget["root"] = root;
-		
+
 		//------------------------ Creating subwidgets -------------------------
 		foreach(subtemplate; sub.subwidgets)
 		{

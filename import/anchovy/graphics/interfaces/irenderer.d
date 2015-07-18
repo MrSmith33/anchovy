@@ -65,4 +65,5 @@ interface IRenderer
 	void setClearColor(in Color color);
 	uvec2 windowSize();
 	void flush();
+	void close();
 }

@@ -76,9 +76,9 @@ class TimerManager
 	}
 
 	/// Resets timer's delay to newDelay if > 0 or to timer.delay otherwise.
-	/// 
+	///
 	/// Timer.delay will not be changed. Timer.nextUpdate only chabges.
-	/// If you wish change Timer.delay you can do this by returning new delay in timer callback or 
+	/// If you wish change Timer.delay you can do this by returning new delay in timer callback or
 	/// by setting it directly trough the reference returned by addTimer.
 	void resetTimer(Timer timer, double newDelay = double.nan)
 	{

@@ -71,19 +71,19 @@ class Texture
 		texFormat = format;
 		loadFromFile(filename);
 	}
-	
+
 	this(Bitmap textureData, TextureTarget target, TextureFormat format)
 	{
 		texTarget = target;
 		texFormat = format;
 		loadFromData(textureData);
 	}
-	
+
 	~this()
 	{
 		unload();
 	}
-	
+
 	void validateBind(uint textureUnit = 0)
 	{
 		if (!isValid) reload();
@@ -101,7 +101,7 @@ class Texture
 		glBindTexture(texTarget, glTextureHandle);
 			checkGlError;
 	}
-	
+
 	void unbind()
 	{
 		glBindTexture(texTarget, 0);
@@ -111,7 +111,7 @@ class Texture
 	{
 		return _bitmap.size;
 	}
-	
+
 	ref const(ubyte[]) data()
 	{
 		return _bitmap.data;
@@ -120,7 +120,7 @@ class Texture
 	private void reload()
 	{
 		if (!isHandleCreated) genTexture();
-		
+
 		bind;
 		if (_bitmap.size != lastSize)
 		{
@@ -167,11 +167,11 @@ class Texture
 	{
 		return _bitmap;
 	}
-	
+
 	/////////////////
 	//Private methods
 	/////////////////
-	
+
 	private void genTexture()
 	{
 		glGenTextures(1, &glTextureHandle);
@@ -179,7 +179,7 @@ class Texture
 
 		isHandleCreated = true;
 	}
-	
+
 	/// Loads image from file in RGBA8 format
 	private void loadFromFile(string filename)
 	{
@@ -196,7 +196,7 @@ class Texture
 
 		invalidate();
 	}
-	
+
 	private void loadFromData(Bitmap textureData)
 	{
 		if (_bitmap)
@@ -209,12 +209,12 @@ class Texture
 
 		invalidate();
 	}
-	
+
 	private void unload()
 	{
 		glDeleteTextures(1, &glTextureHandle);
 	}
-	
+
 private:
 	TextureFormat texFormat;
 	uint glTextureHandle;

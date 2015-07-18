@@ -91,7 +91,7 @@ struct Signal(Args...)
 				slots = slots[0..haystackPos] ~ slots[haystackPos+1 .. $];
 			}
 		}
-		
+
 	}
 
 	void disconnectAll() @trusted
@@ -117,7 +117,7 @@ unittest
 	assert(num == 1); // Doesn't called upon disconnecting.
 
 	test1.emit();
-	assert(num == 1); 
+	assert(num == 1);
 }
 
 // Test for signal with 1 argument
@@ -125,7 +125,7 @@ unittest
 {
 	// Slot that takes one argument.
 	// Slots can have any number of parameters.
-	Signal!int test2; 
+	Signal!int test2;
 
 	auto num = 0;
 	auto slot = (int increment){num += increment;};
@@ -177,7 +177,7 @@ unittest
 	Signal!(int*, int) test4;
 
 	auto num = 0;
-	// Testing static functions. 
+	// Testing static functions.
 	static void staticSlot(int* num, int inc){*num += inc;}
 
 	test4.connect(&staticSlot);

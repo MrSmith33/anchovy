@@ -35,7 +35,7 @@ import anchovy.utils.signal : Signal;
 
 abstract class IProperty
 {
-	// called when value changes. 
+	// called when value changes.
 	alias PropertyChangedSignal = Signal!(FlexibleObject, Variant);
 	alias PropertyChangingSignal = Signal!(FlexibleObject, Variant*);
 
@@ -44,7 +44,7 @@ abstract class IProperty
 
 	ref PropertyChangedSignal valueChanged() @property;
 	ref PropertyChangingSignal valueChanging() @property;
-	
+
 	alias value this;
 }
 
@@ -83,7 +83,7 @@ class ValueProperty : IProperty
 		_isChanging = true;
 
 		_valueChanging.emit(_owner, &newValue);
-		
+
 		if (newValue == _value)
 		{
 			_isChanging = false;

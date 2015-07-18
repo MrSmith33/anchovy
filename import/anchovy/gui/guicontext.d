@@ -156,7 +156,7 @@ public:
 	/// Used to get current clipboard string
 	string clipboardString()
 	{
-		if (_getClipboardStringCallback !is null) 
+		if (_getClipboardStringCallback !is null)
 			return to!string(_getClipboardStringCallback());
 		else
 			return "";
@@ -165,7 +165,7 @@ public:
 	/// Used to set current clipboard string
 	void clipboardString(string newString)
 	{
-		if (_setClipboardStringCallback !is null) 
+		if (_setClipboardStringCallback !is null)
 			_setClipboardStringCallback(to!dstring(newString));
 	}
 

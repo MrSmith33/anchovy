@@ -36,7 +36,7 @@ import std.string;
 
 
 class StreamUtilsException:Exception{
-	this(string msg){super(msg);}	
+	this(string msg){super(msg);}
 }
 ///
 pure T Peek(T)(ref ubyte[] inData){
@@ -50,7 +50,7 @@ T Read(T)(ref ubyte[] inData){
 	Check!T(inData);
 	ubyte[T.sizeof] staticValue= inData[0..T.sizeof];
 	Crop!(T,false)(inData);
-	
+
 	return bigEndianToNative!T(staticValue);
 }
 
@@ -71,7 +71,7 @@ void Check(T)(ref ubyte[] inData){
 //
 unittest{
 	ubyte[] inData=[1,1,1];
-	
+
 }
 
 nothrow void Write(T)(ref ubyte[] outData, T var){
@@ -93,10 +93,10 @@ unittest{
 	Write!(double)(outStream, 3.141592);
 	Write!(long)(outStream, 12345679);
 	Write!(ulong)(outStream, 123456790);
-	
+
 	size_t dataLength = bool.sizeof*2 + byte.sizeof*2 + short.sizeof*2 + int.sizeof*2 + float.sizeof + double.sizeof +
 		long.sizeof*2;
-	
+
 	assert(outStream.length==dataLength);
 	assert(Read!(bool)(outStream)==true);
 	assert(Read!(bool)(outStream)==false);
@@ -117,17 +117,17 @@ unittest{
  * Reads array of elements of type T from byte array data and changes data to point to slice after this array.
  * The elements in stream are stored in Big Endian.
  * If length of stream in less then length of inquired data then empty array is returned.
- * 
+ *
  * Returns: array of type T
  */
 T[] ReadArray(T)(ref ubyte[] inData, uint length){
 	T[] returnValue;
-	
-	if(inData.length<T.sizeof*length) 
+
+	if(inData.length<T.sizeof*length)
 		throw new StreamUtilsException(format("Not enough data to read: need %s, got %s",(T.sizeof)*length,inData.length));
-	
+
 	for(size_t i=0;i<length;++i){
-		
+
 		ubyte[T.sizeof] staticValue= inData[0..T.sizeof];
 		returnValue ~= bigEndianToNative!T(staticValue);
 		inData=inData[T.sizeof..$];//pop the data from begining.
@@ -140,20 +140,20 @@ T[] ReadArray(T)(ref ubyte[] inData, uint length){
 //ReadArray unittest
 unittest{
 	ubyte[] inData=[0,0,0,10,0,0,1,1,0,1,1,1];
-	
-	ubyte[] tempData=inData;	
+
+	ubyte[] tempData=inData;
 	uint[] outData1=ReadArray!(uint)(tempData,3);
-	
+
 	assert(outData1==[10,257,65793]);
 	assert(tempData.length==0);
-	
+
 	/////////
 	tempData=inData;
 	float[] outData2=ReadArray!(float)(tempData,2);
 	assert(tempData.length==4);
 	writeln(outData2);
 	assert(tempData.length==float.sizeof);
-	
-	
+
+
 	writeln("SUCCESS: ReadArray(T)(ref ubyte[] data, uint num)");
 }

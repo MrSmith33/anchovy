@@ -218,7 +218,7 @@ public:
 			{
 				auto context = floating.getPropertyAs!("context", GuiContext);
 				auto container = context.createWidget("dockContainer");
-				
+
 				container.setProperty!("layout", ILayout)(layout);
 
 				dockedParent.replaceChildBy(docked, container);
@@ -293,7 +293,7 @@ public:
 	void handleUndock(Widget docked)
 	{
 		Widget container = docked.getPropertyAs!("parent", Widget);
-		
+
 		docked.detachFromParent;
 		_undockedStorage.addChild(docked);
 		docked["isDocked"] = false;

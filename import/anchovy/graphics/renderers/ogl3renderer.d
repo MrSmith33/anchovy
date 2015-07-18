@@ -143,12 +143,12 @@ void main()
 	FragColor = texture2D(gSampler, texCoord0)*gColor;
 }`;
 
-string primVertFill2d = `#version 330  
+string primVertFill2d = `#version 330
 in vec2 position;
 
 uniform vec2 gHalfTarget;
 uniform vec4 gColor;
- 
+
 smooth out vec4 theColor;
 
 void main()
@@ -158,14 +158,14 @@ void main()
 }
 `;
 //in smooth vec4 theColor DOESN'T works use smooth in unstead
-string primFragFill2d=`#version 330  
+string primFragFill2d=`#version 330
 smooth in vec4 theColor;
 out vec4 fragColor;
 
 void main()
 {
 	fragColor = theColor;
-}	
+}
 `;
 
 class Ogl3Renderer : IRenderer
@@ -174,19 +174,18 @@ class Ogl3Renderer : IRenderer
 	{
 		this.window = window;
 
-		DerelictFI.load();
-		DerelictFT.load();
-
 		FreeImage_SetOutputMessage(&FreeImageErrorHandler);
 		shaders = new IdArray!(ShaderProgram);
 
 		primShader = new ShaderProgram(primVertFill2d, primFragFill2d);
 		if (!primShader.compile)
 			throw new Exception(primShader.errorLog);
-		
+		registerShaderProgram(primShader);
+
 		primTexShader = new ShaderProgram(primVertTex2d, primFragTex2d);
 		if (!primTexShader.compile)
 			throw new Exception("textured primitive shader failed compilation\n"~primTexShader.errorLog);
+		registerShaderProgram(primTexShader);
 
 		rectVao = new Vao;
 		texRectVao = new Vao;
@@ -208,10 +207,19 @@ class Ogl3Renderer : IRenderer
 			texRectVbo.unbind;
 		texRectVao.unbind;
 	}
-	
+
+	override void close()
+	{
+		foreach(k; shaders.array.byKey)
+		{
+			shaders[k].close;
+			shaders.remove(k);
+		}
+	}
+
 	void drawText(string text, uint x, uint y, uint font)
 	{
-		
+
 	}
 
 	override uint createShaderProgram(string vertexSource, string fragmentSource)
@@ -247,7 +255,7 @@ class Ogl3Renderer : IRenderer
 	{
 		texture.validateBind(textureUnit);
 	}
-	
+
 	override void bindShaderProgram(uint programName)
 	{
 		ShaderProgram program = shaders[programName];
@@ -261,10 +269,10 @@ class Ogl3Renderer : IRenderer
 		program.bind;
 		_currentShaderProgram = program;
 	}
-	
+
 	void setProgram(in uint program)
 	{
-		
+
 	}
 
 	override void setClearColor(in Color color)
@@ -384,7 +392,7 @@ class Ogl3Renderer : IRenderer
 		program.setUniform2!float("gHalfTarget", cast(float)window.size.x / 2, cast(float)window.size.y / 2);
 		program.setUniform2!float("gPosition", position.x, position.y);
 		program.setUniform4!float("gColor", curColor.r, curColor.g, curColor.b, curColor.a);
-		
+
 		texture.validateBind();
 		array.bind;
 		glDrawArrays(GL_TRIANGLES, 0, cast(uint)array.vertieces.length);
@@ -396,12 +404,12 @@ class Ogl3Renderer : IRenderer
 	{
 		return window.size();
 	}
-	
+
 	override void flush()
 	{
 		window.swapBuffers;
 	}
-	
+
 private:
 
 	ShaderProgram _currentShaderProgram;
@@ -423,7 +431,7 @@ private:
 
 extern(C)
 {
-	nothrow void FreeImageErrorHandler(FREE_IMAGE_FORMAT fif, const( char)*message) 
+	nothrow void FreeImageErrorHandler(FREE_IMAGE_FORMAT fif, const( char)*message)
 	{
 		try
 		{

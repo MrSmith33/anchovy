@@ -129,7 +129,7 @@ class TextureAtlas
 
 private:
 
-	bool _autoGrow = true; 
+	bool _autoGrow = true;
 	uint _maxAtlasSize = 8192; // 2^13
 
 	Bitmap bitmap;

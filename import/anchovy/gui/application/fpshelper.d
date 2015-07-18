@@ -26,7 +26,7 @@ struct FpsHelper
 	/// Stores last delta time passed into update()
 	float deltaTime;
 
-	/// Stores amount of updates between 
+	/// Stores amount of updates between
 	size_t fpsTicks;
 
 	/// Accumulates time before reaching update interval

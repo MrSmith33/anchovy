@@ -67,7 +67,7 @@ class JsonGuiSkinParser
 			skin.name = getValue!string("name", jsonValue);
 			skin.textureFilename = getValue!string("image", jsonValue);
 			skin.fontInfos = parseFonts(getValue!jsonArray("fonts", jsonValue));
-			
+
 			foreach(i, ref value; getValue!jsonArray("styles", jsonValue))
 			{
 				string styleName = getValue!string("name", value);
@@ -91,7 +91,7 @@ class JsonGuiSkinParser
 		{
 			foreach(warning; warnings)
 				writeln("Warning: ", warning);
-				
+
 			warnings = [];
 		}
 
@@ -109,7 +109,7 @@ class JsonGuiSkinParser
 	GuiStyle parseStyle(ref JSONValue value, string styleName)
 	{
 		expect(JSON_TYPE.OBJECT, value);
-		
+
 		GuiStyle parsedStyle = new GuiStyle();
 		GuiStyleState nullState;
 
@@ -184,7 +184,7 @@ private:
 	int[4] parseRect(jsonArray inArray, int[4] defaultValue = [0, 0, 0, 0])
 	{
 		if (inArray.length == 0) return defaultValue;
-		
+
 		int[4] outArray;
 
 		foreach(i, ref element; inArray)

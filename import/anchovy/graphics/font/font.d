@@ -96,22 +96,22 @@ public:
 	{
 		return _height;
 	}
-	
+
 	uint size() @property const
 	{
 		return _size;
 	}
-	
+
 	uint lineGap() @property const
 	{
 		return _lineGap;
 	}
-	
+
 	uint ascender() @property const
 	{
 		return _ascender;
 	}
-	
+
 	uint descender() @property const
 	{
 		return _descender;

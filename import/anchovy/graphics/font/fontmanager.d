@@ -29,13 +29,10 @@ DEALINGS IN THE SOFTWARE.
 module anchovy.graphics.font.fontmanager;
 
 
-import derelict.opengl3.gl3;
-
 import anchovy.core.types;
 import anchovy.graphics.texture;
 public import anchovy.graphics.font.font;
 import anchovy.graphics.font.textureatlas;
-debug import std.stdio;
 
 
 static const dchar[] asciiChars = "0123456789!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";

@@ -52,9 +52,9 @@ class ShaderParameters
 
 class ShaderProgram
 {
-	
+
 public:
-	
+
 	/++
 	 + Creates an empty shader program in OpenGL state.
 	 + OpenGL must be initialized before creating.
@@ -62,21 +62,28 @@ public:
 	this()
 	{
 		programHandler = glCreateProgram();
+		_isInited = true;
 	}
-	
+
 	this(in string vertShaderSource, in string fragShaderSource)
 	{
 		programHandler = glCreateProgram();
-		
+
 		attachShader(GL_VERTEX_SHADER, vertShaderSource);
 		attachShader(GL_FRAGMENT_SHADER, fragShaderSource);
+
+		_isInited = true;
 	}
-	
-	~this()
+
+	void close()
 	{
-		glDeleteProgram(programHandler);
+		if (_isInited)
+		{
+			glDeleteProgram(programHandler);
+			_isInited = false;
+		}
 	}
-	
+
 	/++
 	 + Binds shader to the current OpenGL state.
 	 + Must be used only after attaching all the shaders and compilation.
@@ -86,40 +93,40 @@ public:
 	{
 		glUseProgram(programHandler);
 	}
-	
+
 	static void unbind()
 	{
 		glUseProgram(0);
 	}
-	
+
 	/++
 	 + Compiles shader source of the given type and attaches it to the shader program.
 	 + If shader compilation fails, writes compilation info to the error log of the shader program (_errorLog)
-	 + 
+	 +
 	 + Params:
 	 + 		shaderType = GL_VERTEX_SHADER or GL_GEOMETRY_SHADER or GL_FRAGMENT_SHADER
 	 + 		shaderSource = the string that contains the source of given shader
 	 +/
 	void attachShader(in GLenum shaderType, in string shaderSource)
 	{
-		
+
 		GLuint shader = glCreateShader(shaderType);
-		
+
 		const char* fileData=toStringz(shaderSource);
 		glShaderSource(shader, 1, &fileData, null);
-		
+
 		glCompileShader(shader);
-		
+
 		int status, length;
 		glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-		
+
 		if (status == GL_FALSE)
 		{
 			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
-			
+
 			char[] error=new char[length];
 			glGetShaderInfoLog(shader, length, null, cast(char*)error);
-			
+
 			string shaderTypeString;
 			switch(shaderType)
 			{
@@ -128,12 +135,12 @@ public:
 				case GL_FRAGMENT_SHADER: shaderTypeString = "fragment"; break;
 				default: break;
 			}
-			
+
 			_errorLog ~= "Compile failure in " ~ shaderTypeString ~ " shader:\n" ~ error~"\n";
 		}
 		glAttachShader(programHandler, shader);
 	}
-	
+
 	/++
 	 + Compiles shaderProgram. If any error occurs, writes log to _errorLog.
 	 + After compile detaches shaders from program.
@@ -141,52 +148,52 @@ public:
 	 +/
 	bool compile()
 	{
-		
+
 		glLinkProgram(programHandler);
-		
+
 		GLint linkStatus;
-		
+
 		glGetProgramiv(programHandler, GL_LINK_STATUS, &linkStatus);
-		
+
 		/++
 		 + Detaches all the shaders after compilation
 		 +/
 		scope(exit)
-		{			
+		{
 			GLuint[3] shaders;
 			GLsizei count;
-			
+
 			glGetAttachedShaders(programHandler, 3, &count, cast(uint*)shaders);
-			
+
 			for( uint i=0; i<count; ++i )
 			{
 				glDetachShader(programHandler, shaders[i]);
 				glDeleteShader(shaders[i]);
 			}
 		}
-		
+
 		if ( linkStatus == GL_FALSE )
 		{
 			GLint infoLogLength;
 			glGetProgramiv(programHandler, GL_INFO_LOG_LENGTH, &infoLogLength);
-			
+
 			char[] strInfoLog = new char[infoLogLength];
 			glGetProgramInfoLog(programHandler, infoLogLength, null, cast(char*)strInfoLog);
 			_errorLog ~= "Linker failure: " ~ strInfoLog ~ "\n";
-			
+
 			return false;
 		}
-		
+
 		int total = -1;
-		glGetProgramiv(programHandler, GL_ACTIVE_UNIFORMS, &total); 
-		for(int i=0; i<total; ++i) 
+		glGetProgramiv(programHandler, GL_ACTIVE_UNIFORMS, &total);
+		for(int i=0; i<total; ++i)
 		{
 			int name_len = -1, num = -1;
 			GLenum type = GL_ZERO;
 			char[100] name;
 			glGetActiveUniform(programHandler, i, name.length-1,
 			                   &name_len, &num, &type, name.ptr);
-			
+
 			name[name_len] = 0;
 			GLuint location = glGetUniformLocation(programHandler, name.ptr);
 			string uniformName = name[0..name_len].idup;
@@ -195,9 +202,10 @@ public:
 		// Magic bug. Cannot remove this statement
 		writef("",uniforms);
 		uniforms.rehash;
+
 		return true;
 	}
-	
+
 	/++
 	 + Returns: empty string if the shader was compiled without	errors, or error log otherwise.
 	 + Examples:
@@ -212,7 +220,7 @@ public:
 	{
 		return _errorLog;
 	}
-	
+
 	private static string getParType(T)()
 	{
 		string res;
@@ -230,7 +238,7 @@ public:
 		}
 		return res;
 	}
-	
+
 	private static uint getGlType(T)()
 	{
 		uint type;
@@ -261,7 +269,7 @@ public:
 		//Uniform* uni = uniName in uniforms;
 		assert(uni !is null, "Unknown uniform name");
 		assert(uni.type == getGlType(t[0])(), "Wrong uniform type");
-		
+
 		writeln("glUniform1" ~
 		        getParType!(typeof(t[0]))() ~
 		        "(" ~
@@ -269,7 +277,7 @@ public:
 		        params ~
 		        ");");+/
 	}
-	
+
 	void setUniform2(T)(string uniName, T t1, T t2)
 	{
 		Uniform* uni = &getUniform(uniName);
@@ -279,7 +287,7 @@ public:
 			mixin("glUniform2"~getParType!T~"(uni.location, t1, t2);");
 		}
 	}
-	
+
 	void setUniform3(T)(string uniName, T t1, T t2, T t3)
 	{
 		Uniform* uni = &getUniform(uniName);
@@ -289,7 +297,7 @@ public:
 			mixin("glUniform3"~getParType!T~"(uni.location, t1, t2, t3);");
 		}
 	}
-	
+
 	void setUniform4(T)(string uniName, T t1, T t2, T t3, T t4)
 	{
 		Uniform* uni = &getUniform(uniName);
@@ -299,19 +307,19 @@ public:
 			mixin("glUniform4"~getParType!T~"(uni.location, t1, t2, t3, t4);");
 		}
 	}
-	
+
 	uint getUniformLoc(string name)
 	{
 		//assert((name in uniforms) !is null, "Unknown uniform: '"~name~"'");
 		return uniforms[name].location;
 	}
-	
+
 	ref Uniform getUniform(string name)
 	{
 		//assert((name in uniforms) !is null, "Unknown uniform: '"~name~"'");
 		return uniforms[name];
 	}
-	
+
 	/+
 	 + Returns: shader program pointer of type GLuint, the result of glCreateProgram();
 	 + Can be used in some OpenGL functions.
@@ -325,20 +333,20 @@ public:
 	 + ---
 	 +/
 	@property GLuint program(){ return programHandler; }
-	
-	//void setUniform(T)(string unifName, 
+
+	//void setUniform(T)(string unifName,
 	//TODO: Add methods for uniforms setting
-	
+
 private:
-	
+
 	/++
 	 + The result of glCreateProgram() get in constructor
-	 + 
+	 +
 	 + See_Also: this
 	 +/
 	GLuint programHandler = 0;
 	Uniform[string] uniforms;
-	
+
 	/++
 	 + The result of:
 	 + ---
@@ -346,12 +354,14 @@ private:
 	 + ---
 	 +/
 	GLuint _compileStatus;
-	
+
 	/++
 	 + Contains full compile log if compile error.
 	 +/
 	string _errorLog;
-	
+
+	bool _isInited;
+
 }
 
 static const string[uint] glTypes;

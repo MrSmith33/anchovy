@@ -65,7 +65,7 @@ public:
 		{
 			throw new Error("Error creating GLFW3 window");
 		}
-		
+
 		glfwMakeContextCurrent(_window);
 		glfwSwapInterval(0);
 
@@ -166,9 +166,6 @@ protected:
 
 	static void initGlfw()
 	{
-		DerelictGLFW3.load();
-		DerelictGL3.load();
-
 		glfwSetErrorCallback(&errorfun);
 
 		if (glfwInit() == 0)

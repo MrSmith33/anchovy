@@ -129,7 +129,7 @@ static T getPropertyAsBase(string propname, T, FlexibleObjectType : FlexibleObje
 	static if(hasStaticProperty!(FlexibleObjectType, propname))
 	{
 		auto property = mixin("w."~propname~".value");
-	
+
 		if (property.convertsTo!T)
 			return property.get!T;
 		else
@@ -138,7 +138,7 @@ static T getPropertyAsBase(string propname, T, FlexibleObjectType : FlexibleObje
 	else
 	{
 		auto property = w[propname];
-	
+
 		if (property.convertsTo!T)
 			return property.get!T;
 		else
@@ -266,7 +266,7 @@ static void setProperty(string propname, ValueType, FlexibleObjectType : Flexibl
 	}
 }
 
-/// 
+///
 void bindTo(IProperty source, IProperty dest, Variant delegate(Variant) converter)
 {
 	auto handler = (FlexibleObject obj, Variant value){

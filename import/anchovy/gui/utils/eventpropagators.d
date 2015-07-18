@@ -9,7 +9,7 @@ module anchovy.gui.utils.eventpropagators;
 import std.traits;
 import anchovy.gui;
 
-/// 
+///
 enum PropagatingStrategy
 {
 	/// First visits parent then child until target is reached.
@@ -56,7 +56,7 @@ Widget[] propagateEventSinkBubble(OnHandle onHandle = OnHandle.StopTraversing)(W
 	foreach_reverse(index, widget; widgets)
 	{
 		event.handled = event.handled || widget.handleEvent(event);
-		
+
 		static if(onHandle == OnHandle.StopTraversing)
 		{
 			if (event.handled) return widgets[0..index+1];
@@ -73,7 +73,7 @@ void propagateEventParentFirst(Widget root, Event event)
 	void propagateEvent(Widget root)
 	{
 		root.handleEvent(event);
-		
+
 		foreach(child; root.getPropertyAs!("children", Widget[]))
 		{
 			propagateEvent(child);
@@ -93,7 +93,7 @@ void propagateEventSinkBubbleTree(Widget root, Event e)
 		e.sinking = true;
 		widget.propagateEventSinkBubbleTree(e);
 	}
-	
+
 	e.bubbling = true;
 	root.handleEvent(e);
 }
@@ -130,7 +130,7 @@ Widget[] buildPathToLeaf(alias pred, T...)(Widget root, T data)
 	bool traverse(Widget root)
 	{
 		if(!pred(root, data)) return false;
-		
+
 		path ~= root;
 
 		foreach(child; root.getPropertyAs!("children", Widget[]))

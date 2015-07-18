@@ -93,7 +93,7 @@ public:
 			else
 				parent["children"] = parent["children"].get!(Widget[]).remove!((a) => a == child);
 		};
-		
+
 		property("staticPosition").valueChanged.connect(onStaticPositionChanged);
 		property("size").valueChanged.connect(onSizeChanged);
 		property("isVisible").valueChanged.connect(onVisibilityChanged);
@@ -189,7 +189,7 @@ public:
 	ValueProperty isVisible;
 	ValueProperty hasBack;
 	ValueProperty respondsToPointer;
-	
+
 	void addEventHandler(T)(T handler)
 	{
 		static assert(isDelegate!T, "handler must be a delegate, not " ~ T.stringof);
@@ -222,7 +222,7 @@ public:
 		}
 		return result;
 	}
-	
+
 	/// Event handlers.
 	bool delegate(Widget, Event)[][TypeInfo] _eventHandlers;
 }

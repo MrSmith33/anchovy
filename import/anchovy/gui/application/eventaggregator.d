@@ -75,7 +75,7 @@ class EventAggregator(WindowType)
 
 		if (window.isKeyPressed(KeyCode.KEY_LEFT_SHIFT) || window.isKeyPressed(KeyCode.KEY_RIGHT_SHIFT))
 			modifiers |= KeyModifiers.SHIFT;
-			
+
 		if (window.isKeyPressed(KeyCode.KEY_LEFT_CONTROL) || window.isKeyPressed(KeyCode.KEY_RIGHT_CONTROL))
 			modifiers |= KeyModifiers.CONTROL;
 

@@ -69,7 +69,7 @@ class Timer
 		}
 
 		double newNextTime;
-		
+
 		with(TimerTickType)
 		final switch(tickType)
 		{
@@ -99,7 +99,7 @@ class Timer
 			}
 		}
 	}
-	
+
 	TimerHandler handler;
 
 	TimerTickType tickType;

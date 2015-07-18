@@ -39,7 +39,7 @@ enum AlignmentType
 	LEFT_TOP    = HoriAlignment.LEFT | VertAlignment.TOP,
 	LEFT_CENTER = HoriAlignment.LEFT | VertAlignment.CENTER,
 	LEFT_BOTTOM = HoriAlignment.LEFT | VertAlignment.BOTTOM,
-	
+
 	CENTER_NONE   = HoriAlignment.CENTER | VertAlignment.NONE,
 	CENTER_TOP    = HoriAlignment.CENTER | VertAlignment.TOP,
 	CENTER_CENTER = HoriAlignment.CENTER | VertAlignment.CENTER,

@@ -88,7 +88,7 @@ enum KeyCode : uint
 	KEY_GRAVE_ACCENT          = 96,
 	KEY_WORLD_1               = 161,
 	KEY_WORLD_2               = 162,
-	
+
 	KEY_ESCAPE                = 256,
 	KEY_ENTER                 = 257,
 	KEY_TAB                   = 258,

@@ -49,7 +49,7 @@ class ImageBehavior : IWidgetBehavior
 		{
 			if (auto bitmap = widget.getPropertyAs!("bitmap", Bitmap))
 				bitmap.dataChanged.disconnect(bitmapSlot);
-			
+
 			auto texture = newTexture.get!Texture;
 			if (texture is null) return;
 

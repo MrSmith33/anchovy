@@ -30,7 +30,7 @@ module anchovy.utils.noise.perlin;
 
 import std.math;
 
-float pnoise(float x, float y, float z) 
+float pnoise(float x, float y, float z)
 {
 	int X = cast(int)floor(x) & 255;
 	int Y = cast(int)floor(y) & 255;
@@ -99,7 +99,7 @@ const static ubyte[512] p = [
 222, 114,  67,  29,  24,  72, 243, 141, 128, 195,  78,  66, 215,  61, 156, 180
 ];
 
-  
+
 float fade(float t)
 {
 	return t * t * t * (t * (t * 6 - 15) + 10);
@@ -110,7 +110,7 @@ float lerp(float t, float a, float b)
 	return a + t * (b - a);
 }
 
-float grad(int hash, float x, float y, float z) 
+float grad(int hash, float x, float y, float z)
 {
 	int h = hash & 15;
 	float u = h < 8 ? x : y;

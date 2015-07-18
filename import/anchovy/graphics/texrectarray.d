@@ -41,7 +41,7 @@ struct TexVertex
 		s = cast(ushort) c;
 		t = cast(ushort) d;
 	}
-	
+
 align(1):
 	short x, y;
 	ushort s, t;
@@ -72,7 +72,7 @@ class TexRectArray
 		vert[1] = TexVertex(gq.x, gq.y, tq.x, tq.y);//upper left
 		vert[2] = TexVertex(gq.x + gq.width, gq.y, tq.x + tq.width, tq.y);//upper right
 		vert[3] = TexVertex(gq.x + gq.width, gq.y+ gq.height, tq.x + tq.width, tq.y + tq.height);//lower right
-		
+
 		vertieces ~= vert[0];
 		vertieces ~= vert[1];
 		vertieces ~= vert[2];
@@ -81,7 +81,7 @@ class TexRectArray
 		vertieces ~= vert[3];
 		return this;
 	}
-	
+
 	void load()
 	{
 		glBindVertexArray(vao);
@@ -91,25 +91,25 @@ class TexRectArray
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(0, 2, GL_SHORT, GL_FALSE, 4*short.sizeof, null);
 		glVertexAttribPointer(1, 2, GL_UNSIGNED_SHORT, GL_FALSE, 4*short.sizeof, cast(void*)(2*short.sizeof));
-		
+
 		glBindBuffer(GL_ARRAY_BUFFER,0);
 		glBindVertexArray(0);
 	}
-	
+
 	void bind()
 	{
 		glBindVertexArray(vao);
 	}
-	
+
 	void draw()
 	{
 		glDrawArrays(GL_TRIANGLES, 0, cast(uint)vertieces.length);
 	}
-	
+
 	void unbind()
 	{
 		glBindVertexArray(0);
 	}
-	
+
 	uint vao, vbo;
 }

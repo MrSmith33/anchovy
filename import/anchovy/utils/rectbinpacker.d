@@ -64,13 +64,13 @@ class RectBinPacker
 
 	/++
 	 + @Returns: A value [0, 1] denoting the ratio of total surface area that is in use.
-	 + 0.0f - the bin is totally empty, 1.0f - the bin is full. 
+	 + 0.0f - the bin is totally empty, 1.0f - the bin is full.
 	 +/
 	float Occupancy()
 	{
 		ulong totalSurfaceArea = binWidth * binHeight;
 		ulong usedSurfaceArea = UsedSurfaceArea(&root);
-		
+
 		return cast(float)usedSurfaceArea/totalSurfaceArea;
 	}
 
@@ -115,7 +115,7 @@ private:
 			node.left.rect.y = node.rect.y;
 			node.left.rect.width = w;
 			node.left.rect.height = height;
-			
+
 			node.right.rect.x = node.rect.x;
 			node.right.rect.y = node.rect.y + height;
 			node.right.rect.width = node.rect.width;
@@ -127,7 +127,7 @@ private:
 			node.left.rect.y = node.rect.y + height;
 			node.left.rect.width = width;
 			node.left.rect.height = h;
-			
+
 			node.right.rect.x = node.rect.x + width;
 			node.right.rect.y = node.rect.y;
 			node.right.rect.width = w;
@@ -144,7 +144,7 @@ private:
 		if (node.left || node.right)
 		{
 			ulong usedSurfaceArea = node.rect.width * node.rect.height;
-			
+
 			if (node.left !is null)
 			{
 				usedSurfaceArea += UsedSurfaceArea(node.left);
@@ -153,10 +153,10 @@ private:
 			{
 				usedSurfaceArea += UsedSurfaceArea(node.right);
 			}
-			
+
 			return usedSurfaceArea;
 		}
-		
+
 		// This is a leaf node, it doesn't constitute to the total surface area.
 		return 0;
 	}

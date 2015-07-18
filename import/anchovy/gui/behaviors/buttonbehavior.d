@@ -32,18 +32,18 @@ public:
 		if (event.button == PointerButton.PB_LEFT)
 		{
 			widget.setProperty!"state"("pressed");
-			
+
 			version(Button_debug) writeln("pressed");
 		}
 		return true;
 	}
-	
+
 	bool pointerReleased(Widget widget, PointerReleaseEvent event)
 	{
 		if (event.button == PointerButton.PB_LEFT)
 		{
 			widget.setProperty!"state"("hover");
-			
+
 			version(Button_debug) writeln("hovered");
 		}
 		return true;
@@ -59,24 +59,24 @@ public:
 		if (event.context.eventDispatcher.pressedWidget is this)
 		{
 			widget.setProperty!"state"("pressed");
-			
+
 			version(Button_debug) writeln("pressed");
 		}
 		else
 		{
 			widget.setProperty!"state"("hover");
-			
+
 			version(Button_debug) writeln("hovered");
 		}
 		return true;
 	}
-	
+
 	bool pointerLeaved(Widget widget, PointerLeaveEvent event)
 	{
 		widget.setProperty!"state"("normal");
-		
+
 		version(Button_debug) writeln("normal");
-		
+
 		return true;
 	}
 }

@@ -60,7 +60,7 @@ class TemplateManager
 	string[] parseString(string str, string filename = null)
 	{
 		TemplateParserResult parserResult = parser.parse(str, filename);
-		
+
 		foreach(templ; parserResult.parsedTemplates)
 		{
 			templates[templ.tree.properties["type"].get!string] = templ;

@@ -38,7 +38,7 @@ public:
 	{
 		return _isInited;
 	}
-	
+
 	void update()
 	{
 		if (text.length == 0 || !_isInited) return;
@@ -86,7 +86,7 @@ public:
 
 		_geometry.vertieces = null;
 		_cursorX = 0;
-		
+
 		appendGlyphs(_text, _font);
 		_isDirty = true;
 
@@ -137,14 +137,14 @@ protected:
 				continue;
 			}
 			if (glyph is null) glyph = font.getGlyph('?');
-			
+
 			int x  =  glyph.metrics.offsetX + _cursorX;
 			int y  =  font.verticalOffset - glyph.metrics.offsetY;
 			int w  =  glyph.metrics.width;
 			int h  =  glyph.metrics.height;
 			int tx =  glyph.atlasPosition.x;
 			int ty =  glyph.atlasPosition.y;
-			
+
 			//whitespace
 			if (w == 0 || h == 0)
 			{
@@ -164,13 +164,13 @@ protected:
 	uint _height;
 	dstring _text;
 	bool _isInited = false;
-	
+
 	TexRectArray _geometry;
 	uint _cursorX;
 	bool _isDirty = true;
-	
+
 	Font _font;
 	string _fontName;
-	
+
 	ubyte _tabSize = 4;
 }

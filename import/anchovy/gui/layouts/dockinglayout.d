@@ -22,6 +22,6 @@ class DockingLayout : ILayout
 
 	override void onContainerResized(Widget root, ivec2 oldSize, ivec2 newSize)
 	{
-		
+
 	}
 }

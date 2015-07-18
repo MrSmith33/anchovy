@@ -8,7 +8,7 @@ module anchovy.gui.interfaces.ilayout;
 
 import anchovy.gui;
 
-/// 
+///
 /// Relative positions will be only affected. Static positions must be updated by container.
 interface ILayout
 {

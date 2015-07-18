@@ -52,7 +52,7 @@ static const string[uint] glErrorStringTable;
 
 static this()
 {
-	glErrorStringTable = 
+	glErrorStringTable =
 		[
 		 //GL_NO_ERROR : "no error",
 		 GL_INVALID_ENUM : "invalid enum",
