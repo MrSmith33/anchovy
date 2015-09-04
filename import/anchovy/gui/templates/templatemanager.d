@@ -37,7 +37,7 @@ class TemplateManager
 		while (filesToParse.data.length > 0)
 		{
 			nextFilename = filesToParse.data[$-1];
-			writefln("Parsing %s", nextFilename);
+			//writefln("Parsing %s", nextFilename);
 			filesToParse.shrinkTo(filesToParse.data.length - 1);
 
 			if (!parsedFiles.data.canFind(nextFilename))
