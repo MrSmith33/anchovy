@@ -79,11 +79,6 @@ class Texture
 		loadFromData(textureData);
 	}
 
-	~this()
-	{
-		unload();
-	}
-
 	void validateBind(uint textureUnit = 0)
 	{
 		if (!isValid) reload();

@@ -57,7 +57,7 @@ class TexRectArray
 		glGenBuffers(1,&vbo);
 	}
 
-	~this()
+	void close()
 	{
 		glDeleteVertexArrays(1, &vao);
 		glDeleteBuffers(1,&vbo);

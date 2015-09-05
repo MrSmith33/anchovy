@@ -21,6 +21,11 @@ public:
 		_text = "";
 	}
 
+	void close()
+	{
+		_geometry.close();
+	}
+
 	void font(Font newFont) @property
 	{
 		if (newFont is null) return;

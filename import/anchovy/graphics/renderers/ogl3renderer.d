@@ -56,7 +56,7 @@ class Vbo
 		glGenBuffers(1, &handle);
 	}
 
-	~this()
+	void close()
 	{
 		glDeleteBuffers(1, &handle);
 	}
@@ -97,7 +97,7 @@ class Vao
 	{
 		glGenVertexArrays(1, &handle);
 	}
-	~this()
+	void close()
 	{
 		glDeleteVertexArrays(1, &handle);
 	}
