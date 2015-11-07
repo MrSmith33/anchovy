@@ -83,7 +83,6 @@ class Application(WindowType)
 
 	void init(in string[] args, uvec2 windowSize, string caption)
 	{
-		initLibs();
 		window.init(windowSize, caption);
 
 		dstring cyrillicChars = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяє"d;
