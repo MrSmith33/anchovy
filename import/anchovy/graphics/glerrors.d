@@ -31,20 +31,31 @@ module anchovy.graphics.glerrors;
 import std.conv: to;
 import derelict.opengl3.gl3;
 
-void checkGlError(string file = __FILE__, size_t line = __LINE__)
+/// Errors checking template; should work in debug build.
+/// Using: checkgl!glFunction(funcParams);
+template checkgl(alias func)
+{
+    debug auto checkgl(string file = __FILE__, int line = __LINE__, Args...)(Args args)
+    {
+        scope(success) checkError(file, line, func.stringof);
+        return func(args);
+    } else
+        alias checkgl = func;
+}
+void checkGlError(string file = __FILE__, size_t line = __LINE__, string funcName = "")
 {
 	uint error = glGetError();
 	if (error != GL_NO_ERROR)
 	{
-		throw new OpenglException(error, file, line);
+		throw new OpenglException(error, file, line, funcName);
 	}
 }
 
 class OpenglException : Exception
 {
-	this(uint errorCode, string file = __FILE__, size_t line = __LINE__)
+	this(uint errorCode, string file = __FILE__, size_t line = __LINE__, string funcName = "")
 	{
-		super("OpenGL error [" ~ to!string(errorCode) ~ "] " ~ glErrorStringTable[errorCode], file, line);
+		super("OpenGL error [" ~ to!string(errorCode) ~ "] " ~ glErrorStringTable[errorCode] ~ " " ~ funcName, file, line);
 	}
 }
 

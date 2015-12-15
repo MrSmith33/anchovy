@@ -190,12 +190,12 @@ private:
 	{
 		GlyphMetrics gm;
 		FT_Glyph_Metrics ftgm = face.glyph.metrics;
-		gm.width	= ftgm.width / 64;
-		gm.height	= ftgm.height / 64;
-		gm.offsetX	= ftgm.horiBearingX / 64;
-		gm.offsetY	= ftgm.horiBearingY / 64;
-		gm.advanceX	= ftgm.horiAdvance / 64;
-		gm.advanceY	= ftgm.vertAdvance / 64;
+		gm.width	= cast(uint)ftgm.width / 64;
+		gm.height	= cast(uint)ftgm.height / 64;
+		gm.offsetX	= cast(uint)ftgm.horiBearingX / 64;
+		gm.offsetY	= cast(uint)ftgm.horiBearingY / 64;
+		gm.advanceX	= cast(uint)ftgm.horiAdvance / 64;
+		gm.advanceY	= cast(uint)ftgm.vertAdvance / 64;
 		return gm;
 	}
 
