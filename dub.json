@@ -9,11 +9,11 @@
 
 	"dependencies" : {
 		"derelict-fi" : "==2.0.1",
-		"derelict-ft" : ">=1.0.2",
-		"derelict-gl3" : ">=1.0.14",
-		"derelict-glfw3" : ">=1.1.0",
-		"dlib" : ">=0.6.1",
-		"sdlang-d" : ">=0.9.1"
+		"derelict-ft" : "==1.0.2",
+		"derelict-gl3" : "==1.0.14",
+		"derelict-glfw3" : "==1.1.0",
+		"dlib" : "==0.7.1",
+		"sdlang-d" : "==0.9.1"
 	},
 
 	"importPaths" : [ "import" ],

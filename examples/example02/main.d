@@ -44,5 +44,6 @@ import anchovy.gui;
 void main(string[] args)
 {
 	auto app = new TestApplication();
+	app.initLibs();
 	app.run(args, uvec2(640, 640), "Test application");
 }
