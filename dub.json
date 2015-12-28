@@ -16,8 +16,8 @@
 		"sdlang-d" : "==0.9.3"
 	},
 
-	"importPaths" : [ "import" ],
-	"sourcePaths" : [ "import" ],
+	"importPaths" : [ "source" ],
+	"sourcePaths" : [ "source" ],
 
 	"targetType" : "library",
 
