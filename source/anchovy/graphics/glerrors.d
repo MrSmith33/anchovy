@@ -37,7 +37,7 @@ template checkgl(alias func)
 {
     debug auto checkgl(string file = __FILE__, int line = __LINE__, Args...)(Args args)
     {
-        scope(success) checkError(file, line, func.stringof);
+        scope(success) checkGlError(file, line, func.stringof);
         return func(args);
     } else
         alias checkgl = func;
